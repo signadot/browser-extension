@@ -30,7 +30,6 @@
   ],
 
   "host_permissions": [
-    "<all_urls>",
-    "https://*.preview.signadot.com" 
+    "<all_urls>"
   ]
 }

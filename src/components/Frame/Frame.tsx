@@ -34,7 +34,7 @@ const Frame = () => {
       }
     );
 
-    let url = "https://www.preview.signadot.com"; // replace with your URL
+    let url = "https://preview.signadot.com"; // replace with your URL
     let cookieName = "signadot-auth"; // replace with your cookie's name
 
     chrome.cookies.get({ url: url, name: cookieName }, function(cookie) {
