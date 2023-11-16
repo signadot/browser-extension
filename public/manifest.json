@@ -25,10 +25,12 @@
     "storage",
     "declarativeNetRequest",
     "declarativeNetRequestFeedback",
-    "declarativeNetRequestWithHostAccess"
+    "declarativeNetRequestWithHostAccess",
+    "cookies"
   ],
 
   "host_permissions": [
-    "<all_urls>"
+    "<all_urls>",
+    "https://*.preview.signadot.com" 
   ]
 }

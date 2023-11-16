@@ -33,6 +33,17 @@ const Frame = () => {
         }, 1000);
       }
     );
+
+    let url = "https://www.preview.signadot.com"; // replace with your URL
+    let cookieName = "signadot-auth"; // replace with your cookie's name
+
+    chrome.cookies.get({ url: url, name: cookieName }, function(cookie) {
+      if (cookie) {
+        console.log(cookie.value);
+      } else {
+        console.log('Can\'t get cookie! Check the name and URL.');
+      }
+    });
   };
 
   const handleEnabledChange = (enable: boolean) => {
