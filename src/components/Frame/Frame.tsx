@@ -43,12 +43,12 @@ const Frame = () => {
       console.error("ignored empty response");
     }
 
-    let url = "https://preview.signadot.com"; // replace with your URL
+    let url = "https://xyz.preview.signadot.com"; // replace with your URL
     let cookieName = "signadot-auth"; // replace with your cookie's name
 
     chrome.cookies.get({ url: url, name: cookieName }, function(cookie) {
       if (cookie) {
-        console.log(cookie.value);
+        console.log(`Fetched value: ${cookieName} = ${cookie.value}`);
 
         chrome.cookies.set({ url: "https://api.signadot.com", name: cookieName, value: cookie.value}, function(cookie) {
           if (cookie) {
