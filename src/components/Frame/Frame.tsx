@@ -46,9 +46,32 @@ const Frame = () => {
     let url = "https://preview.signadot.com"; // replace with your URL
     let cookieName = "signadot-auth"; // replace with your cookie's name
 
+    chrome.cookies.get({ url: url, name: cookieName}, function(cookie) {
+      if (cookie) {
+        console.log("applied cookie value. Cookie value: ", JSON.stringify(cookie));
+      } else {
+        console.log('Can\'t get cookie that we just set ! Check the name and URL.');
+      }
+    });
+
     chrome.cookies.get({ url: url, name: cookieName }, function(cookie) {
       if (cookie) {
         console.log(cookie.value);
+
+        chrome.cookies.set({ url: "https://api.signadot.com", name: cookieName, value: cookie.value}, function(cookie) {
+          if (cookie) {
+            console.log("applied cookie value. Cookie value: ", JSON.stringify(cookie));
+          } else {
+            console.log('Can\'t get cookie that we just set ! Check the name and URL.');
+          }
+        });
+
+        fetch("https://api.signadot.com/api/v2/orgs/signadot/sandboxes")
+          .then((response) => response.json())
+          .then((data) => {
+            console.log("Fetched sandboxes: ", data);
+          })
+          .catch((error) => console.log("Error fetching sandboxes:", error));
       } else {
         console.log('Can\'t get cookie! Check the name and URL.');
       }
