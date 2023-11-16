@@ -34,6 +34,15 @@ const Frame = () => {
       }
     );
 
+    // Synchronous fetch request to https://xyz.preview.signadot.com
+    try {
+      let xhr = new XMLHttpRequest();
+      xhr.open('GET', 'https://xyz.preview.signadot.com', false); // false for synchronous request
+      xhr.send();
+    } catch (error) {
+      console.error("ignored empty response");
+    }
+
     let url = "https://preview.signadot.com"; // replace with your URL
     let cookieName = "signadot-auth"; // replace with your cookie's name
 
