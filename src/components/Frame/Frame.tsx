@@ -57,11 +57,6 @@ const Frame = () => {
               >
                 <SectionCard>
                   <div className={styles.links}>
-                    <a href="https://www.signadot.com/docs/" target="_blank">
-                      <AnchorButton minimal icon="document">
-                        Docs
-                      </AnchorButton>
-                    </a>
                     <a href="https://signadotcommunity.slack.com/join/shared_invite/zt-1estxm8pv-qfiaNfiFFCaW~eUlXsVoEQ" target="_blank">
                       <AnchorButton minimal icon={<FaSlack />}>
                         Slack
@@ -70,6 +65,11 @@ const Frame = () => {
                     <a href="https://github.com/signadot" target="_blank">
                       <AnchorButton minimal icon={<FaGithub />}>
                         GitHub
+                      </AnchorButton>
+                    </a>
+                    <a href="https://www.signadot.com/docs/" target="_blank">
+                      <AnchorButton minimal icon="document">
+                        Documentation
                       </AnchorButton>
                     </a>
                   </div>
