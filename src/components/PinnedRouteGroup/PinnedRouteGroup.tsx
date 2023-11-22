@@ -1,6 +1,7 @@
 import React from "react";
 import {RoutingEntity, RoutingEntityType} from "../ListRouteEntries/types";
 import styles from "./PinnedRouteGroup.module.css";
+import {Icon} from "@blueprintjs/core";
 
 interface Props {
   routingEntity: RoutingEntity;
@@ -22,7 +23,14 @@ const PinnedRouteGroup: React.FC<Props> = ({routingEntity}) => {
       <div className={styles.container}>
         <div className={styles.header}>
           <div className={styles.title}>
-            {dashboardURL ? <a href={dashboardURL} target="_blank">{routingEntity.name}</a> : routingEntity.name}
+            {dashboardURL ? (
+                <a href={dashboardURL} target="_blank">
+                  <div className={styles.link}>
+                    <div>{routingEntity.name}</div>
+                    <Icon icon="link" />
+                  </div>
+                </a>
+            ) : routingEntity.name}
           </div>
           <div className={styles.type}>{routingEntity.type}</div>
         </div>

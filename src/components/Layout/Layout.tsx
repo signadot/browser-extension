@@ -1,17 +1,34 @@
 import React from "react";
 import styles from "./Layout.module.css";
+import {useChromeStorage} from "../../hooks/storage";
+import {Switch, Tooltip} from "@blueprintjs/core";
+
+const logoPath = chrome.runtime.getURL("images/signadot-full-logo.png");
 
 interface Props {
   children: React.ReactNode;
 }
 
-const Layout: React.FC<Props> = ({children}) => (
-    <div className={styles.container}>
-      <div className={styles.topBar}>
-        <div className={styles.title}>Signadot</div>
+const Layout: React.FC<Props> = ({children}) => {
+  const [, , enabled, setEnabledFn] = useChromeStorage();
+  return (
+      <div className={styles.container}>
+        <div className={styles.topBar}>
+          <div><img src={logoPath} height={80}/></div>
+          <div>
+            <Tooltip content={`Sandbox Header ${enabled ? "Enabled" : "Disabled"}`}>
+              <Switch
+                  alignIndicator={"right"}
+                  onChange={(e) => setEnabledFn(e.target.checked)}
+                  checked={enabled}
+                  large={true}
+              />
+            </Tooltip>
+          </div>
+        </div>
+        {enabled ? <div className={styles.body}>{children}</div>: null}
       </div>
-      <div className={styles.body}>{children}</div>
-    </div>
-);
+  );
+}
 
 export default Layout;

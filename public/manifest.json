@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
-  "name": "Signadot Chrome Extension",
-  "description": "Signadot Chrome Extension",
+  "name": "Signadot",
+  "description": "Signadot",
   "version": "1.0",
   "action": {
     "default_icon": "images/signadot-logo.png",

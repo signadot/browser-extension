@@ -11,13 +11,19 @@
 .header {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    justify-content: space-between;
     margin-bottom: 0.5rem;
 }
 
 .title {
     font-size: 1.5rem;
     font-weight: 500;
+}
+
+.link {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
 }
 
 .type {

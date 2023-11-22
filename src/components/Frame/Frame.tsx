@@ -1,6 +1,5 @@
 import React from "react";
 import styles from "./Frame.module.css";
-import {Switch} from "@blueprintjs/core";
 import {RoutingEntity} from "../ListRouteEntries/types";
 import ListRouteEntries from "../ListRouteEntries";
 import {useFetchRoutingEntries} from "../ListRouteEntries/hooks";
@@ -26,17 +25,6 @@ const Frame = () => {
 
   return (
       <div>
-        <div className={styles.switchPanel}>
-          <Switch
-              alignIndicator={"right"}
-              label={`Setting Routing Key header is ${
-                  enabled ? "ENABLED" : "DISABLED"
-              }`}
-              onChange={(e) => setEnabledFn(e.target.checked)}
-              className={styles.switch}
-              checked={enabled}
-          />
-        </div>
         {debug && (
             <div>
               <div>Enabled: {enabled ? "true" : "false"}</div>

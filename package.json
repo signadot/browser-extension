@@ -1,7 +1,7 @@
 {
   "name": "Signadot",
   "version": "0.1.0",
-  "description": "Signadot Chrome Extension",
+  "description": "Signadot",
   "main": "index.js",
   "scripts": {
     "watch": "webpack --config webpack/webpack.dev.js --watch",
