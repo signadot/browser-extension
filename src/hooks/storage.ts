@@ -15,7 +15,7 @@ type ChromeStorageHookOutput = [
 
 export const useChromeStorage = (): ChromeStorageHookOutput => {
   const [routingKey, setRoutingKey] = React.useState<string | undefined>(undefined);
-  const [enabled, setEnabled] = React.useState<boolean>(false);
+  const [enabled, setEnabled] = React.useState<boolean>(true);
 
   const setRoutingKeyFn = (value: string | undefined) => chrome.storage.local.set({[StorageKey.RoutingKey]: value})
   const setEnabledFn = (value: boolean) => chrome.storage.local.set({[StorageKey.Enabled]: value})
