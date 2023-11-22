@@ -1,6 +1,6 @@
 import React from "react";
 import {RoutingEntity} from "./types";
-import {ItemListRendererProps, ItemPredicate, ItemRenderer, Select,} from "@blueprintjs/select";
+import {ItemListRendererProps, ItemPredicate, ItemRenderer, Select, Suggest} from "@blueprintjs/select";
 import {Button, Menu, MenuItem} from "@blueprintjs/core";
 import styles from "./ListRouteEntries.module.css";
 
@@ -87,27 +87,31 @@ const ListRouteEntries: React.FC<Props> = ({
     );
   };
 
+  const renderInputValue = (re: RoutingEntity) => re.name;
+
   return (
       <div className={styles.container}>
-        <Select<RoutingEntity>
+        <Suggest<RoutingEntity>
             items={routingEntities}
             itemPredicate={predicate}
             itemRenderer={itemRenderer}
             itemListRenderer={listRenderer}
+            inputValueRenderer={renderInputValue}
+            popoverProps={{minimal: true}}
+            resetOnSelect
             noResults={
               <MenuItem
                   disabled={true}
-                  text="No results."
+                  text="No results"
                   roleStructure="listoption"
               />
             }
-            onItemSelect={(item, event) => handleClick(item.name)}
-        >
-          <Button
-              text={"Select a Sandbox / RouteGroup"}
-              rightIcon="double-caret-vertical"
-          />
-        </Select>
+            onItemSelect={(item, event) => {
+              if (item) {
+                handleClick(item.name)
+              }
+            }}
+        />
       </div>
   );
 };
