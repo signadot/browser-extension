@@ -4,12 +4,12 @@ const ROUTING_KEY = "routingKey";
 const ENABLED_KEY = "enabled";
 const ROUTING_KEY_PLACEHOLDER = `{${ROUTING_KEY}}`;
 const ROUTING_HEADERS: Record<string, string> = {
-  "Baggage": `sd-routing-key=${ROUTING_KEY_PLACEHOLDER},sd-sandbox=${ROUTING_KEY_PLACEHOLDER}`,
-  "Ot-Baggage-Sd-Routing-Key": `${ROUTING_KEY_PLACEHOLDER}`,
-  "Ot-Baggage-Sd-Sandbox": `${ROUTING_KEY_PLACEHOLDER}`,
-  "Tracestate": `sd-routing-key=${ROUTING_KEY_PLACEHOLDER},sd-sandbox=${ROUTING_KEY_PLACEHOLDER}`,
-  "Uberctx-Sd-Routing-Key": `${ROUTING_KEY_PLACEHOLDER}`,
-  "Uberctx-Sd-Sandbox": `${ROUTING_KEY_PLACEHOLDER}`,
+  "baggage": `sd-routing-key=${ROUTING_KEY_PLACEHOLDER},sd-sandbox=${ROUTING_KEY_PLACEHOLDER}`,
+  "ot-baggage-sd-routing-key": `${ROUTING_KEY_PLACEHOLDER}`,
+  "ot-baggage-sd-sandbox": `${ROUTING_KEY_PLACEHOLDER}`,
+  "tracestate": `sd-routing-key=${ROUTING_KEY_PLACEHOLDER},sd-sandbox=${ROUTING_KEY_PLACEHOLDER}`,
+  "uberctx-sd-routing-key": `${ROUTING_KEY_PLACEHOLDER}`,
+  "uberctx-sd-sandbox": `${ROUTING_KEY_PLACEHOLDER}`,
   "sd-sandbox": `${ROUTING_KEY_PLACEHOLDER}`,
   "sd-routing-key": `${ROUTING_KEY_PLACEHOLDER}`,
 };
