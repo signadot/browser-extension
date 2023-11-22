@@ -1,7 +1,7 @@
 import React from "react";
 import {RoutingEntity} from "./types";
 import {ItemListRendererProps, ItemPredicate, ItemRenderer, Suggest} from "@blueprintjs/select";
-import {Button, Menu, MenuItem} from "@blueprintjs/core";
+import {Menu, MenuItem} from "@blueprintjs/core";
 import styles from "./ListRouteEntries.module.css";
 
 const SELECT_LIST_ITEM_COUNT = 5;

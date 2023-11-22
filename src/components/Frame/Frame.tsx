@@ -5,6 +5,8 @@ import ListRouteEntries from "../ListRouteEntries";
 import {useFetchRoutingEntries} from "../ListRouteEntries/hooks";
 import PinnedRouteGroup from "../PinnedRouteGroup";
 import {useChromeStorage} from "../../hooks/storage";
+import { AnchorButton, Button, Section, SectionCard } from "@blueprintjs/core";
+import { FaSlack, FaGithub } from 'react-icons/fa';
 
 const Frame = () => {
   const [debug, setDebug] = React.useState<boolean>(false);
@@ -38,9 +40,43 @@ const Frame = () => {
                   routingEntities={routingEntities}
                   setUserSelectedRoutingEntity={setUserSelectedEntity}
               />
-              {pinnedRoutingEntityData && (
-                  <PinnedRouteGroup routingEntity={pinnedRoutingEntityData}/>
-              )}
+              <br />
+             <Section
+                compact
+              >
+                {pinnedRoutingEntityData && (
+                  <SectionCard>
+                    Headers are being set for:
+                    <PinnedRouteGroup routingEntity={pinnedRoutingEntityData}/>
+                  </SectionCard>
+                )}
+             </Section>   
+             <br />   
+             <Section
+                icon="document"
+              >
+                <SectionCard>
+                  <div className={styles.links}>
+                    <a href="https://www.signadot.com/docs/" target="_blank">
+                      <AnchorButton minimal icon="document">
+                        Docs
+                      </AnchorButton>
+                    </a>
+                    <a href="https://signadotcommunity.slack.com/join/shared_invite/zt-1estxm8pv-qfiaNfiFFCaW~eUlXsVoEQ" target="_blank">
+                      <AnchorButton minimal icon={<FaSlack />}>
+                        Slack
+                      </AnchorButton>
+                    </a>
+                    <a href="https://github.com/signadot" target="_blank">
+                      <AnchorButton minimal icon={<FaGithub />}>
+                        GitHub
+                      </AnchorButton>
+                    </a>
+                  </div>
+                  
+                </SectionCard>
+             </Section>  
+                     
             </div>
         )}
       </div>

@@ -37,6 +37,11 @@
     font-size: 0.8rem;
 }
 
+.links {
+    display: flex;
+    justify-content: space-between;
+}
+
 .content {
     min-height: 240px;
 }

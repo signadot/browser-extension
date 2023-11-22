@@ -20,7 +20,8 @@ const getDashboardURL = (routingEntity: RoutingEntity): string | undefined => {
 const PinnedRouteGroup: React.FC<Props> = ({routingEntity}) => {
   const dashboardURL = getDashboardURL(routingEntity);
   return (
-      <div className={styles.container}>
+    <> 
+    <div className={styles.container}>
         <div className={styles.header}>
           <div className={styles.title}>
             {dashboardURL ? (
@@ -36,6 +37,8 @@ const PinnedRouteGroup: React.FC<Props> = ({routingEntity}) => {
         </div>
         <div>Routing Key: {routingEntity.routingKey}</div>
       </div>
+      </>
+
   );
 };
 
