@@ -1,0 +1,8 @@
+.container {
+    margin-top: 1rem;
+}
+
+.links {
+    display: flex;
+    justify-content: space-between;
+}
