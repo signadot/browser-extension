@@ -10,8 +10,6 @@ const ROUTING_HEADERS: Record<string, string> = {
   "tracestate": `sd-routing-key=${ROUTING_KEY_PLACEHOLDER},sd-sandbox=${ROUTING_KEY_PLACEHOLDER}`,
   "uberctx-sd-routing-key": `${ROUTING_KEY_PLACEHOLDER}`,
   "uberctx-sd-sandbox": `${ROUTING_KEY_PLACEHOLDER}`,
-  "sd-sandbox": `${ROUTING_KEY_PLACEHOLDER}`,
-  "sd-routing-key": `${ROUTING_KEY_PLACEHOLDER}`,
 };
 const ResourceType = chrome.declarativeNetRequest.ResourceType;
 const MODIFY_HEADER_IN_RESOURCE_TYPES: string[] = [
