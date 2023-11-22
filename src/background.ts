@@ -43,33 +43,33 @@ let inMemoryHeaderValue: string | undefined = undefined;
 let inMemoryFeatureEnabled: boolean = false;
 
 const getRules = (
-  headerKeys: string[],
-  value: string
+    headerKeys: string[],
+    value: string
 ): chrome.declarativeNetRequest.Rule[] =>
-  headerKeys.map(
-    (key, idx) =>
-      ({
-        id: idx + 1,
-        priority: 1,
-        action: {
-          type: chrome.declarativeNetRequest.RuleActionType.MODIFY_HEADERS,
-          requestHeaders: [
-            {
-              header: key,
-              operation: chrome.declarativeNetRequest.HeaderOperation.SET,
-              value: value,
-            },
-          ],
-        },
-        condition: {
-          urlFilter: "*",
-          resourceTypes: MODIFY_HEADER_IN_RESOURCE_TYPES,
-        },
-      } as chrome.declarativeNetRequest.Rule)
-  );
+    headerKeys.map(
+        (key, idx) =>
+            ({
+              id: idx + 1,
+              priority: 1,
+              action: {
+                type: chrome.declarativeNetRequest.RuleActionType.MODIFY_HEADERS,
+                requestHeaders: [
+                  {
+                    header: key,
+                    operation: chrome.declarativeNetRequest.HeaderOperation.SET,
+                    value: value,
+                  },
+                ],
+              },
+              condition: {
+                urlFilter: "*",
+                resourceTypes: MODIFY_HEADER_IN_RESOURCE_TYPES,
+              },
+            } as chrome.declarativeNetRequest.Rule)
+    );
 
 const getCurrentRuleIDs = (
-  rules: chrome.declarativeNetRequest.Rule[]
+    rules: chrome.declarativeNetRequest.Rule[]
 ): number[] => rules.map((rule) => rule.id);
 
 async function updateDynamicRules() {
@@ -77,28 +77,28 @@ async function updateDynamicRules() {
     const rules = getRules(ROUTING_HEADER_KEYS, inMemoryHeaderValue || "");
     // Update the dynamic rules
     chrome.declarativeNetRequest
-      .updateDynamicRules({
-        // Set the new rules
-        addRules: rules,
+        .updateDynamicRules({
+          // Set the new rules
+          addRules: rules,
 
-        // Remove the previous rules
-        removeRuleIds: getCurrentRuleIDs(
-          await chrome.declarativeNetRequest.getDynamicRules()
-        ),
-      })
-      .then(() => {
-        // Adding console.log() to help with debugging (Should be fine to retain in published script)
-        chrome.declarativeNetRequest.getDynamicRules().then((rules) => {
+          // Remove the previous rules
+          removeRuleIds: getCurrentRuleIDs(
+              await chrome.declarativeNetRequest.getDynamicRules()
+          ),
+        })
+        .then(() => {
+          // Adding console.log() to help with debugging (Should be fine to retain in published script)
+          chrome.declarativeNetRequest.getDynamicRules().then((rules) => {
+          });
+        })
+        .catch(() => {
+          // Error
         });
-      })
-      .catch(() => {
-        // Error
-      });
   } else {
     // Remove the previously set rule
     chrome.declarativeNetRequest.updateDynamicRules({
       removeRuleIds: getCurrentRuleIDs(
-        await chrome.declarativeNetRequest.getDynamicRules()
+          await chrome.declarativeNetRequest.getDynamicRules()
       ),
     });
   }
