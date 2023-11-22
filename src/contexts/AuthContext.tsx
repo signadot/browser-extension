@@ -73,7 +73,7 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
   if (!authState) {
     return (
       <Layout>
-        <div>Please login to Signadot app (<a href="https://app.signadot.com" target="_blank">https://app.signadot.com</a>) to continue.</div>
+        <div>Please <a href="https://app.signadot.com" target="_blank">Login to Signadot</a> to continue.</div>
       </Layout>
     );
   }

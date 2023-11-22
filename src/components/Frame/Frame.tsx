@@ -8,7 +8,7 @@ import PinnedRouteGroup from "../PinnedRouteGroup";
 import {useChromeStorage} from "../../hooks/storage";
 
 const Frame = () => {
-    const [debug, setDebug] = React.useState<boolean>(true);
+    const [debug, setDebug] = React.useState<boolean>(false);
     const [routingKey, setRoutingKeyFn, enabled, setEnabledFn] = useChromeStorage();
     const routingEntities: RoutingEntity[] = useFetchRoutingEntries();
     const [userSelectedEntity, setUserSelectedEntity] = React.useState<RoutingEntity | undefined>(undefined);
