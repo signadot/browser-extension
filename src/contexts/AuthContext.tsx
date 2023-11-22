@@ -59,9 +59,13 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
               },
             } as AuthState);
           })
-          .catch((error) => console.log("Error fetching org:", error));
+          .catch((error) => {
+            console.log("Error fetching org:", error)
+            // TODO: Improve error handling
+          });
       } else {
         console.log("Not authenticated!");
+        // TODO: Handle this better afterwards
       }
     });
   }, []);
@@ -69,7 +73,7 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
   if (!authState) {
     return (
       <Layout>
-        <div>You are not logged in!</div>
+        <div>Please login to Signadot app (<a href="https://app.signadot.com" target="_blank">https://app.signadot.com</a>) to continue.</div>
       </Layout>
     );
   }
