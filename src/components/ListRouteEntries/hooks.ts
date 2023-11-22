@@ -1,26 +1,25 @@
-import { useQuery } from "react-query";
-import { ApiError, RoutingEntity, RoutingEntityType } from "./types";
-import { useFetchRouteGroups, useFetchSandboxes } from "./queries";
-import { useAuth } from "../../contexts/AuthContext";
-import React, { useMemo } from "react";
-import { getCookie } from "../../utils/cookies";
+import {useQuery} from "react-query";
+import {ApiError, RoutingEntity, RoutingEntityType} from "./types";
+import {useFetchRouteGroups, useFetchSandboxes} from "./queries";
+import {useAuth} from "../../contexts/AuthContext";
+import {useMemo} from "react";
 
 // TODO: Move out orgName and apiKey from the function call
 export const useFetchRoutingEntries = () => {
-  const { authState } = useAuth();
+  const {authState} = useAuth();
   const {
     data: sandboxes,
     error: sandboxesError,
     isLoading: sandboxesLoading,
   } = useQuery<RoutingEntity[], ApiError>("sandboxes", () =>
-    useFetchSandboxes(authState?.org.name)
+      useFetchSandboxes(authState?.org.name)
   );
   const {
     data: routegroups,
     error: routegroupsError,
     isLoading: routegroupsLoading,
   } = useQuery<RoutingEntity[], ApiError>("routegroups", () =>
-    useFetchRouteGroups(authState?.org.name)
+      useFetchRouteGroups(authState?.org.name)
   );
   // TODO: Handle error and loading too.
 

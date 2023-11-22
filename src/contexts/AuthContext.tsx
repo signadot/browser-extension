@@ -1,6 +1,8 @@
-import React, { createContext, useContext, useState } from "react";
-import { auth } from "./auth";
+import React, {createContext, useContext, useState} from "react";
+import {auth} from "./auth";
 import Layout from "../components/Layout/Layout";
+
+const loadingIconPath = chrome.runtime.getURL("images/loading.gif");
 
 interface Props {
   children: React.ReactNode;
@@ -43,45 +45,55 @@ interface GetOrgsResponse {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 // AuthProvider component
-export const AuthProvider: React.FC<Props> = ({ children }) => {
+export const AuthProvider: React.FC<Props> = ({children}) => {
   const [authState, setAuthState] = useState<AuthState | undefined>(undefined);
+  const [authenticated, setAuthenticated] = React.useState<boolean | undefined>(undefined);
   React.useEffect(() => {
-    auth((authenticated: boolean) => {
+    auth((authenticated) => {
       if (authenticated) {
         fetch("https://api.signadot.com/api/v1/orgs")
-          .then((response) => response.json())
-          .then((data: GetOrgsResponse) => {
-            setAuthState({
-              org: data.orgs[0], // TODO: Ensure safe access
-              user: {
-                firstName: data.user.firstName?.String,
-                lastName: data.user.lastName?.String,
-              },
-            } as AuthState);
-          })
-          .catch((error) => {
-            console.log("Error fetching org:", error)
-            // TODO: Improve error handling
-          });
+            .then((response) => response.json())
+            .then((data: GetOrgsResponse) => {
+              setAuthState({
+                org: data.orgs[0], // TODO: Ensure safe access
+                user: {
+                  firstName: data.user.firstName?.String,
+                  lastName: data.user.lastName?.String,
+                },
+              } as AuthState);
+              setAuthenticated(true);
+            })
+            .catch((error) => {
+              console.log("Error fetching org:", error)
+              // TODO: Improve error handling
+              setAuthenticated(false);
+            });
       } else {
         console.log("Not authenticated!");
         // TODO: Handle this better afterwards
+        setAuthenticated(false);
       }
     });
   }, []);
 
-  if (!authState) {
+  if (authenticated === undefined) {
     return (
-      <Layout>
-        <div>Please <a href="https://app.signadot.com" target="_blank">Login to Signadot</a> to continue.</div>
-      </Layout>
+        <Layout>
+          <div><img src={loadingIconPath}/></div>
+        </Layout>
+    );
+  } else if (!authState) {
+    return (
+        <Layout>
+          <div>Please <a href="https://app.signadot.com" target="_blank">Login to Signadot</a> to continue.</div>
+        </Layout>
     );
   }
 
   return (
-    <AuthContext.Provider value={{ authState }}>
-      <Layout>{children}</Layout>
-    </AuthContext.Provider>
+      <AuthContext.Provider value={{authState}}>
+        <Layout>{children}</Layout>
+      </AuthContext.Provider>
   );
 };
 

@@ -6,7 +6,7 @@ export const useFetchSandboxes = async (
 ): Promise<RoutingEntity[]> => {
   // Wrap the auth and fetch logic inside a new Promise
   return new Promise((resolve, reject) => {
-    auth((authenticated: boolean) => {
+    auth((authenticated) => {
       if (!authenticated) {
         reject(new Error("Authorization failed"));
         return;
@@ -30,7 +30,7 @@ export const useFetchRouteGroups = async (
 ): Promise<RoutingEntity[]> => {
   // Wrap the auth and fetch logic inside a new Promise
   return new Promise((resolve, reject) => {
-    auth((authenticated: boolean) => {
+    auth((authenticated) => {
       if (!authenticated) {
         reject(new Error("Authorization failed"));
         return;
