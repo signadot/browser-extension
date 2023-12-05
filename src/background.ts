@@ -57,7 +57,7 @@ const getRules = (
               },
               condition: {
                 urlFilter: "*",
-                excludedRequestDomains: ["preview.signadot.com"],
+                excludedRequestDomains: ["preview.signadot.com", "preview.staging.signadot.com", "localhost.signadot.com"],
                 resourceTypes: MODIFY_HEADER_IN_RESOURCE_TYPES,
               },
             } as chrome.declarativeNetRequest.Rule)
