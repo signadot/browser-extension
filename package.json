@@ -1,6 +1,6 @@
 {
   "name": "Signadot",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Signadot",
   "main": "index.js",
   "scripts": {
