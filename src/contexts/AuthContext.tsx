@@ -1,6 +1,7 @@
 import React, {createContext, useContext, useState} from "react";
 import {auth} from "./auth";
 import Layout from "../components/Layout/Layout";
+import axios from "axios";
 
 const loadingIconPath = chrome.runtime.getURL("images/loading.gif");
 
@@ -51,9 +52,9 @@ export const AuthProvider: React.FC<Props> = ({children}) => {
   React.useEffect(() => {
     auth((authenticated) => {
       if (authenticated) {
-        fetch("https://api.signadot.com/api/v1/orgs")
-            .then((response) => response.json())
-            .then((data: GetOrgsResponse) => {
+        axios.get<GetOrgsResponse>("/api/v1/orgs")
+            .then((response) => {
+              const data = response.data;
               setAuthState({
                 org: data.orgs[0], // TODO: Ensure safe access
                 user: {

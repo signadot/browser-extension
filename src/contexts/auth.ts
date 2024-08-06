@@ -1,14 +1,16 @@
+import {SIGNADOT_API_DOMAIN} from "../axiosSetup";
+
 type PostAuthCallbackFn = (authenticated: boolean) => void;
 const AUTH_SESSION_COOKIE_NAME = "signadot-auth";
 const DUMMY_PREVIEW_ENDPOINT =
     "https://dummy-preview-endpoint.preview.signadot.com";
-const SIGNADOT_API_DOMAIN = "https://api.signadot.com";
 
 const refreshPreviewDomainCookies = () => {
   // Synchronous fetch request to https://xyz.preview.signadot.com
   try {
     let xhr = new XMLHttpRequest();
     xhr.open("GET", DUMMY_PREVIEW_ENDPOINT, false); // false for synchronous request
+    xhr.setRequestHeader("Cache-Control", "no-cache");
     xhr.send();
   } catch (error) {
     // empty response expected. ignore
