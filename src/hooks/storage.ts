@@ -27,6 +27,7 @@ export const useChromeStorage = (): ChromeStorageHookOutput => {
             setRoutingKey(result?.[StorageKey.RoutingKey]);
           }
           setEnabled(!!result[StorageKey.Enabled]);
+          return
         });
 
 
@@ -51,7 +52,19 @@ export const useChromeStorage = (): ChromeStorageHookOutput => {
   )
 
     React.useEffect(() => {
-        chrome.action.setBadgeText({ text: enabled ? 'on' : ""});
+        if (!enabled) {
+            chrome.action.setIcon({ path: {
+                    "16": "images/icons/icon16_inactive.png",
+                    "48": "images/icons/icon48_inactive.png",
+                    "128": "images/icons/icon128_inactive.png"
+                }});
+        } else {
+            chrome.action.setIcon({ path: {
+                    "16": "images/icons/icon16_active.png",
+                    "48": "images/icons/icon48_active.png",
+                    "128": "images/icons/icon128_active.png"
+                }});
+        }
     }, [enabled]);
 
   return [routingKey, setRoutingKeyFn, enabled, setEnabledFn];
