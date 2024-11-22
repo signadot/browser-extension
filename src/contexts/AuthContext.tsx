@@ -53,9 +53,13 @@ export const AuthProvider: React.FC<Props> = ({children}) => {
       if (authenticated) {
         fetch("https://api.signadot.com/api/v1/orgs")
             .then((response) => {
-              if (!response.ok) {
+              if (response.status === 401) {
                 setAuthenticated(false);
-                return;
+                throw new Error("Unauthorized");
+              }
+
+              if (!response.ok) {
+                throw new Error(`HTTP error: ${response.status}`);
               }
 
               return response.json();
@@ -71,8 +75,7 @@ export const AuthProvider: React.FC<Props> = ({children}) => {
               setAuthenticated(true);
             })
             .catch((error) => {
-              console.log("Error fetching org:", error)
-              // TODO: Improve error handling
+              console.error("Error fetching org:", error);
               setAuthenticated(false);
             });
       } else {
