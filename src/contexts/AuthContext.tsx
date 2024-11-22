@@ -52,7 +52,14 @@ export const AuthProvider: React.FC<Props> = ({children}) => {
     auth((authenticated) => {
       if (authenticated) {
         fetch("https://api.signadot.com/api/v1/orgs")
-            .then((response) => response.json())
+            .then((response) => {
+              if (!response.ok) {
+                setAuthenticated(false);
+                return;
+              }
+
+              return response.json();
+            })
             .then((data: GetOrgsResponse) => {
               setAuthState({
                 org: data.orgs[0], // TODO: Ensure safe access
