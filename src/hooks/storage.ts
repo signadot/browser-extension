@@ -27,7 +27,6 @@ export const useChromeStorage = (): ChromeStorageHookOutput => {
             setRoutingKey(result?.[StorageKey.RoutingKey]);
           }
           setEnabled(!!result[StorageKey.Enabled]);
-          return
         });
 
 
