@@ -54,7 +54,6 @@ export const AuthProvider: React.FC<Props> = ({children}) => {
         fetch("https://api.signadot.com/api/v1/orgs")
             .then((response) => {
               if (response.status === 401) {
-                setAuthenticated(false);
                 throw new Error("Unauthorized");
               }
 
