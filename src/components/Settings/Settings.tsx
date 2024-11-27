@@ -27,7 +27,6 @@ interface SettingsProps {
 const Settings: React.FC<SettingsProps> = ({ onClose }) => {
   const [apiUrl, setApiUrl] = useState<string>(DEFAULT_API_URL);
   const [previewUrl, setPreviewUrl] = useState<string>(DEFAULT_PREVIEW_URL);
-  const [showValues, setShowValues] = useState(false);
   const [isApiEditable, setIsApiEditable] = useState(false);
   const [pressedKeys, setPressedKeys] = useState<Set<string>>(new Set());
 
@@ -114,29 +113,6 @@ const Settings: React.FC<SettingsProps> = ({ onClose }) => {
         <h3 className={styles.title}>Settings</h3>
       </div>
 
-      <div className={styles.section}>
-        <div className={styles.sectionHeader}>
-          <h4 className={styles.sectionTitle}>Headers Being Added</h4>
-          <Button
-            small
-            minimal
-            onClick={() => setShowValues(!showValues)}
-          >
-            {showValues ? 'Hide Values' : 'Show Values'}
-          </Button>
-        </div>
-        <div className={styles.headersList}>
-          {Object.entries(ROUTING_HEADERS).map(([header, value]) => (
-            <div key={header} className={styles.headerItem}>
-              <span className={styles.headerName}>{header}</span>
-              {showValues && (
-                <div className={styles.headerValue}>{value}</div>
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
-      
       <div className={styles.section}>
         <div className={styles.sectionHeader}>
           <h4 className={styles.sectionTitle}>API Configuration</h4>
