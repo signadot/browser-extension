@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useMemo, useState } from "react";
 import {RoutingEntity, RoutingEntityType} from "../ListRouteEntries/types";
 import styles from "./PinnedRouteGroup.module.css";
-import {Icon} from "@blueprintjs/core";
+import {Button, Icon, Card, Tag} from "@blueprintjs/core";
+import { useChromeStorage } from "../../hooks/storage";
 
 interface Props {
   routingEntity: RoutingEntity;
@@ -17,25 +18,98 @@ const getDashboardURL = (routingEntity: RoutingEntity): string | undefined => {
   return undefined;
 };
 
-const PinnedRouteGroup: React.FC<Props> = ({routingEntity}) => {
+interface Props {
+  routingEntity: RoutingEntity;
+  onRemove: (routingEntity: RoutingEntity) => void;
+}
+
+const PinnedRouteGroup: React.FC<Props> = ({routingEntity, onRemove}) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const {extraHeaders, injectedHeaders} = useChromeStorage();
   const dashboardURL = getDashboardURL(routingEntity);
+  
+
+  const defaultHeaders = useMemo(() => {
+    return Object.entries(injectedHeaders || {})
+      .filter(([_, header]) => header.show !== "extra")
+      .map(([key]) => key);
+  }, [injectedHeaders]);
+
   return (
-    <div className={styles.container}>
-        <div className={styles.header}>
-          <div className={styles.title}>
-            {dashboardURL ? (
-                <a href={dashboardURL} target="_blank">
-                  <div className={styles.link}>
-                    <div>{routingEntity.name}</div>
-                    <Icon icon="link" />
-                  </div>
-                </a>
-            ) : routingEntity.name}
-          </div>
-          <div className={styles.type}>{routingEntity.type}</div>
+    <Card className={styles.container} elevation={1}>
+      <div className={styles.header}>
+        <div className={styles.title}>
+          {dashboardURL ? (
+            <a href={dashboardURL} target="_blank" rel="noopener noreferrer">
+              <div className={styles.link}>
+                <div>{routingEntity.name}</div>
+                <Icon icon="share" size={12} />
+              </div>
+            </a>
+          ) : routingEntity.name}
         </div>
-        <div>Routing Key: {routingEntity.routingKey}</div>
+        <div className={styles.headerActions}>
+          <Tag minimal>{routingEntity.type}</Tag>
+          <Button
+            minimal
+            small
+            icon="cross"
+            onClick={() => onRemove(routingEntity)}
+            title="Remove"
+          />
+        </div>
       </div>
+
+      <div className={styles.content}>
+        <div className={styles.routingKey}>
+          <strong>Routing Key:</strong> {routingEntity.routingKey}
+        </div>
+
+        <Button
+          minimal
+          small
+          icon={isExpanded ? "chevron-down" : "chevron-right"}
+          onClick={() => setIsExpanded(!isExpanded)}
+          className={styles.headerButton}
+        >
+          {isExpanded ? 'Hide Details' : 'Show Details'}
+        </Button>
+
+        {isExpanded && (
+          <div className={styles.headersList}>
+
+            <h4>Injected Headers</h4>
+            <div>
+              <h5>Default Headers</h5>
+              {defaultHeaders.length > 0 ? (
+                <ul className={styles.headerItems}>
+                  {defaultHeaders.map((header, index) => (
+                    <li key={index}>
+                      <Tag minimal intent="primary">{header}</Tag>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <div className={styles.noHeaders}>No default headers</div>
+              )}
+
+              {extraHeaders.length > 0 && (
+                <>
+                  <h5>Custom Headers</h5>
+                  <ul className={styles.headerItems}>
+                    {extraHeaders.map((header, index) => (
+                    <li key={index}>
+                      <Tag minimal>{header}</Tag>
+                    </li>
+                    ))}
+                  </ul>
+                </>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+    </Card>
   );
 };
 

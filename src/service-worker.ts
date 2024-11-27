@@ -1,15 +1,21 @@
 // service-worker.ts
 
+import {auth} from "./contexts/auth";
+import { StorageKey } from "./hooks/storage";
+// import {getClusters} from "./components/ListRouteEntries/queries";
+
+export type Header = { value: string, show: 'always' | 'extra' | 'default' }
+
 const ROUTING_KEY = "routingKey";
 const ENABLED_KEY = "enabled";
 const ROUTING_KEY_PLACEHOLDER = `{${ROUTING_KEY}}`;
-const ROUTING_HEADERS: Record<string, string> = {
-  "baggage": `sd-routing-key=${ROUTING_KEY_PLACEHOLDER},sd-sandbox=${ROUTING_KEY_PLACEHOLDER}`,
-  "ot-baggage-sd-routing-key": `${ROUTING_KEY_PLACEHOLDER}`,
-  "ot-baggage-sd-sandbox": `${ROUTING_KEY_PLACEHOLDER}`,
-  "tracestate": `sd-routing-key=${ROUTING_KEY_PLACEHOLDER},sd-sandbox=${ROUTING_KEY_PLACEHOLDER}`,
-  "uberctx-sd-routing-key": `${ROUTING_KEY_PLACEHOLDER}`,
-  "uberctx-sd-sandbox": `${ROUTING_KEY_PLACEHOLDER}`,
+export const ROUTING_HEADERS: Record<string, Header> = {
+  "baggage": { value: `sd-routing-key=${ROUTING_KEY_PLACEHOLDER},sd-sandbox=${ROUTING_KEY_PLACEHOLDER}`, show: 'always' },
+  "ot-baggage-sd-routing-key": { value: `${ROUTING_KEY_PLACEHOLDER}`, show: 'default' },
+  "ot-baggage-sd-sandbox": { value: `${ROUTING_KEY_PLACEHOLDER}`, show: 'default' },
+  "tracestate": { value: `sd-routing-key=${ROUTING_KEY_PLACEHOLDER},sd-sandbox=${ROUTING_KEY_PLACEHOLDER}`, show: 'always' },
+  "uberctx-sd-routing-key": { value: `${ROUTING_KEY_PLACEHOLDER}`, show: 'default' },
+  "uberctx-sd-sandbox": { value: `${ROUTING_KEY_PLACEHOLDER}`, show: 'default' },
 };
 const ResourceType = chrome.declarativeNetRequest.ResourceType;
 const MODIFY_HEADER_IN_RESOURCE_TYPES: string[] = [
@@ -33,8 +39,23 @@ const populateRoutingKey = (input: string, routingKey: string): string => {
   return input.replace(regex, routingKey);
 }
 
+export const getHeaders = (extraHeaders: string[]): Record<string, Header> => {
+  if (extraHeaders.length > 0) {
+    const defaultHeaders = Object.entries(ROUTING_HEADERS)
+      .filter(([_, header]) => header.show === "always")
+      .reduce((acc, [key, header]) => ({ ...acc, [key]: header }), {});
+
+    const extraHeadersObj = extraHeaders.reduce((acc, header) => ({ ...acc, [header]: { value: header, show: "extra" } }), {});
+
+    return { ...defaultHeaders, ...extraHeadersObj };
+  }
+
+  return ROUTING_HEADERS;
+}
+
+
 const getRules = (
-  headerKeys: Record<string, string>,
+  headerKeys: Record<string, Header>,
   routingKey: string
 ): chrome.declarativeNetRequest.Rule[] =>
   Object.keys(headerKeys).map(
@@ -47,7 +68,7 @@ const getRules = (
           {
             header: key,
             operation: chrome.declarativeNetRequest.HeaderOperation.SET,
-            value: populateRoutingKey(headerKeys[key], routingKey),
+            value: populateRoutingKey(headerKeys[key].value, routingKey),
           },
         ],
       },
@@ -59,22 +80,27 @@ const getRules = (
     } as chrome.declarativeNetRequest.Rule)
   );
 
+
 async function updateDynamicRules() {
-  chrome.storage.local.get([ROUTING_KEY, ENABLED_KEY], async (result) => {
-    const currentRoutingKey = result[ROUTING_KEY];
-    const currentFeatureEnabled = !!result[ENABLED_KEY];
+  chrome.storage.local.get([StorageKey.RoutingKey, StorageKey.Enabled, StorageKey.ExtraHeaders], async (result) => {
+    const currentRoutingKey = result[StorageKey.RoutingKey];
+    const currentFeatureEnabled = !!result[StorageKey.Enabled];
+    const currentExtraHeaders = result[StorageKey.ExtraHeaders];
 
     if (currentFeatureEnabled && currentRoutingKey) {
       try {
-        const rules = getRules(ROUTING_HEADERS, currentRoutingKey);
+        const headerKeys = getHeaders(currentExtraHeaders);
+        const rules = getRules(headerKeys, currentRoutingKey);
         const existingRules = await chrome.declarativeNetRequest.getDynamicRules();
+
+        await chrome.storage.local.set({[StorageKey.InjectedHeaders]: headerKeys});
 
         await chrome.declarativeNetRequest.updateDynamicRules({
           addRules: rules,
           removeRuleIds: existingRules.map(rule => rule.id),
         });
 
-        console.log("Dynamic rules updated successfully.");
+        console.log("Dynamic rules updated successfully2.");
       } catch (error) {
         console.error("Error updating dynamic rules: ", error);
       }

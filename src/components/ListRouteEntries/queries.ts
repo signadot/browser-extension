@@ -1,18 +1,19 @@
-import {RoutingEntity} from "./types";
+import {Cluster, RoutingEntity} from "./types";
 import {auth} from "../../contexts/auth";
+import {getApiUrl} from "../Settings/api";
 
-export const useFetchSandboxes = async (
+export const fetchSandboxes = async (
     orgName?: string
 ): Promise<RoutingEntity[]> => {
-  // Wrap the auth and fetch logic inside a new Promise
-  return new Promise((resolve, reject) => {
-    auth((authenticated) => {
-      if (!authenticated) {
+  return new Promise(async (resolve, reject) => {
+    auth((isAuthenticated: boolean) => {
+      if (!isAuthenticated) {
         reject(new Error("Authorization failed"));
         return;
       }
 
-      fetch(`https://api.signadot.com/api/v2/orgs/${orgName}/sandboxes`)
+      getApiUrl().then((apiUrl: string) => {
+        fetch(`${apiUrl}/api/v2/orgs/${orgName}/sandboxes`)
           .then((response) => {
             if (!response.ok) {
               throw new Error("Failed to fetch sandboxes");
@@ -21,22 +22,23 @@ export const useFetchSandboxes = async (
           })
           .then((data) => resolve(data))
           .catch((error) => reject(error));
+      });
     });
   });
 };
 
-export const useFetchRouteGroups = async (
+export const fetchRouteGroups = async (
     orgName?: string
 ): Promise<RoutingEntity[]> => {
-  // Wrap the auth and fetch logic inside a new Promise
-  return new Promise((resolve, reject) => {
-    auth((authenticated) => {
-      if (!authenticated) {
+  return new Promise(async (resolve, reject) => {
+    auth((isAuthenticated: boolean) => {
+      if (!isAuthenticated) {
         reject(new Error("Authorization failed"));
         return;
       }
 
-      fetch(`https://api.signadot.com/api/v2/orgs/${orgName}/routegroups`)
+      getApiUrl().then((apiUrl: string) => {
+        fetch(`${apiUrl}/api/v2/orgs/${orgName}/routegroups`)
           .then((response) => {
             if (!response.ok) {
               throw new Error("Failed to fetch route groups");
@@ -45,6 +47,32 @@ export const useFetchRouteGroups = async (
           })
           .then((data) => resolve(data))
           .catch((error) => reject(error));
+      });
     });
   });
+};
+
+export const fetchClusters = async (
+    orgName: string
+): Promise<Cluster[]> => {
+    return new Promise(async (resolve, reject) => {
+        auth((isAuthenticated: boolean) => {
+            if (!isAuthenticated) {
+                reject(new Error("Authorization failed"));
+                return;
+            }
+
+            getApiUrl().then((apiUrl: string) => {
+              fetch(`${apiUrl}/api/v2/orgs/${orgName}/clusters`)
+                  .then((response) => {
+                      if (!response.ok) {
+                          throw new Error("Failed to fetch clusters");
+                      }
+                      return response.json();
+                  })
+                  .then((data) => resolve(data))
+                  .catch((error) => reject(error));
+            });
+        });
+    });
 };

@@ -7,12 +7,18 @@ import PinnedRouteGroup from "../PinnedRouteGroup";
 import {useChromeStorage} from "../../hooks/storage";
 import {Section, SectionCard} from "@blueprintjs/core";
 import Footer from "../Footer";
+import Settings from "../Settings/Settings";
+import { Button, Icon } from "@blueprintjs/core";
+import { useAuth } from "../../contexts/AuthContext";
 
 const Frame = () => {
   const [debug, setDebug] = React.useState<boolean>(false);
-  const [routingKey, setRoutingKeyFn, enabled, setEnabledFn] = useChromeStorage();
+  const {routingKey, setRoutingKeyFn, enabled, extraHeaders} = useChromeStorage();
   const routingEntities: RoutingEntity[] = useFetchRoutingEntries();
   const [userSelectedEntity, setUserSelectedEntity] = React.useState<RoutingEntity | undefined>(undefined);
+  const [isSettingsOpen, setIsSettingsOpen] = React.useState(false);
+
+  const {authState} = useAuth();
 
   React.useEffect(() => {
     setRoutingKeyFn(userSelectedEntity?.routingKey)
@@ -36,22 +42,41 @@ const Frame = () => {
         )}
         {enabled && (
             <div className={styles.content}>
-              <ListRouteEntries
-                  routingEntities={routingEntities}
-                  setUserSelectedRoutingEntity={setUserSelectedEntity}
-              />
-              {pinnedRoutingEntityData && (
-                  <Section
-                      compact
-                      className={styles.pinned}
-                  >
-                    <SectionCard>
-                      Headers are being set for:
-                      <PinnedRouteGroup routingEntity={pinnedRoutingEntityData}/>
-                    </SectionCard>
-                  </Section>
+              <div className={styles.header}>
+                <Button
+                  icon="cog"
+                  minimal
+                  onClick={() => setIsSettingsOpen(!isSettingsOpen)}
+                  title="Settings"
+                />
+              </div>
+
+              {isSettingsOpen ? (
+                <Settings onClose={() => {}} />
+              ) : (
+                <>
+                  <ListRouteEntries
+                      orgName={authState?.org.name}
+                      routingEntities={routingEntities}
+                      setUserSelectedRoutingEntity={setUserSelectedEntity}
+                  />
+                  {pinnedRoutingEntityData && (
+                      <Section
+                          compact
+                          className={styles.pinned}
+                      >
+                        <SectionCard>
+                          Headers are being set for:
+                          <PinnedRouteGroup routingEntity={pinnedRoutingEntityData} onRemove={() => {
+                            setUserSelectedEntity(undefined);
+                            setRoutingKeyFn(undefined);
+                          }}/>
+                        </SectionCard>
+                      </Section>
+                  )}
+                  <Footer/>
+                </>
               )}
-              <Footer/>
             </div>
         )}
       </div>

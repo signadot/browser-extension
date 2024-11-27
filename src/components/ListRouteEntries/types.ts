@@ -17,4 +17,21 @@ export interface RoutingEntity {
   name: string;
   routingKey: string;
   type: RoutingEntityType;
+  cluster: string;
+}
+
+export interface Cluster {
+  id: string;
+  name: string;
+  operatorVersion?: string;
+  operator?: {
+    version?: string;
+  };
+  createdAt?: string;
+  isPlayground?: boolean;
+  clusterConfig?: {
+    routing?: {
+      customHeaders?: string[];
+    };
+  };
 }
