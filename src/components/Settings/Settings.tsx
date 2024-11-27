@@ -1,24 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import styles from './Settings.module.css';
-import { Button } from '@blueprintjs/core';
 import { auth } from "../../contexts/auth";
-
-// Import the headers constant
-const ROUTING_HEADERS = {
-  "baggage": `sd-routing-key={routingKey},sd-sandbox={routingKey}`,
-  "ot-baggage-sd-routing-key": `{routingKey}`,
-  "ot-baggage-sd-sandbox": `{routingKey}`,
-  "tracestate": `sd-routing-key={routingKey},sd-sandbox={routingKey}`,
-  "uberctx-sd-routing-key": `{routingKey}`,
-  "uberctx-sd-sandbox": `{routingKey}`,
-};
+import { useHotkeys } from 'react-hotkeys-hook';
 
 export const DEFAULT_API_URL = 'https://api.signadot.com/';
 export const DEFAULT_PREVIEW_URL = 'https://preview.signadot.com/';
-const UNLOCK_KEYS = ['Control', 'Shift', 'u']; // Ctrl+Shift+U to unlock
 
 const AUTH_SESSION_COOKIE_NAME = 'signadot-auth';
-
 
 interface SettingsProps {
   onClose: () => void;
@@ -28,7 +16,12 @@ const Settings: React.FC<SettingsProps> = ({ onClose }) => {
   const [apiUrl, setApiUrl] = useState<string>(DEFAULT_API_URL);
   const [previewUrl, setPreviewUrl] = useState<string>(DEFAULT_PREVIEW_URL);
   const [isApiEditable, setIsApiEditable] = useState(false);
-  const [pressedKeys, setPressedKeys] = useState<Set<string>>(new Set());
+
+  // Use the hook to handle Ctrl+Shift+U
+  useHotkeys('ctrl+shift+u', () => setIsApiEditable(true), {
+    enableOnFormTags: true,
+    preventDefault: true
+  });
 
   useEffect(() => {
     // Load saved API URL when component mounts
@@ -36,36 +29,6 @@ const Settings: React.FC<SettingsProps> = ({ onClose }) => {
       setApiUrl(result.apiUrl || DEFAULT_API_URL);
       setPreviewUrl(result.previewUrl || DEFAULT_PREVIEW_URL);
     });
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      setPressedKeys(prev => {
-        const newKeys = new Set(prev);
-        newKeys.add(e.key);
-        
-        // Check if all unlock keys are pressed
-        if (UNLOCK_KEYS.every(key => newKeys.has(key))) {
-          setIsApiEditable(true);
-        }
-        
-        return newKeys;
-      });
-    };
-
-    const handleKeyUp = (e: KeyboardEvent) => {
-      setPressedKeys(prev => {
-        const newKeys = new Set(prev);
-        newKeys.delete(e.key);
-        return newKeys;
-      });
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    window.addEventListener('keyup', handleKeyUp);
-
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-      window.removeEventListener('keyup', handleKeyUp);
-    };
   }, []);
 
   const handleSave = () => {
