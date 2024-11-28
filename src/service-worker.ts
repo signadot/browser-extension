@@ -100,7 +100,7 @@ async function updateDynamicRules() {
           removeRuleIds: existingRules.map(rule => rule.id),
         });
 
-        console.log("Dynamic rules updated successfully2.");
+        console.log("Dynamic rules updated successfully.");
       } catch (error) {
         console.error("Error updating dynamic rules: ", error);
       }
