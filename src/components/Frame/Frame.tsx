@@ -21,7 +21,9 @@ const Frame = () => {
   const {authState} = useAuth();
 
   React.useEffect(() => {
-    setRoutingKeyFn(userSelectedEntity?.routingKey)
+    if (userSelectedEntity) {
+      setRoutingKeyFn(userSelectedEntity.routingKey)
+    }
   }, [userSelectedEntity]);
   const pinnedRoutingEntityData: RoutingEntity | undefined =
       React.useMemo(() => {

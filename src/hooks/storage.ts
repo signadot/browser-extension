@@ -25,7 +25,13 @@ export const useChromeStorage = (): ChromeStorageHookOutput => {
   const [extraHeaders, setExtraHeaders] = React.useState<string[]>([]);
   const [injectedHeaders, setInjectedHeaders] = React.useState<Record<string, Header> | undefined>(undefined);
 
-  const setRoutingKeyFn = (value: string | undefined) => chrome.storage.local.set({[StorageKey.RoutingKey]: value})
+  const setRoutingKeyFn = (value: string | undefined): Promise<void> => {
+    if (value) {
+      return chrome.storage.local.set({[StorageKey.RoutingKey]: value});
+    } else {
+      return chrome.storage.local.remove(StorageKey.RoutingKey);
+    }
+  }
   const setEnabledFn = (value: boolean) => chrome.storage.local.set({[StorageKey.Enabled]: value})
   const setExtraHeadersFn = (value: string[]) => chrome.storage.local.set({[StorageKey.ExtraHeaders]: value})
 
@@ -76,7 +82,7 @@ export const useChromeStorage = (): ChromeStorageHookOutput => {
   )
 
     React.useEffect(() => {
-        if (!enabled) {
+        if (!routingKey) {
             chrome.action.setIcon({ path: {
                     "16": "images/icons/icon16_inactive.png",
                     "48": "images/icons/icon48_inactive.png",
@@ -89,7 +95,7 @@ export const useChromeStorage = (): ChromeStorageHookOutput => {
                     "128": "images/icons/icon128_active.png"
                 }});
         }
-    }, [enabled]);
+    }, [routingKey]);
 
   return {routingKey, setRoutingKeyFn, enabled, setEnabled: setEnabledFn, extraHeaders, setExtraHeaders: setExtraHeadersFn, injectedHeaders};
 }

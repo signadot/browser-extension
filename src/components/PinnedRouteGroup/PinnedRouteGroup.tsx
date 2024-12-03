@@ -25,7 +25,7 @@ interface Props {
 
 const PinnedRouteGroup: React.FC<Props> = ({routingEntity, onRemove}) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const {extraHeaders, injectedHeaders} = useChromeStorage();
+  const {extraHeaders, injectedHeaders, setRoutingKeyFn} = useChromeStorage();
   const dashboardURL = getDashboardURL(routingEntity);
   
 
@@ -54,7 +54,10 @@ const PinnedRouteGroup: React.FC<Props> = ({routingEntity, onRemove}) => {
             minimal
             small
             icon="cross"
-            onClick={() => onRemove(routingEntity)}
+            onClick={() => {
+              setRoutingKeyFn(undefined);
+              onRemove(routingEntity);
+            }}
             title="Remove"
           />
         </div>
