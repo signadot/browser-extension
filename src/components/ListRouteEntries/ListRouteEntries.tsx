@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {useQuery} from "react-query";
 import { fetchClusters } from "./queries";
 import {RoutingEntity} from "./types";
@@ -22,13 +22,17 @@ const ListRouteEntries: React.FC<Props> = ({
                                            }) => {
   const [userSelected, setUserSelected] = React.useState<RoutingEntity | undefined>(undefined);
 
-  const { setExtraHeaders } = useChromeStorage();
+  const { setExtraHeaders, apiUrl } = useChromeStorage();
 
-  const { data: clusters, isLoading, error } = useQuery({
+  const { data: clusters, isLoading, error, refetch } = useQuery({
     queryKey: ['clusters', orgName],
     queryFn: () => fetchClusters(orgName!),
     enabled: !!orgName,
   });
+
+  useEffect(() => {
+    refetch();
+  }, [apiUrl]);
 
   const handleClick = React.useCallback(
       (name: string): void => {

@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 import styles from './Settings.module.css';
 import { auth } from "../../contexts/auth";
 import { useHotkeys } from 'react-hotkeys-hook';
+import { useChromeStorage } from '../../hooks/storage';
 
-export const DEFAULT_API_URL = 'https://api.signadot.com/';
-export const DEFAULT_PREVIEW_URL = 'https://preview.signadot.com/';
+export const DEFAULT_API_URL = 'https://api.signadot.com';
+export const DEFAULT_PREVIEW_URL = 'https://preview.signadot.com';
 
 const AUTH_SESSION_COOKIE_NAME = 'signadot-auth';
 
@@ -16,6 +17,7 @@ const Settings: React.FC<SettingsProps> = ({ onClose }) => {
   const [apiUrl, setApiUrl] = useState<string>(DEFAULT_API_URL);
   const [previewUrl, setPreviewUrl] = useState<string>(DEFAULT_PREVIEW_URL);
   const [isApiEditable, setIsApiEditable] = useState(false);
+  const { apiUrl: storedApiUrl, previewUrl: storedPreviewUrl } = useChromeStorage();
 
   // Use the hook to handle Ctrl+Shift+U
   useHotkeys('ctrl+shift+u', () => setIsApiEditable(true), {
@@ -24,18 +26,17 @@ const Settings: React.FC<SettingsProps> = ({ onClose }) => {
   });
 
   useEffect(() => {
-    // Load saved API URL when component mounts
-    chrome.storage.sync.get(['apiUrl', 'previewUrl'], (result) => {
-      setApiUrl(result.apiUrl || DEFAULT_API_URL);
-      setPreviewUrl(result.previewUrl || DEFAULT_PREVIEW_URL);
-    });
-  }, []);
+    setApiUrl(storedApiUrl || DEFAULT_API_URL);
+    setPreviewUrl(storedPreviewUrl || DEFAULT_PREVIEW_URL);
+  }, [storedApiUrl, storedPreviewUrl]);
 
   const handleSave = () => {
+    setIsApiEditable(false);
+
     const cleanApiUrl = apiUrl.replace(/\/+$/, '');
     const cleanPreviewUrl = previewUrl.replace(/\/+$/, '');
-    
-    chrome.storage.sync.set({ 
+
+    chrome.storage.local.set({
       apiUrl: cleanApiUrl,
       previewUrl: cleanPreviewUrl 
     }, () => {

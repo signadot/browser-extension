@@ -1,12 +1,15 @@
 import React, {useEffect} from "react";
 import StorageChange = chrome.storage.StorageChange;
 import { getHeaders, Header } from "../service-worker";
+import { DEFAULT_API_URL, DEFAULT_PREVIEW_URL } from "../components/Settings/Settings";
 
 export enum StorageKey {
   RoutingKey = "routingKey",
   Enabled = "enabled",
   ExtraHeaders = "extraHeaders",
-  InjectedHeaders = "injectedHeaders"
+  InjectedHeaders = "injectedHeaders",
+  ApiUrl = "apiUrl",
+  PreviewUrl = "previewUrl"
 }
 
 type ChromeStorageHookOutput = {
@@ -17,6 +20,10 @@ type ChromeStorageHookOutput = {
   extraHeaders: string[],
   setExtraHeaders: ((value: string[]) => Promise<void>),
   injectedHeaders: Record<string, Header> | undefined,
+  apiUrl: string | undefined,
+  previewUrl: string | undefined,
+  setApiUrl: ((value: string) => Promise<void>),
+  setPreviewUrl: ((value: string) => Promise<void>)
 }
 
 export const useChromeStorage = (): ChromeStorageHookOutput => {
@@ -24,6 +31,8 @@ export const useChromeStorage = (): ChromeStorageHookOutput => {
   const [enabled, setEnabled] = React.useState<boolean>(true);
   const [extraHeaders, setExtraHeaders] = React.useState<string[]>([]);
   const [injectedHeaders, setInjectedHeaders] = React.useState<Record<string, Header> | undefined>(undefined);
+  const [apiUrl, setApiUrl] = React.useState<string | undefined>(undefined);
+  const [previewUrl, setPreviewUrl] = React.useState<string | undefined>(undefined);
 
   const setRoutingKeyFn = (value: string | undefined): Promise<void> => {
     if (value) {
@@ -34,14 +43,37 @@ export const useChromeStorage = (): ChromeStorageHookOutput => {
   }
   const setEnabledFn = (value: boolean) => chrome.storage.local.set({[StorageKey.Enabled]: value})
   const setExtraHeadersFn = (value: string[]) => chrome.storage.local.set({[StorageKey.ExtraHeaders]: value})
+  const setApiUrlFn = (value: string) => chrome.storage.local.set({[StorageKey.ApiUrl]: value})
+  const setPreviewUrlFn = (value: string) => chrome.storage.local.set({[StorageKey.PreviewUrl]: value})
 
   React.useEffect(() => {
     setInjectedHeaders(getHeaders(extraHeaders));
   }, [extraHeaders]);
 
   React.useEffect(() => {
+
+    chrome.storage.local.get(["apiUrl", "previewUrl"], (result) => {
+      if (!result.apiUrl) {
+        setApiUrlFn(DEFAULT_API_URL);
+        setApiUrl(DEFAULT_API_URL)
+      } else {
+        setApiUrlFn(result.apiUrl);
+        setApiUrl(result.apiUrl)
+      }
+
+      if (!result.previewUrl) {
+        setPreviewUrlFn(DEFAULT_PREVIEW_URL);
+        setPreviewUrl(DEFAULT_PREVIEW_URL)
+      } else {
+        setPreviewUrlFn(result.previewUrl);
+        setPreviewUrl(result.previewUrl)
+      }
+    });
+  }, []);
+
+  React.useEffect(() => {
         // Populate value for routingKey and enabled from Chrome Storage.
-        chrome.storage.local.get([StorageKey.RoutingKey, StorageKey.Enabled, StorageKey.ExtraHeaders], (result) => {
+        chrome.storage.local.get([StorageKey.RoutingKey, StorageKey.Enabled, StorageKey.ExtraHeaders, StorageKey.PreviewUrl, StorageKey.ApiUrl], (result) => {
           if (StorageKey.RoutingKey in result) {
             setRoutingKey(result?.[StorageKey.RoutingKey]);
           }
@@ -51,6 +83,12 @@ export const useChromeStorage = (): ChromeStorageHookOutput => {
           }
           if (StorageKey.InjectedHeaders in result) {
             setInjectedHeaders(result[StorageKey.InjectedHeaders]);
+          }
+          if (StorageKey.ApiUrl in result) {
+            setApiUrl(result[StorageKey.ApiUrl]);
+          }
+          if (StorageKey.PreviewUrl in result) {
+            setPreviewUrl(result[StorageKey.PreviewUrl]);
           }
         });
 
@@ -69,6 +107,12 @@ export const useChromeStorage = (): ChromeStorageHookOutput => {
             }
             if (StorageKey.InjectedHeaders in changes) {
               setInjectedHeaders(changes[StorageKey.InjectedHeaders].newValue);
+            }
+            if (StorageKey.ApiUrl in changes) {
+              setApiUrl(changes[StorageKey.ApiUrl].newValue);
+            }
+            if (StorageKey.PreviewUrl in changes) {
+              setPreviewUrl(changes[StorageKey.PreviewUrl].newValue);
             }
           }
         }
@@ -97,5 +141,17 @@ export const useChromeStorage = (): ChromeStorageHookOutput => {
         }
     }, [routingKey]);
 
-  return {routingKey, setRoutingKeyFn, enabled, setEnabled: setEnabledFn, extraHeaders, setExtraHeaders: setExtraHeadersFn, injectedHeaders};
+  return {
+    routingKey,
+    setRoutingKeyFn,
+    enabled,
+    setEnabled: setEnabledFn,
+    extraHeaders,
+    setExtraHeaders: setExtraHeadersFn,
+    injectedHeaders,
+    apiUrl,
+    previewUrl,
+    setApiUrl: setApiUrlFn,
+    setPreviewUrl: setPreviewUrlFn
+  };
 }
