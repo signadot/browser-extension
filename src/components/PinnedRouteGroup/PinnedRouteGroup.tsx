@@ -96,7 +96,7 @@ const PinnedRouteGroup: React.FC<Props> = ({routingEntity, onRemove}) => {
                 <div className={styles.noHeaders}>No default headers</div>
               )}
 
-              {extraHeaders.length > 0 && (
+              {Array.isArray(extraHeaders) && extraHeaders.length > 0 && (
                 <>
                   <h5>Custom Headers</h5>
                   <ul className={styles.headerItems}>

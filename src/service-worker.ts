@@ -39,18 +39,20 @@ const populateRoutingKey = (input: string, routingKey: string): string => {
   return input.replace(regex, routingKey);
 }
 
-export const getHeaders = (extraHeaders: string[]): Record<string, Header> => {
-  if (extraHeaders.length > 0) {
-    const defaultHeaders = Object.entries(ROUTING_HEADERS)
+export const getHeaders = (extraHeaders: string[] | null): Record<string, Header> => {
+  // This means cluster is using an old operator version
+  if (!extraHeaders) {
+    return Object.entries(ROUTING_HEADERS)
+        .reduce((acc, [key, header]) => ({ ...acc, [key]: header }), {});
+  }
+
+  const defaultHeaders = Object.entries(ROUTING_HEADERS)
       .filter(([_, header]) => header.show === "always")
       .reduce((acc, [key, header]) => ({ ...acc, [key]: header }), {});
 
-    const extraHeadersObj = extraHeaders.reduce((acc, header) => ({ ...acc, [header]: { value: header, show: "extra" } }), {});
+  const extraHeadersObj = extraHeaders.reduce((acc, header) => ({ ...acc, [header]: { value: header, show: "extra" } }), {});
 
-    return { ...defaultHeaders, ...extraHeadersObj };
-  }
-
-  return ROUTING_HEADERS;
+  return { ...defaultHeaders, ...extraHeadersObj };
 }
 
 

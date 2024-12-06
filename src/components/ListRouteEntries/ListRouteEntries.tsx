@@ -44,7 +44,10 @@ const ListRouteEntries: React.FC<Props> = ({
           setUserSelected(selected);
           setUserSelectedRoutingEntity(selected);
           const cluster = clusters?.find((c) => c.name === selected.cluster);
-          setExtraHeaders(cluster?.clusterConfig?.routing?.customHeaders || []);
+
+          if (!cluster) return;
+          const clusterConfig = cluster.clusterConfig
+          setExtraHeaders(clusterConfig ? (clusterConfig?.routing?.customHeaders || []) : null);
         }
       },
       [routingEntities]

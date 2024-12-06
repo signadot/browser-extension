@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React from "react";
 import StorageChange = chrome.storage.StorageChange;
 import { getHeaders, Header } from "../service-worker";
 import { DEFAULT_API_URL, DEFAULT_PREVIEW_URL } from "../components/Settings/Settings";
@@ -17,8 +17,8 @@ type ChromeStorageHookOutput = {
   setRoutingKeyFn: ((value: (string | undefined)) => Promise<void>),
   enabled: boolean,
   setEnabled: ((value: boolean) => Promise<void>),
-  extraHeaders: string[],
-  setExtraHeaders: ((value: string[]) => Promise<void>),
+  extraHeaders: string[] | null,
+  setExtraHeaders: ((value: string[] | null) => Promise<void>),
   injectedHeaders: Record<string, Header> | undefined,
   apiUrl: string | undefined,
   previewUrl: string | undefined,
@@ -29,7 +29,7 @@ type ChromeStorageHookOutput = {
 export const useChromeStorage = (): ChromeStorageHookOutput => {
   const [routingKey, setRoutingKey] = React.useState<string | undefined>(undefined);
   const [enabled, setEnabled] = React.useState<boolean>(true);
-  const [extraHeaders, setExtraHeaders] = React.useState<string[]>([]);
+  const [extraHeaders, setExtraHeaders] = React.useState<string[] | null>([]);
   const [injectedHeaders, setInjectedHeaders] = React.useState<Record<string, Header> | undefined>(undefined);
   const [apiUrl, setApiUrl] = React.useState<string | undefined>(undefined);
   const [previewUrl, setPreviewUrl] = React.useState<string | undefined>(undefined);
@@ -42,7 +42,13 @@ export const useChromeStorage = (): ChromeStorageHookOutput => {
     }
   }
   const setEnabledFn = (value: boolean) => chrome.storage.local.set({[StorageKey.Enabled]: value})
-  const setExtraHeadersFn = (value: string[]) => chrome.storage.local.set({[StorageKey.ExtraHeaders]: value})
+  const setExtraHeadersFn = (value: string[] | null) => {
+    if (value) {
+      return chrome.storage.local.set({[StorageKey.ExtraHeaders]: value})
+    } {
+      return chrome.storage.local.remove(StorageKey.ExtraHeaders)
+    }
+  }
   const setApiUrlFn = (value: string) => chrome.storage.local.set({[StorageKey.ApiUrl]: value})
   const setPreviewUrlFn = (value: string) => chrome.storage.local.set({[StorageKey.PreviewUrl]: value})
 
@@ -52,7 +58,7 @@ export const useChromeStorage = (): ChromeStorageHookOutput => {
 
   React.useEffect(() => {
 
-    chrome.storage.local.get(["apiUrl", "previewUrl"], (result) => {
+    chrome.storage.local.get([StorageKey.ApiUrl, StorageKey.PreviewUrl], (result) => {
       if (!result.apiUrl) {
         setApiUrlFn(DEFAULT_API_URL);
         setApiUrl(DEFAULT_API_URL)
