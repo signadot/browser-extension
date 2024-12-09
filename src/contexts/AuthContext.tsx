@@ -1,5 +1,5 @@
 import React, {createContext, useContext, useState} from "react";
-import {auth} from "./auth";
+import {auth, DASHBOARD_PREVIEW_ENDPOINT, SIGNADOT_API_ENDPOINT} from "./auth";
 import Layout from "../components/Layout/Layout";
 
 const loadingIconPath = chrome.runtime.getURL("images/loading.gif");
@@ -51,7 +51,7 @@ export const AuthProvider: React.FC<Props> = ({children}) => {
   React.useEffect(() => {
     auth((authenticated) => {
       if (authenticated) {
-        fetch("https://api.signadot.com/api/v1/orgs")
+        fetch(SIGNADOT_API_ENDPOINT +"/api/v1/orgs")
             .then((response) => {
               if (response.status === 401) {
                 throw new Error("Unauthorized");
@@ -94,7 +94,7 @@ export const AuthProvider: React.FC<Props> = ({children}) => {
   } else if (!authState) {
     return (
         <Layout>
-          <div>Please <a href="https://app.signadot.com" target="_blank">Login to Signadot</a> to continue.</div>
+          <div>Please <a href={DASHBOARD_PREVIEW_ENDPOINT} target="_blank">Login to Signadot</a> to continue.</div>
         </Layout>
     );
   }

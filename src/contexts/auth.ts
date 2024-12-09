@@ -1,14 +1,16 @@
 type PostAuthCallbackFn = (authenticated: boolean) => void;
 const AUTH_SESSION_COOKIE_NAME = "signadot-auth";
-const DUMMY_PREVIEW_ENDPOINT =
-    "https://dummy-preview-endpoint.preview.signadot.com";
-const SIGNADOT_API_DOMAIN = "https://api.signadot.com";
+export const DASHBOARD_ENDPOINT =
+    "https://app.signadot.com";
+export const DASHBOARD_PREVIEW_ENDPOINT =
+    "https://dashboard.preview.signadot.com";
+export const SIGNADOT_API_ENDPOINT = "https://api.signadot.com";
 
 const refreshPreviewDomainCookies = () => {
-  // Synchronous fetch request to https://xyz.preview.signadot.com
+  // Synchronous fetch request to https://dashboard.preview.signadot.com
   try {
     let xhr = new XMLHttpRequest();
-    xhr.open("GET", DUMMY_PREVIEW_ENDPOINT, false); // false for synchronous request
+    xhr.open("GET", DASHBOARD_PREVIEW_ENDPOINT, false); // false for synchronous request
     xhr.send();
   } catch (error) {
     // empty response expected. ignore
@@ -21,12 +23,12 @@ export const auth = (callback: PostAuthCallbackFn) => {
 
   // Get auth session cookie from preview subdomain.
   chrome.cookies.get(
-      {url: DUMMY_PREVIEW_ENDPOINT, name: AUTH_SESSION_COOKIE_NAME},
+      {url: DASHBOARD_PREVIEW_ENDPOINT, name: AUTH_SESSION_COOKIE_NAME},
       function (cookie) {
         if (cookie) {
           chrome.cookies.set(
               {
-                url: SIGNADOT_API_DOMAIN,
+                url: SIGNADOT_API_ENDPOINT,
                 name: AUTH_SESSION_COOKIE_NAME,
                 value: cookie.value,
               }

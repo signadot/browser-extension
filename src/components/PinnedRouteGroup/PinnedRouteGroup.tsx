@@ -2,6 +2,7 @@ import React from "react";
 import {RoutingEntity, RoutingEntityType} from "../ListRouteEntries/types";
 import styles from "./PinnedRouteGroup.module.css";
 import {Icon} from "@blueprintjs/core";
+import {DASHBOARD_ENDPOINT} from "../../contexts/auth";
 
 interface Props {
   routingEntity: RoutingEntity;
@@ -10,9 +11,9 @@ interface Props {
 const getDashboardURL = (routingEntity: RoutingEntity): string | undefined => {
   switch (routingEntity.type) {
     case RoutingEntityType.Sandbox:
-      return `https://app.signadot.com/sandbox/name/${routingEntity.name}/overview`; // TODO: Do not use hard-coded URL
+      return DASHBOARD_ENDPOINT +`/sandbox/name/${routingEntity.name}/overview`;
     case RoutingEntityType.RouteGroup:
-      return `https://app.signadot.com/routegroups/${routingEntity.name}`;
+      return DASHBOARD_ENDPOINT+ `/routegroups/${routingEntity.name}`;
   }
   return undefined;
 };

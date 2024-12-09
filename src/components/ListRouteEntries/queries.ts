@@ -1,5 +1,5 @@
 import {RoutingEntity} from "./types";
-import {auth} from "../../contexts/auth";
+import {auth, SIGNADOT_API_ENDPOINT} from "../../contexts/auth";
 
 export const useFetchSandboxes = async (
     orgName?: string
@@ -12,7 +12,7 @@ export const useFetchSandboxes = async (
         return;
       }
 
-      fetch(`https://api.signadot.com/api/v2/orgs/${orgName}/sandboxes`)
+      fetch(SIGNADOT_API_ENDPOINT +`/api/v2/orgs/${orgName}/sandboxes`)
           .then((response) => {
             if (!response.ok) {
               throw new Error("Failed to fetch sandboxes");
@@ -36,7 +36,7 @@ export const useFetchRouteGroups = async (
         return;
       }
 
-      fetch(`https://api.signadot.com/api/v2/orgs/${orgName}/routegroups`)
+      fetch(SIGNADOT_API_ENDPOINT +`/api/v2/orgs/${orgName}/routegroups`)
           .then((response) => {
             if (!response.ok) {
               throw new Error("Failed to fetch route groups");
