@@ -1,5 +1,5 @@
 .container {
-  padding: 16px 16px 16px 0;
+  padding: 0 16px 16px 0;
 }
 
 .title {
@@ -31,6 +31,12 @@
   border-color: #2196f3;
 }
 
+.actions {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+}
+
 .button {
   background-color: #2196f3;
   color: white;
@@ -44,10 +50,22 @@
   background-color: #1976d2;
 }
 
+.cancel_action {
+  background-color: #4f5f69;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.cancel_action:hover {
+  background-color: #3d4950;
+}
+
 .header {
   display: flex;
   align-items: center;
-  margin-bottom: 16px;
 }
 
 .title {

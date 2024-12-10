@@ -16,11 +16,10 @@ interface SettingsProps {
 const Settings: React.FC<SettingsProps> = ({ onClose }) => {
   const [apiUrl, setApiUrl] = useState<string>(DEFAULT_API_URL);
   const [previewUrl, setPreviewUrl] = useState<string>(DEFAULT_PREVIEW_URL);
-  const [isApiEditable, setIsApiEditable] = useState(false);
   const { apiUrl: storedApiUrl, previewUrl: storedPreviewUrl } = useChromeStorage();
 
   // Use the hook to handle Ctrl+Shift+U
-  useHotkeys('ctrl+shift+u', () => setIsApiEditable(true), {
+  useHotkeys('ctrl+shift+u', onClose, {
     enableOnFormTags: true,
     preventDefault: true
   });
@@ -31,8 +30,6 @@ const Settings: React.FC<SettingsProps> = ({ onClose }) => {
   }, [storedApiUrl, storedPreviewUrl]);
 
   const handleSave = () => {
-    setIsApiEditable(false);
-
     const cleanApiUrl = apiUrl.replace(/\/+$/, '');
     const cleanPreviewUrl = previewUrl.replace(/\/+$/, '');
 
@@ -69,6 +66,8 @@ const Settings: React.FC<SettingsProps> = ({ onClose }) => {
         }
       );
     });
+
+    onClose();
   };
 
   return (
@@ -80,9 +79,6 @@ const Settings: React.FC<SettingsProps> = ({ onClose }) => {
       <div className={styles.section}>
         <div className={styles.sectionHeader}>
           <h4 className={styles.sectionTitle}>API Configuration</h4>
-          {!isApiEditable && (
-            <small className={styles.unlockHint}>Press Ctrl+Shift+U to edit</small>
-          )}
         </div>
         <div className={styles.formGroup}>
           <label htmlFor="apiUrl">API URL:</label>
@@ -93,7 +89,6 @@ const Settings: React.FC<SettingsProps> = ({ onClose }) => {
             onChange={(e) => setApiUrl(e.target.value)}
             className={styles.input}
             placeholder="Enter API URL"
-            disabled={!isApiEditable}
           />
         </div>
         <div className={styles.formGroup}>
@@ -105,18 +100,24 @@ const Settings: React.FC<SettingsProps> = ({ onClose }) => {
             onChange={(e) => setPreviewUrl(e.target.value)}
             className={styles.input}
             placeholder="Enter Preview URL"
-            disabled={!isApiEditable}
           />
         </div>
       </div>
 
-      <button 
-        onClick={handleSave} 
-        className={styles.button}
-        disabled={!isApiEditable}
-      >
-        Save Settings
-      </button>
+      <div className={styles.actions}>
+        <button
+            onClick={handleSave}
+            className={styles.button}
+        >
+          Save Settings
+        </button>
+        <button
+            onClick={onClose}
+            className={styles.cancel_action}
+        >
+          Cancel
+        </button>
+      </div>
     </div>
   );
 };

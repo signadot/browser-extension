@@ -10,6 +10,7 @@ import Footer from "../Footer";
 import Settings from "../Settings/Settings";
 import { Button, Icon } from "@blueprintjs/core";
 import { useAuth } from "../../contexts/AuthContext";
+import {useHotkeys} from "react-hotkeys-hook";
 
 const Frame = () => {
   const [debug, setDebug] = React.useState<boolean>(false);
@@ -19,6 +20,11 @@ const Frame = () => {
   const [isSettingsOpen, setIsSettingsOpen] = React.useState(false);
 
   const {authState} = useAuth();
+
+  useHotkeys('ctrl+shift+u', () => setIsSettingsOpen(true), {
+     enableOnFormTags: true,
+     preventDefault: true
+  });
 
   React.useEffect(() => {
     if (userSelectedEntity) {
@@ -44,17 +50,8 @@ const Frame = () => {
         )}
         {enabled && (
             <div className={styles.content}>
-              <div className={styles.header}>
-                <Button
-                  icon="cog"
-                  minimal
-                  onClick={() => setIsSettingsOpen(!isSettingsOpen)}
-                  title="Settings"
-                />
-              </div>
-
               {isSettingsOpen ? (
-                <Settings onClose={() => {}} />
+                <Settings onClose={() => setIsSettingsOpen(false)} />
               ) : (
                 <>
                   <ListRouteEntries

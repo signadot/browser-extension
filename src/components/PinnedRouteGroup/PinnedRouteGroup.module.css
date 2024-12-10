@@ -1,7 +1,7 @@
 @import "../../styles/colors.module.css";
 
 .container {
-    margin-bottom: 1rem;
+    margin-block: 1rem;
 }
 
 .header {
