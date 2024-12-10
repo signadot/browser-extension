@@ -28,7 +28,7 @@
 
 .input:focus {
   outline: none;
-  border-color: #2196f3;
+  border-color: #2e77ff;
 }
 
 .actions {
@@ -38,7 +38,7 @@
 }
 
 .button {
-  background-color: #2196f3;
+  background-color: #2e77ff;
   color: white;
   padding: 8px 16px;
   border: none;
@@ -47,7 +47,7 @@
 }
 
 .button:hover {
-  background-color: #1976d2;
+  background-color: #0049d1;
 }
 
 .cancel_action {
