@@ -31,7 +31,7 @@ const PinnedRouteGroup: React.FC<Props> = ({routingEntity, onRemove}) => {
 
   const defaultHeaders = useMemo(() => {
     return Object.entries(injectedHeaders || {})
-      .filter(([_, header]) => header.show !== "extra")
+      .filter(([_, header]) => header.kind !== "extra")
       .map(([key]) => key);
   }, [injectedHeaders]);
 

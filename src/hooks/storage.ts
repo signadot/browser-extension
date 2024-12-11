@@ -17,7 +17,7 @@ type ChromeStorageHookOutput = {
   setRoutingKeyFn: ((value: (string | undefined)) => Promise<void>),
   enabled: boolean,
   setEnabled: ((value: boolean) => Promise<void>),
-  extraHeaders: string[] | null,
+  extraHeaders: string[] | undefined,
   setExtraHeaders: ((value: string[] | null) => Promise<void>),
   injectedHeaders: Record<string, Header> | undefined,
   apiUrl: string | undefined,
@@ -29,7 +29,7 @@ type ChromeStorageHookOutput = {
 export const useChromeStorage = (): ChromeStorageHookOutput => {
   const [routingKey, setRoutingKey] = React.useState<string | undefined>(undefined);
   const [enabled, setEnabled] = React.useState<boolean>(true);
-  const [extraHeaders, setExtraHeaders] = React.useState<string[] | null>([]);
+  const [extraHeaders, setExtraHeaders] = React.useState<string[] | undefined>(undefined);
   const [injectedHeaders, setInjectedHeaders] = React.useState<Record<string, Header> | undefined>(undefined);
   const [apiUrl, setApiUrl] = React.useState<string | undefined>(undefined);
   const [previewUrl, setPreviewUrl] = React.useState<string | undefined>(undefined);

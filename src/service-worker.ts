@@ -4,18 +4,18 @@ import {auth} from "./contexts/auth";
 import { StorageKey } from "./hooks/storage";
 // import {getClusters} from "./components/ListRouteEntries/queries";
 
-export type Header = { value: string, show: 'always' | 'extra' | 'default' }
+export type Header = { value: string, kind: 'always' | 'extra' | 'defaultBeforeV191' }
 
 const ROUTING_KEY = "routingKey";
 const ENABLED_KEY = "enabled";
 const ROUTING_KEY_PLACEHOLDER = `{${ROUTING_KEY}}`;
 export const ROUTING_HEADERS: Record<string, Header> = {
-  "baggage": { value: `sd-routing-key=${ROUTING_KEY_PLACEHOLDER},sd-sandbox=${ROUTING_KEY_PLACEHOLDER}`, show: 'always' },
-  "ot-baggage-sd-routing-key": { value: `${ROUTING_KEY_PLACEHOLDER}`, show: 'default' },
-  "ot-baggage-sd-sandbox": { value: `${ROUTING_KEY_PLACEHOLDER}`, show: 'default' },
-  "tracestate": { value: `sd-routing-key=${ROUTING_KEY_PLACEHOLDER},sd-sandbox=${ROUTING_KEY_PLACEHOLDER}`, show: 'always' },
-  "uberctx-sd-routing-key": { value: `${ROUTING_KEY_PLACEHOLDER}`, show: 'default' },
-  "uberctx-sd-sandbox": { value: `${ROUTING_KEY_PLACEHOLDER}`, show: 'default' },
+  "baggage": { value: `sd-routing-key=${ROUTING_KEY_PLACEHOLDER},sd-sandbox=${ROUTING_KEY_PLACEHOLDER}`, kind: 'always' },
+  "ot-baggage-sd-routing-key": { value: `${ROUTING_KEY_PLACEHOLDER}`, kind: 'defaultBeforeV191' },
+  "ot-baggage-sd-sandbox": { value: `${ROUTING_KEY_PLACEHOLDER}`, kind: 'defaultBeforeV191' },
+  "tracestate": { value: `sd-routing-key=${ROUTING_KEY_PLACEHOLDER},sd-sandbox=${ROUTING_KEY_PLACEHOLDER}`, kind: 'always' },
+  "uberctx-sd-routing-key": { value: `${ROUTING_KEY_PLACEHOLDER}`, kind: 'defaultBeforeV191' },
+  "uberctx-sd-sandbox": { value: `${ROUTING_KEY_PLACEHOLDER}`, kind: 'defaultBeforeV191' },
 };
 const ResourceType = chrome.declarativeNetRequest.ResourceType;
 const MODIFY_HEADER_IN_RESOURCE_TYPES: string[] = [
@@ -39,7 +39,8 @@ const populateRoutingKey = (input: string, routingKey: string): string => {
   return input.replace(regex, routingKey);
 }
 
-export const getHeaders = (extraHeaders: string[] | null): Record<string, Header> => {
+export const getHeaders = (extraHeaders: string[] | undefined): Record<string, Header> => {
+
   // This means cluster is using an old operator version
   if (!extraHeaders) {
     return Object.entries(ROUTING_HEADERS)
@@ -47,10 +48,10 @@ export const getHeaders = (extraHeaders: string[] | null): Record<string, Header
   }
 
   const defaultHeaders = Object.entries(ROUTING_HEADERS)
-      .filter(([_, header]) => header.show === "always")
+      .filter(([_, header]) => header.kind === "always")
       .reduce((acc, [key, header]) => ({ ...acc, [key]: header }), {});
 
-  const extraHeadersObj = extraHeaders.reduce((acc, header) => ({ ...acc, [header]: { value: header, show: "extra" } }), {});
+  const extraHeadersObj = extraHeaders.reduce((acc, header) => ({ ...acc, [header]: { value: header, kind: "extra" } }), {});
 
   return { ...defaultHeaders, ...extraHeadersObj };
 }
