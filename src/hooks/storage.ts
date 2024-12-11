@@ -1,7 +1,7 @@
 import React from "react";
 import StorageChange = chrome.storage.StorageChange;
 import { getHeaders, Header } from "../service-worker";
-import { DEFAULT_API_URL, DEFAULT_PREVIEW_URL } from "../components/Settings/Settings";
+import { DEFAULT_API_URL, DEFAULT_PREVIEW_URL, DEFAULT_DASHBOARD_URL } from "../components/Settings/Settings";
 
 export enum StorageKey {
   RoutingKey = "routingKey",
@@ -9,7 +9,8 @@ export enum StorageKey {
   ExtraHeaders = "extraHeaders",
   InjectedHeaders = "injectedHeaders",
   ApiUrl = "apiUrl",
-  PreviewUrl = "previewUrl"
+  PreviewUrl = "previewUrl",
+  DashboardUrl = "dashboardUrl",
 }
 
 type ChromeStorageHookOutput = {
@@ -22,8 +23,10 @@ type ChromeStorageHookOutput = {
   injectedHeaders: Record<string, Header> | undefined,
   apiUrl: string | undefined,
   previewUrl: string | undefined,
+  dashboardUrl: string | undefined,
   setApiUrl: ((value: string) => Promise<void>),
   setPreviewUrl: ((value: string) => Promise<void>)
+  setDashboardUrl: ((value: string) => Promise<void>)
 }
 
 export const useChromeStorage = (): ChromeStorageHookOutput => {
@@ -33,6 +36,7 @@ export const useChromeStorage = (): ChromeStorageHookOutput => {
   const [injectedHeaders, setInjectedHeaders] = React.useState<Record<string, Header> | undefined>(undefined);
   const [apiUrl, setApiUrl] = React.useState<string | undefined>(undefined);
   const [previewUrl, setPreviewUrl] = React.useState<string | undefined>(undefined);
+  const [dashboardUrl, setDashboardUrl] = React.useState<string | undefined>(undefined);
 
   const setRoutingKeyFn = (value: string | undefined): Promise<void> => {
     if (value) {
@@ -51,14 +55,14 @@ export const useChromeStorage = (): ChromeStorageHookOutput => {
   }
   const setApiUrlFn = (value: string) => chrome.storage.local.set({[StorageKey.ApiUrl]: value})
   const setPreviewUrlFn = (value: string) => chrome.storage.local.set({[StorageKey.PreviewUrl]: value})
+  const setDashboardUrlFn = (value: string) => chrome.storage.local.set({[StorageKey.DashboardUrl]: value})
 
   React.useEffect(() => {
     setInjectedHeaders(getHeaders(extraHeaders));
   }, [extraHeaders]);
 
   React.useEffect(() => {
-
-    chrome.storage.local.get([StorageKey.ApiUrl, StorageKey.PreviewUrl], (result) => {
+    chrome.storage.local.get([StorageKey.ApiUrl, StorageKey.PreviewUrl, StorageKey.DashboardUrl], (result) => {
       if (!result.apiUrl) {
         setApiUrlFn(DEFAULT_API_URL);
         setApiUrl(DEFAULT_API_URL)
@@ -74,12 +78,20 @@ export const useChromeStorage = (): ChromeStorageHookOutput => {
         setPreviewUrlFn(result.previewUrl);
         setPreviewUrl(result.previewUrl)
       }
+
+      if (!result.dashboardUrl) {
+        setDashboardUrlFn(DEFAULT_DASHBOARD_URL);
+        setDashboardUrl(DEFAULT_DASHBOARD_URL)
+      } else {
+        setDashboardUrlFn(result.dashboardUrl);
+        setDashboardUrl(result.dashboardUrl)
+      }
     });
   }, []);
 
   React.useEffect(() => {
         // Populate value for routingKey and enabled from Chrome Storage.
-        chrome.storage.local.get([StorageKey.RoutingKey, StorageKey.Enabled, StorageKey.ExtraHeaders, StorageKey.PreviewUrl, StorageKey.ApiUrl], (result) => {
+        chrome.storage.local.get([StorageKey.RoutingKey, StorageKey.Enabled, StorageKey.ExtraHeaders, StorageKey.ApiUrl, StorageKey.PreviewUrl, StorageKey.DashboardUrl], (result) => {
           if (StorageKey.RoutingKey in result) {
             setRoutingKey(result?.[StorageKey.RoutingKey]);
           }
@@ -96,8 +108,10 @@ export const useChromeStorage = (): ChromeStorageHookOutput => {
           if (StorageKey.PreviewUrl in result) {
             setPreviewUrl(result[StorageKey.PreviewUrl]);
           }
+          if (StorageKey.DashboardUrl in result) {
+            setDashboardUrl(result[StorageKey.DashboardUrl]);
+          }
         });
-
 
         // Update values for RoutingKey and enabled when the value in Google (Local) storage changes.
         const handleStorageChange = (changes: { [p: string]: StorageChange }, area: string) => {
@@ -119,6 +133,9 @@ export const useChromeStorage = (): ChromeStorageHookOutput => {
             }
             if (StorageKey.PreviewUrl in changes) {
               setPreviewUrl(changes[StorageKey.PreviewUrl].newValue);
+            }
+            if (StorageKey.DashboardUrl in changes) {
+              setDashboardUrl(changes[StorageKey.DashboardUrl].newValue);
             }
           }
         }
@@ -157,7 +174,9 @@ export const useChromeStorage = (): ChromeStorageHookOutput => {
     injectedHeaders,
     apiUrl,
     previewUrl,
+    dashboardUrl,
     setApiUrl: setApiUrlFn,
-    setPreviewUrl: setPreviewUrlFn
+    setPreviewUrl: setPreviewUrlFn,
+    setDashboardUrl: setDashboardUrlFn
   };
 }

@@ -5,7 +5,8 @@ import { useHotkeys } from 'react-hotkeys-hook';
 import { useChromeStorage } from '../../hooks/storage';
 
 export const DEFAULT_API_URL = 'https://api.signadot.com';
-export const DEFAULT_PREVIEW_URL = 'https://preview.signadot.com';
+export const DEFAULT_PREVIEW_URL = 'https://browser-extension-auth-redirect.preview.signadot.com';
+export const DEFAULT_DASHBOARD_URL = 'https://app.signadot.com';
 
 const AUTH_SESSION_COOKIE_NAME = 'signadot-auth';
 
@@ -16,7 +17,8 @@ interface SettingsProps {
 const Settings: React.FC<SettingsProps> = ({ onClose }) => {
   const [apiUrl, setApiUrl] = useState<string>(DEFAULT_API_URL);
   const [previewUrl, setPreviewUrl] = useState<string>(DEFAULT_PREVIEW_URL);
-  const { apiUrl: storedApiUrl, previewUrl: storedPreviewUrl } = useChromeStorage();
+  const [dashboardUrl, setDashboardUrl] = useState<string>(DEFAULT_DASHBOARD_URL);
+  const { apiUrl: storedApiUrl, previewUrl: storedPreviewUrl, dashboardUrl: storedDashboardUrl } = useChromeStorage();
 
   // Use the hook to handle Ctrl+Shift+U
   useHotkeys('ctrl+shift+u', onClose, {
@@ -27,15 +29,18 @@ const Settings: React.FC<SettingsProps> = ({ onClose }) => {
   useEffect(() => {
     setApiUrl(storedApiUrl || DEFAULT_API_URL);
     setPreviewUrl(storedPreviewUrl || DEFAULT_PREVIEW_URL);
-  }, [storedApiUrl, storedPreviewUrl]);
+    setDashboardUrl(storedDashboardUrl || DEFAULT_DASHBOARD_URL);
+  }, [storedApiUrl, storedPreviewUrl, storedDashboardUrl]);
 
   const handleSave = () => {
     const cleanApiUrl = apiUrl.replace(/\/+$/, '');
     const cleanPreviewUrl = previewUrl.replace(/\/+$/, '');
+    const cleanDashboardUrl = dashboardUrl.replace(/\/+$/, '');
 
     chrome.storage.local.set({
       apiUrl: cleanApiUrl,
-      previewUrl: cleanPreviewUrl 
+      previewUrl: cleanPreviewUrl,
+      dashboardUrl: cleanDashboardUrl
     }, () => {
       // After saving, update the cookie for the new domain
       chrome.cookies.get(
@@ -100,6 +105,17 @@ const Settings: React.FC<SettingsProps> = ({ onClose }) => {
             onChange={(e) => setPreviewUrl(e.target.value)}
             className={styles.input}
             placeholder="Enter Preview URL"
+          />
+        </div>
+        <div className={styles.formGroup}>
+          <label htmlFor="dashboardUrl">Dashboard URL:</label>
+          <input
+            id="dashboardUrl"
+            type="url"
+            value={dashboardUrl}
+            onChange={(e) => setDashboardUrl(e.target.value)}
+            className={styles.input}
+            placeholder="Enter Dashboard URL"
           />
         </div>
       </div>

@@ -8,12 +8,12 @@ interface Props {
   routingEntity: RoutingEntity;
 }
 
-const getDashboardURL = (routingEntity: RoutingEntity): string | undefined => {
+const getEntityDashboardURL = (dashboardUrl: string, routingEntity: RoutingEntity): string | undefined => {
   switch (routingEntity.type) {
     case RoutingEntityType.Sandbox:
-      return `https://app.signadot.com/sandbox/name/${routingEntity.name}/overview`; // TODO: Do not use hard-coded URL
+      return dashboardUrl +`/sandbox/name/${routingEntity.name}/overview`;
     case RoutingEntityType.RouteGroup:
-      return `https://app.signadot.com/routegroups/${routingEntity.name}`;
+      return dashboardUrl+ `/routegroups/${routingEntity.name}`;
   }
   return undefined;
 };
@@ -25,9 +25,11 @@ interface Props {
 
 const PinnedRouteGroup: React.FC<Props> = ({routingEntity, onRemove}) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const {extraHeaders, injectedHeaders, setRoutingKeyFn} = useChromeStorage();
-  const dashboardURL = getDashboardURL(routingEntity);
-  
+  const {extraHeaders, injectedHeaders, setRoutingKeyFn, dashboardUrl} = useChromeStorage();
+
+  if (dashboardUrl) {
+    var entityDashboardURL = getEntityDashboardURL(dashboardUrl, routingEntity);
+  }  
 
   const defaultHeaders = useMemo(() => {
     return Object.entries(injectedHeaders || {})
@@ -39,8 +41,8 @@ const PinnedRouteGroup: React.FC<Props> = ({routingEntity, onRemove}) => {
     <Card className={styles.container} elevation={1}>
       <div className={styles.header}>
         <div className={styles.title}>
-          {dashboardURL ? (
-            <a href={dashboardURL} target="_blank" rel="noopener noreferrer">
+          {entityDashboardURL ? (
+            <a href={entityDashboardURL} target="_blank" rel="noopener noreferrer">
               <div className={styles.link}>
                 <div>{routingEntity.name}</div>
                 <Icon icon="share" size={12} />
