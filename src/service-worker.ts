@@ -51,7 +51,7 @@ export const getHeaders = (extraHeaders: string[] | undefined): Record<string, H
       .filter(([_, header]) => header.kind === "always")
       .reduce((acc, [key, header]) => ({ ...acc, [key]: header }), {});
 
-  const extraHeadersObj = extraHeaders.reduce((acc, header) => ({ ...acc, [header]: { value: header, kind: "extra" } }), {});
+  const extraHeadersObj = extraHeaders.reduce((acc, header) => ({ ...acc, [header]: { value: `${ROUTING_KEY_PLACEHOLDER}`, kind: "extra" } }), {});
 
   return { ...defaultHeaders, ...extraHeadersObj };
 }
