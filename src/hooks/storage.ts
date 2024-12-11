@@ -1,34 +1,117 @@
-import React, {useEffect} from "react";
+import React from "react";
 import StorageChange = chrome.storage.StorageChange;
+import { getHeaders, Header } from "../service-worker";
+import { DEFAULT_API_URL, DEFAULT_PREVIEW_URL, DEFAULT_DASHBOARD_URL } from "../components/Settings/Settings";
 
-enum StorageKey {
+export enum StorageKey {
   RoutingKey = "routingKey",
-  Enabled = "enabled"
+  Enabled = "enabled",
+  ExtraHeaders = "extraHeaders",
+  InjectedHeaders = "injectedHeaders",
+  ApiUrl = "apiUrl",
+  PreviewUrl = "previewUrl",
+  DashboardUrl = "dashboardUrl",
 }
 
-type ChromeStorageHookOutput = [
+type ChromeStorageHookOutput = {
   routingKey: (string | undefined),
   setRoutingKeyFn: ((value: (string | undefined)) => Promise<void>),
   enabled: boolean,
-  setEnabled: ((value: boolean) => Promise<void>)
-]
+  setEnabled: ((value: boolean) => Promise<void>),
+  extraHeaders: string[] | null,
+  setExtraHeaders: ((value: string[] | null) => Promise<void>),
+  injectedHeaders: Record<string, Header> | undefined,
+  apiUrl: string | undefined,
+  previewUrl: string | undefined,
+  dashboardUrl: string | undefined,
+  setApiUrl: ((value: string) => Promise<void>),
+  setPreviewUrl: ((value: string) => Promise<void>)
+  setDashboardUrl: ((value: string) => Promise<void>)
+}
 
 export const useChromeStorage = (): ChromeStorageHookOutput => {
   const [routingKey, setRoutingKey] = React.useState<string | undefined>(undefined);
   const [enabled, setEnabled] = React.useState<boolean>(true);
+  const [extraHeaders, setExtraHeaders] = React.useState<string[] | null>([]);
+  const [injectedHeaders, setInjectedHeaders] = React.useState<Record<string, Header> | undefined>(undefined);
+  const [apiUrl, setApiUrl] = React.useState<string | undefined>(undefined);
+  const [previewUrl, setPreviewUrl] = React.useState<string | undefined>(undefined);
+  const [dashboardUrl, setDashboardUrl] = React.useState<string | undefined>(undefined);
 
-  const setRoutingKeyFn = (value: string | undefined) => chrome.storage.local.set({[StorageKey.RoutingKey]: value})
+  const setRoutingKeyFn = (value: string | undefined): Promise<void> => {
+    if (value) {
+      return chrome.storage.local.set({[StorageKey.RoutingKey]: value});
+    } else {
+      return chrome.storage.local.remove(StorageKey.RoutingKey);
+    }
+  }
   const setEnabledFn = (value: boolean) => chrome.storage.local.set({[StorageKey.Enabled]: value})
+  const setExtraHeadersFn = (value: string[] | null) => {
+    if (value) {
+      return chrome.storage.local.set({[StorageKey.ExtraHeaders]: value})
+    } {
+      return chrome.storage.local.remove(StorageKey.ExtraHeaders)
+    }
+  }
+  const setApiUrlFn = (value: string) => chrome.storage.local.set({[StorageKey.ApiUrl]: value})
+  const setPreviewUrlFn = (value: string) => chrome.storage.local.set({[StorageKey.PreviewUrl]: value})
+  const setDashboardUrlFn = (value: string) => chrome.storage.local.set({[StorageKey.DashboardUrl]: value})
+
+  React.useEffect(() => {
+    setInjectedHeaders(getHeaders(extraHeaders));
+  }, [extraHeaders]);
+
+  React.useEffect(() => {
+    chrome.storage.local.get([StorageKey.ApiUrl, StorageKey.PreviewUrl, StorageKey.DashboardUrl], (result) => {
+      if (!result.apiUrl) {
+        setApiUrlFn(DEFAULT_API_URL);
+        setApiUrl(DEFAULT_API_URL)
+      } else {
+        setApiUrlFn(result.apiUrl);
+        setApiUrl(result.apiUrl)
+      }
+
+      if (!result.previewUrl) {
+        setPreviewUrlFn(DEFAULT_PREVIEW_URL);
+        setPreviewUrl(DEFAULT_PREVIEW_URL)
+      } else {
+        setPreviewUrlFn(result.previewUrl);
+        setPreviewUrl(result.previewUrl)
+      }
+
+      if (!result.dashboardUrl) {
+        setDashboardUrlFn(DEFAULT_DASHBOARD_URL);
+        setDashboardUrl(DEFAULT_DASHBOARD_URL)
+      } else {
+        setDashboardUrlFn(result.dashboardUrl);
+        setDashboardUrl(result.dashboardUrl)
+      }
+    });
+  }, []);
 
   React.useEffect(() => {
         // Populate value for routingKey and enabled from Chrome Storage.
-        chrome.storage.local.get([StorageKey.RoutingKey, StorageKey.Enabled], (result) => {
+        chrome.storage.local.get([StorageKey.RoutingKey, StorageKey.Enabled, StorageKey.ExtraHeaders, StorageKey.ApiUrl, StorageKey.PreviewUrl, StorageKey.DashboardUrl], (result) => {
           if (StorageKey.RoutingKey in result) {
             setRoutingKey(result?.[StorageKey.RoutingKey]);
           }
           setEnabled(!!result[StorageKey.Enabled]);
+          if (StorageKey.ExtraHeaders in result) {
+            setExtraHeaders(result[StorageKey.ExtraHeaders]);
+          }
+          if (StorageKey.InjectedHeaders in result) {
+            setInjectedHeaders(result[StorageKey.InjectedHeaders]);
+          }
+          if (StorageKey.ApiUrl in result) {
+            setApiUrl(result[StorageKey.ApiUrl]);
+          }
+          if (StorageKey.PreviewUrl in result) {
+            setPreviewUrl(result[StorageKey.PreviewUrl]);
+          }
+          if (StorageKey.DashboardUrl in result) {
+            setDashboardUrl(result[StorageKey.DashboardUrl]);
+          }
         });
-
 
         // Update values for RoutingKey and enabled when the value in Google (Local) storage changes.
         const handleStorageChange = (changes: { [p: string]: StorageChange }, area: string) => {
@@ -38,6 +121,21 @@ export const useChromeStorage = (): ChromeStorageHookOutput => {
             }
             if (StorageKey.Enabled in changes) {
               setEnabled(!!changes[StorageKey.Enabled].newValue);
+            }
+            if (StorageKey.ExtraHeaders in changes) {
+              setExtraHeaders(changes[StorageKey.ExtraHeaders].newValue);
+            }
+            if (StorageKey.InjectedHeaders in changes) {
+              setInjectedHeaders(changes[StorageKey.InjectedHeaders].newValue);
+            }
+            if (StorageKey.ApiUrl in changes) {
+              setApiUrl(changes[StorageKey.ApiUrl].newValue);
+            }
+            if (StorageKey.PreviewUrl in changes) {
+              setPreviewUrl(changes[StorageKey.PreviewUrl].newValue);
+            }
+            if (StorageKey.DashboardUrl in changes) {
+              setDashboardUrl(changes[StorageKey.DashboardUrl].newValue);
             }
           }
         }
@@ -51,7 +149,7 @@ export const useChromeStorage = (): ChromeStorageHookOutput => {
   )
 
     React.useEffect(() => {
-        if (!enabled) {
+        if (!routingKey) {
             chrome.action.setIcon({ path: {
                     "16": "images/icons/icon16_inactive.png",
                     "48": "images/icons/icon48_inactive.png",
@@ -64,7 +162,21 @@ export const useChromeStorage = (): ChromeStorageHookOutput => {
                     "128": "images/icons/icon128_active.png"
                 }});
         }
-    }, [enabled]);
+    }, [routingKey]);
 
-  return [routingKey, setRoutingKeyFn, enabled, setEnabledFn];
+  return {
+    routingKey,
+    setRoutingKeyFn,
+    enabled,
+    setEnabled: setEnabledFn,
+    extraHeaders,
+    setExtraHeaders: setExtraHeadersFn,
+    injectedHeaders,
+    apiUrl,
+    previewUrl,
+    dashboardUrl,
+    setApiUrl: setApiUrlFn,
+    setPreviewUrl: setPreviewUrlFn,
+    setDashboardUrl: setDashboardUrlFn
+  };
 }

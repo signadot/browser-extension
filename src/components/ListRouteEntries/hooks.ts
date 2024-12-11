@@ -1,8 +1,9 @@
 import {useQuery} from "react-query";
 import {ApiError, RoutingEntity, RoutingEntityType} from "./types";
-import {useFetchRouteGroups, useFetchSandboxes} from "./queries";
+import {fetchSandboxes, fetchRouteGroups} from "./queries";
 import {useAuth} from "../../contexts/AuthContext";
 import {useMemo} from "react";
+
 
 // TODO: Move out orgName and apiKey from the function call
 export const useFetchRoutingEntries = () => {
@@ -12,14 +13,14 @@ export const useFetchRoutingEntries = () => {
     error: sandboxesError,
     isLoading: sandboxesLoading,
   } = useQuery<RoutingEntity[], ApiError>("sandboxes", () =>
-      useFetchSandboxes(authState?.org.name)
+      fetchSandboxes(authState?.org.name)
   );
   const {
     data: routegroups,
     error: routegroupsError,
     isLoading: routegroupsLoading,
   } = useQuery<RoutingEntity[], ApiError>("routegroups", () =>
-      useFetchRouteGroups(authState?.org.name)
+      fetchRouteGroups(authState?.org.name)
   );
   // TODO: Handle error and loading too.
 
@@ -31,6 +32,7 @@ export const useFetchRoutingEntries = () => {
           name: sandbox.name,
           routingKey: sandbox.routingKey,
           type: RoutingEntityType.Sandbox,
+          cluster: (sandbox as any).spec.cluster,
         } as RoutingEntity);
       });
     }
@@ -40,6 +42,7 @@ export const useFetchRoutingEntries = () => {
           name: routeGroup.name,
           routingKey: routeGroup.routingKey,
           type: RoutingEntityType.RouteGroup,
+          cluster: (routeGroup as any).spec.cluster,
         } as RoutingEntity);
       });
     }

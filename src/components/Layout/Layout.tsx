@@ -10,7 +10,7 @@ interface Props {
 }
 
 const Layout: React.FC<Props> = ({children}) => {
-  const [, , enabled, setEnabledFn] = useChromeStorage();
+  const {enabled, setEnabled} = useChromeStorage();
   return (
       <div className={styles.container}>
         <div className={styles.topBar}>
@@ -19,7 +19,7 @@ const Layout: React.FC<Props> = ({children}) => {
             <Tooltip content={`Header injection ${enabled ? "Enabled" : "Disabled"}`}>
               <Switch
                   alignIndicator={"right"}
-                  onChange={(e) => setEnabledFn(e.target.checked)}
+                  onChange={(e) => setEnabled(e.target.checked)}
                   checked={enabled}
                   large={true}
               />

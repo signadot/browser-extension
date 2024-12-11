@@ -1,21 +1,38 @@
-import React from "react";
+import React, { useEffect } from "react";
+import {useQuery} from "react-query";
+import { fetchClusters } from "./queries";
 import {RoutingEntity} from "./types";
 import {ItemListRendererProps, ItemPredicate, ItemRenderer, Suggest} from "@blueprintjs/select";
 import {Menu, MenuItem} from "@blueprintjs/core";
 import styles from "./ListRouteEntries.module.css";
+import { useChromeStorage } from "../../hooks/storage";
 
 const SELECT_LIST_ITEM_COUNT = 5;
 
 interface Props {
   routingEntities: RoutingEntity[];
   setUserSelectedRoutingEntity: (routingEntity: RoutingEntity) => void;
+  orgName?: string;
 }
 
 const ListRouteEntries: React.FC<Props> = ({
                                              routingEntities,
                                              setUserSelectedRoutingEntity,
+                                             orgName,
                                            }) => {
   const [userSelected, setUserSelected] = React.useState<RoutingEntity | undefined>(undefined);
+
+  const { setExtraHeaders, apiUrl } = useChromeStorage();
+
+  const { data: clusters, isLoading, error, refetch } = useQuery({
+    queryKey: ['clusters', orgName],
+    queryFn: () => fetchClusters(orgName!),
+    enabled: !!orgName,
+  });
+
+  useEffect(() => {
+    refetch();
+  }, [apiUrl]);
 
   const handleClick = React.useCallback(
       (name: string): void => {
@@ -26,6 +43,11 @@ const ListRouteEntries: React.FC<Props> = ({
         if (selected) {
           setUserSelected(selected);
           setUserSelectedRoutingEntity(selected);
+          const cluster = clusters?.find((c) => c.name === selected.cluster);
+
+          if (!cluster) return;
+          const clusterConfig = cluster.clusterConfig
+          setExtraHeaders(clusterConfig ? (clusterConfig?.routing?.customHeaders || []) : null);
         }
       },
       [routingEntities]
@@ -91,27 +113,31 @@ const ListRouteEntries: React.FC<Props> = ({
 
   return (
       <div className={styles.container}>
-        <Suggest<RoutingEntity>
-            items={routingEntities}
-            itemPredicate={predicate}
-            itemRenderer={itemRenderer}
-            itemListRenderer={listRenderer}
-            inputValueRenderer={renderInputValue}
-            popoverProps={{minimal: true}}
-            resetOnSelect
-            noResults={
-              <MenuItem
-                  disabled={true}
-                  text="No results"
-                  roleStructure="listoption"
-              />
-            }
-            onItemSelect={(item, event) => {
-              if (item) {
-                handleClick(item.name)
+        {isLoading && <div>Loading...</div>}
+        {/* {error && <div>Error: {error?.message || 'An unknown error occurred'}</div>} */}
+        {!isLoading && !error && (
+          <Suggest<RoutingEntity>
+              items={routingEntities}
+              itemPredicate={predicate}
+              itemRenderer={itemRenderer}
+              itemListRenderer={listRenderer}
+              inputValueRenderer={renderInputValue}
+              popoverProps={{minimal: true}}
+              resetOnSelect
+              noResults={
+                <MenuItem
+                    disabled={true}
+                    text="No results"
+                    roleStructure="listoption"
+                />
               }
-            }}
-        />
+              onItemSelect={(item, event) => {
+                if (item) {
+                  handleClick(item.name)
+                }
+              }}
+          />
+        )}
       </div>
   );
 };
