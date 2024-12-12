@@ -48,13 +48,7 @@ export const useChromeStorage = (): ChromeStorageHookOutput => {
       return chrome.storage.local.remove(StorageKey.RoutingKey);
     }
   }
-  const setEnabledFn = async (value: boolean): Promise<void> => {
-    await chrome.storage.local.set({ [StorageKey.Enabled]: value });
-    if (!value) {
-      // remove stored routing key when disabling
-      await setRoutingKeyFn("");
-    }
-  };
+  const setEnabledFn = (value: boolean) => chrome.storage.local.set({[StorageKey.Enabled]: value})
   const setExtraHeadersFn = (value: string[] | null) => {
     if (value) {
       return chrome.storage.local.set({[StorageKey.ExtraHeaders]: value})
@@ -159,7 +153,7 @@ export const useChromeStorage = (): ChromeStorageHookOutput => {
   )
 
     React.useEffect(() => {
-        if (!routingKey) {
+        if (!enabled || !routingKey) {
             chrome.action.setIcon({ path: {
                     "16": "images/icons/icon16_inactive.png",
                     "48": "images/icons/icon48_inactive.png",
@@ -172,7 +166,7 @@ export const useChromeStorage = (): ChromeStorageHookOutput => {
                     "128": "images/icons/icon128_active.png"
                 }});
         }
-    }, [routingKey]);
+    }, [enabled, routingKey]);
 
   return {
     init,
