@@ -14,10 +14,11 @@ export enum StorageKey {
 }
 
 type ChromeStorageHookOutput = {
-  routingKey: (string | undefined),
-  setRoutingKeyFn: ((value: (string | undefined)) => Promise<void>),
+  init: boolean,
   enabled: boolean,
   setEnabled: ((value: boolean) => Promise<void>),
+  routingKey: (string | undefined),
+  setRoutingKeyFn: ((value: (string | undefined)) => Promise<void>),
   extraHeaders: string[] | undefined,
   setExtraHeaders: ((value: string[] | null) => Promise<void>),
   injectedHeaders: Record<string, Header> | undefined,
@@ -30,8 +31,10 @@ type ChromeStorageHookOutput = {
 }
 
 export const useChromeStorage = (): ChromeStorageHookOutput => {
-  const [routingKey, setRoutingKey] = React.useState<string | undefined>(undefined);
+
+  const [init, setInit] = React.useState<boolean>(false);
   const [enabled, setEnabled] = React.useState<boolean>(true);
+  const [routingKey, setRoutingKey] = React.useState<string | undefined>(undefined);
   const [extraHeaders, setExtraHeaders] = React.useState<string[] | undefined>(undefined);
   const [injectedHeaders, setInjectedHeaders] = React.useState<Record<string, Header> | undefined>(undefined);
   const [apiUrl, setApiUrl] = React.useState<string | undefined>(undefined);
@@ -45,7 +48,13 @@ export const useChromeStorage = (): ChromeStorageHookOutput => {
       return chrome.storage.local.remove(StorageKey.RoutingKey);
     }
   }
-  const setEnabledFn = (value: boolean) => chrome.storage.local.set({[StorageKey.Enabled]: value})
+  const setEnabledFn = async (value: boolean): Promise<void> => {
+    await chrome.storage.local.set({ [StorageKey.Enabled]: value });
+    if (!value) {
+      // remove stored routing key when disabling
+      await setRoutingKeyFn("");
+    }
+  };
   const setExtraHeadersFn = (value: string[] | null) => {
     if (value) {
       return chrome.storage.local.set({[StorageKey.ExtraHeaders]: value})
@@ -92,10 +101,10 @@ export const useChromeStorage = (): ChromeStorageHookOutput => {
   React.useEffect(() => {
         // Populate value for routingKey and enabled from Chrome Storage.
         chrome.storage.local.get([StorageKey.RoutingKey, StorageKey.Enabled, StorageKey.ExtraHeaders, StorageKey.ApiUrl, StorageKey.PreviewUrl, StorageKey.DashboardUrl], (result) => {
+          setEnabled(!!result[StorageKey.Enabled]);
           if (StorageKey.RoutingKey in result) {
             setRoutingKey(result?.[StorageKey.RoutingKey]);
           }
-          setEnabled(!!result[StorageKey.Enabled]);
           if (StorageKey.ExtraHeaders in result) {
             setExtraHeaders(result[StorageKey.ExtraHeaders]);
           }
@@ -111,16 +120,17 @@ export const useChromeStorage = (): ChromeStorageHookOutput => {
           if (StorageKey.DashboardUrl in result) {
             setDashboardUrl(result[StorageKey.DashboardUrl]);
           }
+          setInit(true);
         });
 
         // Update values for RoutingKey and enabled when the value in Google (Local) storage changes.
         const handleStorageChange = (changes: { [p: string]: StorageChange }, area: string) => {
           if (area === "local") {
-            if (StorageKey.RoutingKey in changes) {
-              setRoutingKey(changes[StorageKey.RoutingKey].newValue);
-            }
             if (StorageKey.Enabled in changes) {
               setEnabled(!!changes[StorageKey.Enabled].newValue);
+            }
+            if (StorageKey.RoutingKey in changes) {
+              setRoutingKey(changes[StorageKey.RoutingKey].newValue);
             }
             if (StorageKey.ExtraHeaders in changes) {
               setExtraHeaders(changes[StorageKey.ExtraHeaders].newValue);
@@ -165,10 +175,11 @@ export const useChromeStorage = (): ChromeStorageHookOutput => {
     }, [routingKey]);
 
   return {
-    routingKey,
-    setRoutingKeyFn,
+    init,
     enabled,
     setEnabled: setEnabledFn,
+    routingKey,
+    setRoutingKeyFn,
     extraHeaders,
     setExtraHeaders: setExtraHeadersFn,
     injectedHeaders,

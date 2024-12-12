@@ -10,8 +10,8 @@ interface Props {
 }
 
 const Layout: React.FC<Props> = ({children}) => {
-  const {enabled, setEnabled} = useChromeStorage();
-  return (
+  const {init, enabled, setEnabled} = useChromeStorage();
+  return init && (
       <div className={styles.container}>
         <div className={styles.topBar}>
           <div><img src={logoPath} height={80}/></div>

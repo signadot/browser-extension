@@ -4,15 +4,11 @@ type PostAuthCallbackFn = (authenticated: boolean) => void;
 const AUTH_SESSION_COOKIE_NAME = "signadot-auth";
 
 const refreshPreviewDomainCookies = async (previewUrl: string) => {
-  try {
-    let xhr = new XMLHttpRequest();
-    xhr.open("GET", previewUrl, false);
-    xhr.send();
-  } catch (error) {
-    // empty response expected. ignore
-  }
+    await fetch(previewUrl, {
+      method: 'HEAD',
+      redirect: 'manual' // Prevents automatic redirection
+  });
 };
-
 
 // Define two prototypes for the auth function, one that a callback and other that take apiUrl and previewUrl as arguments plus a callback
 type AuthCallbackFn = (authenticated: boolean) => void;
