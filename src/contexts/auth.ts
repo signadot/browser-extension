@@ -5,7 +5,7 @@ const AUTH_SESSION_COOKIE_NAME = "signadot-auth";
 
 const refreshPreviewDomainCookies = async (previewUrl: string) => {
     await fetch(previewUrl, {
-      method: 'HEAD',
+      method: 'GET',
       redirect: 'manual' // Prevents automatic redirection
   });
 };
