@@ -1,7 +1,7 @@
 // service-worker.ts
 
 import {auth} from "./contexts/auth";
-import { StorageKey } from "./hooks/storage";
+import { useChromeStorage, StorageKey } from "./hooks/storage";
 // import {getClusters} from "./components/ListRouteEntries/queries";
 
 export type Header = { value: string, kind: 'always' | 'extra' | 'defaultBeforeV191' }
@@ -39,8 +39,16 @@ const populateRoutingKey = (input: string, routingKey: string): string => {
   return input.replace(regex, routingKey);
 }
 
+
 export const getHeaders = (extraHeaders: string[] | undefined): Record<string, Header> => {
 
+  const { traceparentHeader: storedTraceparentHeader } = useChromeStorage();
+  if (storedTraceparentHeader) {
+	  ROUTING_HEADERS["traceparent"] = {
+		  value: storedTraceparentHeader,
+		  kind: 'always',
+	  };
+  }
   // This means cluster is using an old operator version
   if (!extraHeaders) {
     return Object.entries(ROUTING_HEADERS)

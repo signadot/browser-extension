@@ -1,7 +1,7 @@
 import React from "react";
 import StorageChange = chrome.storage.StorageChange;
 import { getHeaders, Header } from "../service-worker";
-import { DEFAULT_API_URL, DEFAULT_PREVIEW_URL, DEFAULT_DASHBOARD_URL } from "../components/Settings/Settings";
+import { DEFAULT_API_URL, DEFAULT_PREVIEW_URL, DEFAULT_DASHBOARD_URL, DEFAULT_TRACEPARENT_HEADER } from "../components/Settings/Settings";
 
 export enum StorageKey {
   RoutingKey = "routingKey",
@@ -23,7 +23,7 @@ type ChromeStorageHookOutput = {
   extraHeaders: string[] | undefined,
   setExtraHeaders: ((value: string[] | null) => Promise<void>),
   traceparentHeader: (string | undefined),
-  setTraceparentHeader: ((value: (string | undefined)) => Promise<void>),
+  setTraceparentHeader: ((value: string) => Promise<void>),
   injectedHeaders: Record<string, Header> | undefined,
   apiUrl: string | undefined,
   previewUrl: string | undefined,
@@ -39,7 +39,7 @@ export const useChromeStorage = (): ChromeStorageHookOutput => {
   const [enabled, setEnabled] = React.useState<boolean>(true);
   const [routingKey, setRoutingKey] = React.useState<string | undefined>(undefined);
   const [extraHeaders, setExtraHeaders] = React.useState<string[] | undefined>(undefined);
-  const [traceparentHeader, setTraceparentHeader] = React.useState<string | undefined>(undefined);
+  const [traceparentHeader, setTraceparentHeader] = React.useState<string>(DEFAULT_TRACEPARENT_HEADER);
   const [injectedHeaders, setInjectedHeaders] = React.useState<Record<string, Header> | undefined>(undefined);
   const [apiUrl, setApiUrl] = React.useState<string | undefined>(undefined);
   const [previewUrl, setPreviewUrl] = React.useState<string | undefined>(undefined);
@@ -60,12 +60,8 @@ export const useChromeStorage = (): ChromeStorageHookOutput => {
       return chrome.storage.local.remove(StorageKey.ExtraHeaders)
     }
   }
-  const setTraceparentHeaderFn = (value: string | undefined) => {
-    if (value) {
-  	  return chrome.storage.local.set({[StorageKey.TraceparentHeader]: value})
-    } {
-      return chrome.storage.local.remove(StorageKey.TraceparentHeader)
-    }
+  const setTraceparentHeaderFn = (value: string) => {
+    return chrome.storage.local.set({[StorageKey.TraceparentHeader]: value})
   }
   const setApiUrlFn = (value: string) => chrome.storage.local.set({[StorageKey.ApiUrl]: value})
   const setPreviewUrlFn = (value: string) => chrome.storage.local.set({[StorageKey.PreviewUrl]: value})
