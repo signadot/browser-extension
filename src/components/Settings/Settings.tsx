@@ -7,6 +7,7 @@ import { useChromeStorage } from '../../hooks/storage';
 export const DEFAULT_API_URL = 'https://api.signadot.com';
 export const DEFAULT_PREVIEW_URL = 'https://browser-extension-auth-redirect.preview.signadot.com';
 export const DEFAULT_DASHBOARD_URL = 'https://app.signadot.com';
+export const DEFAULT_TRACEPARENT_HEADER = "00-abcdef0123456789-abcdef01-00";
 
 const AUTH_SESSION_COOKIE_NAME = 'signadot-auth';
 
@@ -18,7 +19,8 @@ const Settings: React.FC<SettingsProps> = ({ onClose }) => {
   const [apiUrl, setApiUrl] = useState<string>(DEFAULT_API_URL);
   const [previewUrl, setPreviewUrl] = useState<string>(DEFAULT_PREVIEW_URL);
   const [dashboardUrl, setDashboardUrl] = useState<string>(DEFAULT_DASHBOARD_URL);
-  const { apiUrl: storedApiUrl, previewUrl: storedPreviewUrl, dashboardUrl: storedDashboardUrl } = useChromeStorage();
+  const [traceparentHeader, setTraceparentHeader] = useState<string>(DEFAULT_TRACEPARENT_HEADER);
+  const { traceparentHeader: storedTraceparentHeader, apiUrl: storedApiUrl, previewUrl: storedPreviewUrl, dashboardUrl: storedDashboardUrl } = useChromeStorage();
 
   // Use the hook to handle Ctrl+Shift+U
   useHotkeys('ctrl+shift+u', onClose, {
@@ -30,6 +32,7 @@ const Settings: React.FC<SettingsProps> = ({ onClose }) => {
     setApiUrl(storedApiUrl || DEFAULT_API_URL);
     setPreviewUrl(storedPreviewUrl || DEFAULT_PREVIEW_URL);
     setDashboardUrl(storedDashboardUrl || DEFAULT_DASHBOARD_URL);
+    setTraceparentHeader(storedTraceparentHeader || DEFAULT_TRACEPARENT_HEADER);
   }, [storedApiUrl, storedPreviewUrl, storedDashboardUrl]);
 
   const handleSave = () => {
@@ -40,7 +43,8 @@ const Settings: React.FC<SettingsProps> = ({ onClose }) => {
     chrome.storage.local.set({
       apiUrl: cleanApiUrl,
       previewUrl: cleanPreviewUrl,
-      dashboardUrl: cleanDashboardUrl
+      dashboardUrl: cleanDashboardUrl,
+      traceparentHeader: traceparentHeader,
     }, () => {
       // After saving, update the cookie for the new domain
       chrome.cookies.get(
@@ -83,6 +87,20 @@ const Settings: React.FC<SettingsProps> = ({ onClose }) => {
 
       <div className={styles.section}>
         <div className={styles.sectionHeader}>
+          <h4 className={styles.sectionTitle}>Header Settings</h4>
+        </div>
+        <div className={styles.formGroup}>
+          <label htmlFor="traceparentHeader">traceparent Header Value:</label>
+          <input
+            id="traceparentHeader"
+            type="string"
+            value={traceparentHeader}
+            onChange={(e) => setTraceparentHeader(e.target.value)}
+            className={styles.input}
+            placeholder="Enter Value (eg 00-abcdef0123456789-abcdef01-00)" />
+      </div>
+    </div><div className={styles.section}>
+        <div className={styles.sectionHeader}>
           <h4 className={styles.sectionTitle}>API Configuration</h4>
         </div>
         <div className={styles.formGroup}>
@@ -93,8 +111,7 @@ const Settings: React.FC<SettingsProps> = ({ onClose }) => {
             value={apiUrl}
             onChange={(e) => setApiUrl(e.target.value)}
             className={styles.input}
-            placeholder="Enter API URL"
-          />
+            placeholder="Enter API URL" />
         </div>
         <div className={styles.formGroup}>
           <label htmlFor="previewUrl">Preview URL:</label>
@@ -104,8 +121,7 @@ const Settings: React.FC<SettingsProps> = ({ onClose }) => {
             value={previewUrl}
             onChange={(e) => setPreviewUrl(e.target.value)}
             className={styles.input}
-            placeholder="Enter Preview URL"
-          />
+            placeholder="Enter Preview URL" />
         </div>
         <div className={styles.formGroup}>
           <label htmlFor="dashboardUrl">Dashboard URL:</label>
@@ -115,21 +131,18 @@ const Settings: React.FC<SettingsProps> = ({ onClose }) => {
             value={dashboardUrl}
             onChange={(e) => setDashboardUrl(e.target.value)}
             className={styles.input}
-            placeholder="Enter Dashboard URL"
-          />
+            placeholder="Enter Dashboard URL" />
         </div>
-      </div>
-
-      <div className={styles.actions}>
+      </div><div className={styles.actions}>
         <button
-            onClick={handleSave}
-            className={styles.button}
+          onClick={handleSave}
+          className={styles.button}
         >
           Save Settings
         </button>
         <button
-            onClick={onClose}
-            className={styles.cancel_action}
+          onClick={onClose}
+          className={styles.cancel_action}
         >
           Cancel
         </button>
