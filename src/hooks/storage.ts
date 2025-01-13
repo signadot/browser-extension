@@ -68,7 +68,7 @@ export const useChromeStorage = (): ChromeStorageHookOutput => {
   const setDashboardUrlFn = (value: string) => chrome.storage.local.set({[StorageKey.DashboardUrl]: value})
 
   React.useEffect(() => {
-    setInjectedHeaders(getHeaders(extraHeaders));
+    setInjectedHeaders(getHeaders(extraHeaders, traceparentHeader))
   }, [extraHeaders]);
 
   React.useEffect(() => {
