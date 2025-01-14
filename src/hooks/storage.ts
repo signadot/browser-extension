@@ -69,7 +69,7 @@ export const useChromeStorage = (): ChromeStorageHookOutput => {
 
   React.useEffect(() => {
     setInjectedHeaders(getHeaders(extraHeaders, traceparentHeader))
-  }, [extraHeaders]);
+  }, [extraHeaders, traceparentHeader]);
 
   React.useEffect(() => {
     chrome.storage.local.get([StorageKey.ApiUrl, StorageKey.PreviewUrl, StorageKey.DashboardUrl], (result) => {

@@ -43,11 +43,6 @@ const populateRoutingKey = (input: string, routingKey: string): string => {
 export const getHeaders = (extraHeaders: string[] | undefined, traceparentHeader: string | undefined): Record<string, Header> => {
 
   const traceparentObj: Record<string, Header> = traceparentHeader ? { "traceparent": {value: traceparentHeader, kind: "always" }} : {};
-  if (traceparentHeader) {
-	  console.log("traceparentHeader: " + traceparentHeader);
-  } else {
-	  console.log("no traceparentHeader");
-  }
 
   // This means cluster is using an old operator version
   if (!extraHeaders) {
@@ -135,7 +130,7 @@ async function updateDynamicRules() {
 chrome.runtime.onInstalled.addListener(updateDynamicRules);
 chrome.runtime.onStartup.addListener(updateDynamicRules);
 chrome.storage.onChanged.addListener((changes, areaName) => {
-  if (areaName === "local" && (changes[ROUTING_KEY] || changes[ENABLED_KEY])) {
+  if (areaName === "local" && (changes[ROUTING_KEY] || changes[ENABLED_KEY] || changes[StorageKey.TraceparentHeader])) {
     updateDynamicRules();
   }
 });
