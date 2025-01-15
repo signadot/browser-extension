@@ -1,13 +1,13 @@
 // service-worker.ts
 
 import {auth} from "./contexts/auth";
-import { useChromeStorage, StorageKey } from "./hooks/storage";
+import { StorageKey } from "./hooks/storage";
+import { DEFAULT_TRACEPARENT_HEADER } from "./components/Settings/Settings";
 // import {getClusters} from "./components/ListRouteEntries/queries";
 
 export type Header = { value: string, kind: 'always' | 'extra' | 'defaultBeforeV191' }
 
 const ROUTING_KEY = "routingKey";
-const ENABLED_KEY = "enabled";
 const ROUTING_KEY_PLACEHOLDER = `{${ROUTING_KEY}}`;
 export const ROUTING_HEADERS: Record<string, Header> = {
   "baggage": { value: `sd-routing-key=${ROUTING_KEY_PLACEHOLDER},sd-sandbox=${ROUTING_KEY_PLACEHOLDER}`, kind: 'always' },
@@ -97,7 +97,8 @@ async function updateDynamicRules() {
 
     if (currentFeatureEnabled && currentRoutingKey) {
       try {
-        const headerKeys = getHeaders(currentExtraHeaders, currentTraceparentHeader);
+        const traceparentHeader = currentTraceparentHeader === undefined ? DEFAULT_TRACEPARENT_HEADER : currentTraceparentHeader;
+        const headerKeys = getHeaders(currentExtraHeaders, traceparentHeader);
         const rules = getRules(headerKeys, currentRoutingKey);
         const existingRules = await chrome.declarativeNetRequest.getDynamicRules();
 
@@ -130,7 +131,7 @@ async function updateDynamicRules() {
 chrome.runtime.onInstalled.addListener(updateDynamicRules);
 chrome.runtime.onStartup.addListener(updateDynamicRules);
 chrome.storage.onChanged.addListener((changes, areaName) => {
-  if (areaName === "local" && (changes[ROUTING_KEY] || changes[ENABLED_KEY] || changes[StorageKey.TraceparentHeader])) {
+  if (areaName === "local" && (changes[StorageKey.RoutingKey] || changes[StorageKey.Enabled] || changes[StorageKey.TraceparentHeader])) {
     updateDynamicRules();
   }
 });
