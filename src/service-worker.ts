@@ -42,17 +42,17 @@ const populateRoutingKey = (input: string, routingKey: string): string => {
 
 export const getHeaders = (extraHeaders: string[] | undefined, traceparentHeader: string | undefined): Record<string, Header> => {
 
-  const traceparentObj: Record<string, Header> = traceparentHeader ? { "traceparent": {value: traceparentHeader, kind: "always" }} : {};
+  const traceparentMap: Record<string, Header> = traceparentHeader ? { "traceparent": {value: traceparentHeader, kind: "always" }} : {};
 
   // This means cluster is using an old operator version
   if (!extraHeaders) {
     return Object.entries(ROUTING_HEADERS)
-        .reduce((acc, [key, header]) => ({ ...acc, [key]: header }), traceparentObj);
+        .reduce((acc, [key, header]) => ({ ...acc, [key]: header }), traceparentMap);
   }
 
   const defaultHeaders = Object.entries(ROUTING_HEADERS)
       .filter(([_, header]) => header.kind === "always")
-      .reduce((acc, [key, header]) => ({ ...acc, [key]: header }), traceparentObj);
+      .reduce((acc, [key, header]) => ({ ...acc, [key]: header }), traceparentMap);
 
   const extraHeadersObj = extraHeaders.reduce((acc, header) => ({ ...acc, [header]: { value: `${ROUTING_KEY_PLACEHOLDER}`, kind: "extra" } }), {});
 
