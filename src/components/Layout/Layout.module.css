@@ -21,6 +21,30 @@ html, body {
     align-items: center;
 }
 
+.topRight {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-direction: row-reverse;
+}
+
+.topRight button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: gray;
+}
+
+.topRight button:hover {
+    color: var(--SIGNADOT-BLUE400);
+}
+
+
+.topRight button:focus {
+    border: none;
+    outline: none;
+}
+
 .body {
     padding: 1rem;
 }

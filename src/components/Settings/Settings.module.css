@@ -35,6 +35,9 @@
   display: flex;
   flex-direction: row;
   gap: 8px;
+  position: fixed;
+  bottom: 0;
+  margin-bottom: 1rem;
 }
 
 .button {
@@ -76,6 +79,10 @@
 
 .section {
   margin-bottom: 24px;
+}
+
+.section[data-hide-section=true] {
+  display: none;
 }
 
 .sectionHeader {
