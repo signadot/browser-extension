@@ -85,6 +85,11 @@
   display: none;
 }
 
+.traceparent {
+  display: flex;
+  flex-direction: row;
+}
+
 .sectionHeader {
   display: flex;
   justify-content: space-between;

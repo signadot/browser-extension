@@ -3,6 +3,7 @@ import styles from './Settings.module.css';
 import {auth} from "../../contexts/auth";
 import {useHotkeys} from 'react-hotkeys-hook';
 import {useChromeStorage} from '../../hooks/storage';
+import {Switch} from "@blueprintjs/core";
 
 export const DEFAULT_API_URL = 'https://api.signadot.com';
 export const DEFAULT_PREVIEW_URL = 'https://browser-extension-auth-redirect.preview.signadot.com';
@@ -24,7 +25,9 @@ const Settings: React.FC<SettingsProps> = ({onClose}) => {
         traceparentHeader: storedTraceparentHeader,
         apiUrl: storedApiUrl,
         previewUrl: storedPreviewUrl,
-        dashboardUrl: storedDashboardUrl
+        dashboardUrl: storedDashboardUrl,
+        traceparentHeaderEnabled: storedTraceparentEnabled,
+        setTraceparentHeaderEnabled,
     } = useChromeStorage();
     const [isExtraSettingsOpen, setIsExtraSettingsOpen] = React.useState(false);
 
@@ -96,16 +99,26 @@ const Settings: React.FC<SettingsProps> = ({onClose}) => {
                 <div className={styles.sectionHeader}>
                     <h4 className={styles.sectionTitle}>Header Settings</h4>
                 </div>
+                <div className={styles.traceparent}>
+                    <Switch
+                        onChange={(e) => setTraceparentHeaderEnabled(e.target.checked)}
+                        checked={storedTraceparentEnabled}
+                        large={false}
+                    />
+                    <label htmlFor="traceparentEnabled">Enable Traceparent</label>
+                </div>
                 <div className={styles.formGroup}>
                     <label htmlFor="traceparentHeader">Traceparent Header Value:</label>
                     <input
                         id="traceparentHeader"
                         type="string"
                         value={traceparentHeader}
+                        disabled={!storedTraceparentEnabled}
                         onChange={(e) => setTraceparentHeader(e.target.value)}
                         className={styles.input}
                         placeholder="Enter Value (eg 00-abcdef0123456789-abcdef01-00)"/>
                 </div>
+
             </div>
             <div className={styles.section} data-hide-section={!isExtraSettingsOpen}>
                 <div className={styles.sectionHeader}>
