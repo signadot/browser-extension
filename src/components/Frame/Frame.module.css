@@ -39,6 +39,17 @@
 
 .content {
     min-height: 240px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.content > .home {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    flex: 1;
 }
 
 .pinned {
