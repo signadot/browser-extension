@@ -10,6 +10,7 @@ import Footer from "../Footer";
 import Settings from "../Settings/Settings";
 import {useAuth} from "../../contexts/AuthContext";
 import {useRouteView} from "../../contexts/RouteViewContext/RouteViewContext";
+import { DebugPanel } from "../DebugPanel";
 
 const Frame = () => {
     const [debug, setDebug] = React.useState<boolean>(false);
@@ -17,15 +18,14 @@ const Frame = () => {
     const routingEntities: RoutingEntity[] = useFetchRoutingEntries();
     const [userSelectedEntity, setUserSelectedEntity] = React.useState<RoutingEntity | undefined>(undefined);
     const {currentView, setCurrentView} = useRouteView();
-
     const {authState} = useAuth();
-
 
     React.useEffect(() => {
         if (userSelectedEntity) {
             setRoutingKeyFn(userSelectedEntity.routingKey)
         }
     }, [userSelectedEntity]);
+
     const pinnedRoutingEntityData: RoutingEntity | undefined =
         React.useMemo(() => {
             const filteredList = routingEntities?.filter(
@@ -35,52 +35,25 @@ const Frame = () => {
         }, [routingKey, routingEntities]);
 
     return (
-        <div>
-            {debug && (
-                <div>
-                    <div>Enabled: {enabled ? "true" : "false"}</div>
-                    <div>Selected entity: {JSON.stringify(userSelectedEntity)}</div>
-                    <div>Stored RoutingKey: {routingKey}</div>
-                </div>
-            )}
-            {enabled && (
-                <div className={styles.content}>
-                    {currentView === "settings" ? (
-                        <Settings onClose={() => setCurrentView("home")}/>
-                    ) : (
-                        <div className={styles.home}>
-                            <div>
-                                <ListRouteEntries
-                                    orgName={authState?.org.name}
-                                    routingEntities={routingEntities}
-                                    setUserSelectedRoutingEntity={setUserSelectedEntity}
-                                />
-                                {pinnedRoutingEntityData ? (
-                                    <Section
-                                        compact
-                                        className={styles.pinned}
-                                    >
-                                        <SectionCard>
-                                            Headers are being set for:
-                                            <PinnedRouteGroup routingEntity={pinnedRoutingEntityData} onRemove={() => {
-                                                setUserSelectedEntity(undefined);
-                                                setRoutingKeyFn(undefined);
-                                            }}/>
-                                        </SectionCard>
-                                    </Section>
-                                ) : <Section
-                                    compact
-                                    className={styles.pinned}
-                                >
-                                    <SectionCard>
-                                        No Sandbox or RouteGroup selected
-                                    </SectionCard>
-                                </Section>}
-                            </div>
-                            <Footer/>
-                        </div>
+        <div className={styles.container}>
+            {currentView === "settings" ? (
+                <Settings onClose={() => setCurrentView("home")}/>
+            ) : (
+                <>
+                    {pinnedRoutingEntityData && (
+                        <PinnedRouteGroup
+                            routingEntity={pinnedRoutingEntityData}
+                            onRemove={() => setUserSelectedEntity(undefined)}
+                        />
                     )}
-                </div>
+                    <ListRouteEntries
+                        routingEntities={routingEntities}
+                        setUserSelectedRoutingEntity={setUserSelectedEntity}
+                        orgName={authState?.org.name}
+                    />
+                    <Footer/>
+                    <DebugPanel/>
+                </>
             )}
         </div>
     );

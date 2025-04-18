@@ -1,0 +1,52 @@
+.debugContainer {
+  margin-top: 1rem;
+  border-top: 1px solid #e1e8ed;
+  padding-top: 1rem;
+}
+
+.debugPanel {
+  margin-top: 0.5rem;
+  background-color: #f5f8fa;
+}
+
+.toggleButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.stateList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.stateItem {
+  border: 1px solid #e1e8ed;
+  border-radius: 3px;
+  padding: 0.5rem;
+  background-color: white;
+}
+
+.stateHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.stateKey {
+  font-weight: 600;
+  color: #182026;
+}
+
+.stateValue {
+  margin: 0;
+  padding: 0.5rem;
+  background-color: #f5f8fa;
+  border-radius: 3px;
+  font-size: 12px;
+  max-height: 200px;
+  overflow: auto;
+} 
