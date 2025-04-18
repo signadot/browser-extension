@@ -40,8 +40,7 @@ const populateRoutingKey = (input: string, routingKey: string): string => {
 }
 
 
-export const getHeaders = (extraHeaders: string[] | undefined, traceparentHeader: string | undefined): Record<string, Header> => {
-
+export const getHeaders = (extraHeaders: string[] | null | undefined, traceparentHeader: string | undefined): Record<string, Header> => {
   const traceparentMap: Record<string, Header> = traceparentHeader ? { "traceparent": {value: traceparentHeader, kind: "always" }} : {};
 
   // This means cluster is using an old operator version
