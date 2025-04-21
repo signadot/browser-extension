@@ -88,15 +88,18 @@ const getRules = (
 }
 
 async function updateDynamicRules() {
-  chrome.storage.local.get([StorageKey.RoutingKey, StorageKey.Enabled, StorageKey.ExtraHeaders, StorageKey.TraceparentHeader], async (result) => {
+  chrome.storage.local.get([StorageKey.RoutingKey, StorageKey.Enabled, StorageKey.ExtraHeaders, StorageKey.TraceparentHeader, StorageKey.TraceparentHeaderEnabled], async (result) => {
     const currentRoutingKey = result[StorageKey.RoutingKey];
     const currentFeatureEnabled = !!result[StorageKey.Enabled];
     const currentExtraHeaders = result[StorageKey.ExtraHeaders];
     const currentTraceparentHeader = result[StorageKey.TraceparentHeader];
-
+    const currentTraceparentHeaderEnabled = result[StorageKey.TraceparentHeaderEnabled];
     if (currentFeatureEnabled && currentRoutingKey) {
       try {
-        const traceparentHeader = currentTraceparentHeader === undefined ? DEFAULT_TRACEPARENT_HEADER : currentTraceparentHeader;
+        const traceparentHeaderValue = currentTraceparentHeader === undefined ? DEFAULT_TRACEPARENT_HEADER : currentTraceparentHeader;
+        const traceparentHeader = currentTraceparentHeaderEnabled ? traceparentHeaderValue : undefined;
+
+        console.log("Traceparent header: ", traceparentHeader, currentTraceparentHeader);
         const headerKeys = getHeaders(currentExtraHeaders, traceparentHeader);
         const rules = getRules(headerKeys, currentRoutingKey);
         const existingRules = await chrome.declarativeNetRequest.getDynamicRules();
@@ -130,7 +133,7 @@ async function updateDynamicRules() {
 chrome.runtime.onInstalled.addListener(updateDynamicRules);
 chrome.runtime.onStartup.addListener(updateDynamicRules);
 chrome.storage.onChanged.addListener((changes, areaName) => {
-  if (areaName === "local" && (changes[StorageKey.RoutingKey] || changes[StorageKey.Enabled] || changes[StorageKey.TraceparentHeader])) {
+  if (areaName === "local" && (changes[StorageKey.RoutingKey] || changes[StorageKey.Enabled] || changes[StorageKey.TraceparentHeader] || changes[StorageKey.TraceparentHeaderEnabled])) {
     updateDynamicRules();
   }
 });

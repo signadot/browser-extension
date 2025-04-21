@@ -15,7 +15,7 @@ export const DebugPanel: React.FC = () => {
   const [isOpen, setIsOpen] = React.useState(false);
   const storage = useChromeStorage();
 
-  const storageEntries = Object.entries(storage).map(([key, value]): StateEntry => {
+  const storageEntries = Object.entries(storage).map(([key, value]): StateEntry | null => {
     let displayValue: string;
     let valueType: ValueType;
 
@@ -40,6 +40,10 @@ export const DebugPanel: React.FC = () => {
       valueType = typeof value as ValueType;
     }
 
+    if (["function"].includes(valueType)) {
+      return null;
+    }
+
     return {
       key,
       value: displayValue,
@@ -62,7 +66,7 @@ export const DebugPanel: React.FC = () => {
         <Card className={styles.debugPanel}>
           <H5>Storage State Debug</H5>
           <div className={styles.stateList}>
-            {storageEntries.map(({ key, value, type }) => (
+            {(storageEntries.filter(s => s !== null) as StateEntry[]).map(({ key, value, type }) => (
               <div key={key} className={styles.stateItem}>
                 <div className={styles.stateHeader}>
                   <span className={styles.stateKey}>{key}</span>
