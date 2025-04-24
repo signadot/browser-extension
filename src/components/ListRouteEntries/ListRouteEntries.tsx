@@ -20,7 +20,7 @@ const ListRouteEntries: React.FC<Props> = ({
                                              setUserSelectedRoutingEntity,
                                              orgName,
                                            }) => {
-  const { settings, setHeaders } = useStorage();
+  const { settings, setHeaders, currentRoutingKey } = useStorage();
 
   const { data: clusters, isLoading, error, refetch } = useQuery({
     queryKey: ['clusters', orgName],
@@ -32,6 +32,37 @@ const ListRouteEntries: React.FC<Props> = ({
     refetch();
   }, [settings.signadotUrls.apiUrl]);
 
+
+  const calculateHeaders = (routingEntity: RoutingEntity) => {
+    const cluster = clusters?.find((c) => c.name === routingEntity.cluster);
+
+    if (!cluster) return [];
+    const clusterConfig = cluster.clusterConfig
+
+    let headers = BASIC_HEADERS;
+    if (clusterConfig) {  
+      headers = [...headers, ...(clusterConfig?.routing?.customHeaders?.map((header) => ({
+        key: header,
+        value: HEADER_VALUE_TEMPLATE,
+        kind: "extra" as const,
+      })) || [])];
+    }
+
+    return headers;
+  } 
+
+
+  useEffect(() => {
+    if (currentRoutingKey && routingEntities.length > 0) {
+      const selected = routingEntities.find((entity) => entity.routingKey === currentRoutingKey);
+      if (selected) {
+        const headers = calculateHeaders(selected);
+        setHeaders(headers);
+      }
+    }
+  }, [currentRoutingKey, routingEntities]);  
+
+
   const handleClick = React.useCallback(
       (name: string): void => {
         const filteredEntity = routingEntities.filter(
@@ -40,20 +71,8 @@ const ListRouteEntries: React.FC<Props> = ({
         const selected = filteredEntity?.[0];
         if (selected) {
           setUserSelectedRoutingEntity(selected);
-          const cluster = clusters?.find((c) => c.name === selected.cluster);
 
-          if (!cluster) return;
-          const clusterConfig = cluster.clusterConfig
-
-          let headers = BASIC_HEADERS;
-          if (clusterConfig) {  
-            headers = [...headers, ...(clusterConfig?.routing?.customHeaders?.map((header) => ({
-              key: header,
-              value: HEADER_VALUE_TEMPLATE,
-              kind: "extra" as const,
-            })) || [])];
-          }
-
+          const headers = calculateHeaders(selected);
           setHeaders(headers);
         }
       },

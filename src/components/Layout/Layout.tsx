@@ -13,7 +13,7 @@ interface Props {
 
 const Layout: React.FC<Props> = ({children}) => {
   const { currentView, setCurrentView } = useRouteView();
-  const { init, settings, setSettings } = useStorage();
+  const { init, settings, setSettings, isAuthenticated } = useStorage();
   return init && (
       <div className={styles.container}>
         <div className={styles.topBar}>
@@ -25,6 +25,7 @@ const Layout: React.FC<Props> = ({children}) => {
                         onChange={(e) => setSettings({ ...settings, enabled: e.target.checked })}
                         checked={settings.enabled}
                         large={true}
+                        disabled={!isAuthenticated}
                     />
                 </Tooltip>
                 <button

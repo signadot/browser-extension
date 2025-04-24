@@ -24,8 +24,16 @@ export const getBrowserStoreValue = async (key: StorageBrowserKeys, onResult: (r
     onResult(result[key]);
 }
 
-export const setBrowserStoreValue = async (key: StorageBrowserKeys, value: any) => {
-    await chrome.storage.local.set({ [key]: value });
+export const setBrowserStoreValue = async (key: StorageBrowserKeys, value: any, onSet?: (result: any) => void) => {
+    if (value === undefined) {
+        await chrome.storage.local.remove([key]);
+        onSet?.(value);
+        return;
+    }
+
+    await chrome.storage.local.set({ [key]: value }, () => {
+        onSet?.(value);
+    });
 }
 
 export const setBrowserStoreValues = async (values: Record<StorageBrowserKeys, any>) => {

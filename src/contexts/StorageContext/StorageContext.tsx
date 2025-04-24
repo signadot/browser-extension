@@ -47,32 +47,106 @@ export const StorageProvider: React.FC<StorageProviderProps> = ({ children }) =>
         setIsStorageLoaded(true);
     }, []);
 
+    // Load initial values from browser storage
     useEffect(() => {
+        const loadInitialValues = async () => {
+            const storedValues = await chrome.storage.local.get([
+                StorageBrowserKeys.enabled,
+                StorageBrowserKeys.debugMode,
+                StorageBrowserKeys.signadotUrls,
+                StorageBrowserKeys.traceparentHeader,
+                StorageBrowserKeys.routingKey,
+                StorageBrowserKeys.headers,
+            ]);
 
-        console.log({ state })
+            setState(prev => {
+                const newState = { ...prev };
+
+                // Enabled
+                if (storedValues[StorageBrowserKeys.enabled] !== undefined) {
+                    newState.settings = {
+                        ...newState.settings,
+                        enabled: Boolean(storedValues[StorageBrowserKeys.enabled])
+                    };
+                }
+
+                // Debug mode
+                if (storedValues[StorageBrowserKeys.debugMode] !== undefined) {
+                    try {
+                        newState.settings = {
+                            ...newState.settings,
+                            debugMode: JSON.parse(storedValues[StorageBrowserKeys.debugMode])
+                        };
+                    } catch {
+                        newState.settings = { ...newState.settings, debugMode: defaultSettings.debugMode };
+                    }
+                }
+
+                // Signadot URLs
+                if (storedValues[StorageBrowserKeys.signadotUrls] !== undefined) {
+                    try {
+                        const urls = JSON.parse(storedValues[StorageBrowserKeys.signadotUrls]);
+                        newState.settings = {
+                            ...newState.settings,
+                            signadotUrls: {
+                                apiUrl: urls.apiUrl || defaultSettings.signadotUrls.apiUrl,
+                                previewUrl: urls.previewUrl || defaultSettings.signadotUrls.previewUrl,
+                                dashboardUrl: urls.dashboardUrl || defaultSettings.signadotUrls.dashboardUrl
+                            }
+                        };
+                    } catch {
+                        newState.settings = { ...newState.settings, signadotUrls: defaultSettings.signadotUrls };
+                    }
+                }
+
+                // Traceparent
+                if (storedValues[StorageBrowserKeys.traceparentHeader] !== undefined) {
+                    try {
+                        const traceparent = JSON.parse(storedValues[StorageBrowserKeys.traceparentHeader]);
+                        newState.traceparent = {
+                            inject: Boolean(traceparent.inject),
+                            value: traceparent.value || defaultTraceparent.value
+                        };
+                    } catch {
+                        newState.traceparent = defaultTraceparent;
+                    }
+                }
+
+                // Routing key
+                if (storedValues[StorageBrowserKeys.routingKey] !== undefined) {
+                    newState.currentRoutingKey = storedValues[StorageBrowserKeys.routingKey] || undefined;
+                }
+
+                return newState;
+            });
+        };
+
+        loadInitialValues();
+    }, []);
+
+    useEffect(() => {
         const { isAuthenticated, currentRoutingKey, headers, traceparent } = state;
 
-        if (shouldInjectHeader(isAuthenticated, currentRoutingKey, headers) && currentRoutingKey) {
+        if (shouldInjectHeader(isAuthenticated, currentRoutingKey, headers) && currentRoutingKey !== undefined && currentRoutingKey !== "") {
             const headersToInject = getHeaders(currentRoutingKey, headers, traceparent)
             setBrowserStoreValue(StorageBrowserKeys.headers, JSON.stringify(headersToInject ));
         } else {
-            console.log("Removing headers")
-            setBrowserStoreValue(StorageBrowserKeys.headers, "no headers");
+            setBrowserStoreValue(StorageBrowserKeys.headers, JSON.stringify([]));
         }
     }, [state])
     
-
     const handleSetRoutingKey = (value: string | undefined) => {
-        console.log({ routingKey: value })
-
-        setState((prev) => ({ ...prev, currentRoutingKey: value }));
-        setBrowserStoreValue(StorageBrowserKeys.routingKey, value);
+        setBrowserStoreValue(StorageBrowserKeys.routingKey, value, () => {
+            setState((prev) => ({ ...prev, currentRoutingKey: value }));
+        });
     }
 
     const handleSetTraceparent = (inject: boolean, value: undefined | string) => {
         const valueToSet = value || defaultTraceparent.value;
 
-        setState((prev) => ({ ...prev, traceparent: { value: valueToSet, inject } }));
+        setBrowserStoreValue(StorageBrowserKeys.traceparentHeader, JSON.stringify({ value: valueToSet, inject }), () => {
+            setState((prev) => ({ ...prev, traceparent: { value: valueToSet, inject } }));
+        });
     }
 
     const handleUpdateSettings = (settings: Settings) => {
