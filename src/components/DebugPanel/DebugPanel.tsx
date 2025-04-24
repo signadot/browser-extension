@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, H5, Pre, Tag, Collapse, Button } from '@blueprintjs/core';
-import { useChromeStorage } from '../../hooks/storage';
+import { useStorage } from '../../contexts/StorageContext/StorageContext';
 import styles from './DebugPanel.module.css';
 
 type ValueType = 'string' | 'number' | 'boolean' | 'undefined' | 'object' | 'function' | 'array' | 'null';
@@ -13,7 +13,7 @@ interface StateEntry {
 
 export const DebugPanel: React.FC = () => {
   const [isOpen, setIsOpen] = React.useState(false);
-  const storage = useChromeStorage();
+  const storage = useStorage();
 
   const storageEntries = Object.entries(storage).map(([key, value]): StateEntry | null => {
     let displayValue: string;
@@ -51,7 +51,7 @@ export const DebugPanel: React.FC = () => {
     };
   });
 
-  if (!storage.debugMode) {
+  if (!storage.settings.debugMode) {
     return null;
   }
 

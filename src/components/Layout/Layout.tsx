@@ -1,10 +1,10 @@
 import React from "react";
 import styles from "./Layout.module.css";
-import {useChromeStorage} from "../../hooks/storage";
 import {Switch, Tooltip} from "@blueprintjs/core";
 import { IoHomeSharp, IoSettingsSharp } from "react-icons/io5";
 import {useRouteView} from "../../contexts/RouteViewContext/RouteViewContext";
 import { DebugPanel } from "../DebugPanel/DebugPanel";
+import { useStorage } from "../../contexts/StorageContext/StorageContext";
 const logoPath = chrome.runtime.getURL("images/signadot-full-logo.png");
 
 interface Props {
@@ -12,18 +12,18 @@ interface Props {
 }
 
 const Layout: React.FC<Props> = ({children}) => {
-  const {init, enabled, setEnabled} = useChromeStorage();
   const { currentView, setCurrentView } = useRouteView();
+  const { init, settings, setSettings } = useStorage();
   return init && (
       <div className={styles.container}>
         <div className={styles.topBar}>
           <div><img src={logoPath} height={80}/></div>
             <div className={styles.topRight}>
-                <Tooltip content={`Header injection ${enabled ? "Enabled" : "Disabled"}`}>
+                <Tooltip content={`Header injection ${settings.enabled ? "Enabled" : "Disabled"}`}>
                     <Switch
                         alignIndicator={"right"}
-                        onChange={(e) => setEnabled(e.target.checked)}
-                        checked={enabled}
+                        onChange={(e) => setSettings({ ...settings, enabled: e.target.checked })}
+                        checked={settings.enabled}
                         large={true}
                     />
                 </Tooltip>
@@ -40,7 +40,7 @@ const Layout: React.FC<Props> = ({children}) => {
                 </button>
             </div>
         </div>
-          {enabled ? <div className={styles.body}>{children}</div> : null}
+          {settings.enabled ? <div className={styles.body}>{children}</div> : null}
           <DebugPanel/>
       </div>
   );

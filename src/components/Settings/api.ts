@@ -1,13 +1,13 @@
 import { auth } from "../../contexts/auth";
-import { StorageKey } from "../../hooks/storage";
 import { RoutingEntity } from "../ListRouteEntries/types";
+import { getBrowserStoreValue, StorageBrowserKeys } from "../../contexts/StorageContext/browserKeys";
 
 export const DEFAULT_API_URL = 'https://api.signadot.com';
 
 export const getApiUrl = async (): Promise<string> => {
   return new Promise<string>((resolve) => {
-    chrome.storage.local.get([StorageKey.ApiUrl], (result: { apiUrl?: string }) => {
-      const baseUrl = (result.apiUrl || DEFAULT_API_URL).replace(/\/+$/, '');
+    getBrowserStoreValue(StorageBrowserKeys.apiUrl, (result: string) => {
+      const baseUrl = (result || DEFAULT_API_URL).replace(/\/+$/, '');
       resolve(baseUrl);
     });
   });

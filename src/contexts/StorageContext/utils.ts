@@ -23,7 +23,7 @@ export const getGroupedHeadersByKind = (headers: Header[]): Record<"basic" | "ex
     return groupedHeaders;
 }
 
-const shouldInjectHeader = (isAuthenticated: boolean, routingKey: string | undefined, headers: Header[]): boolean => {
+export const shouldInjectHeader = (isAuthenticated: boolean, routingKey: string | undefined, headers: Header[]): boolean => {
     return isAuthenticated && typeof routingKey === "string" && headers.length > 0;
 }
 

@@ -11,6 +11,7 @@ export type TraceparentConfig = {
 
 export type Settings = {
     debugMode: boolean;
+    enabled: boolean;
     signadotUrls: SignadotUrlsConfig;
 }
 
@@ -37,4 +38,7 @@ export type StorageContextType = {
     currentRoutingKey: string | undefined;
     setIsAuthenticated: (value: boolean) => void;
     setCurrentRoutingKey: (value: string | undefined) => void;
+    setTraceparent: (inject: boolean, value: undefined | string) => void;
+    setSettings: (value: Settings) => void;
+    setHeaders: (value: Header[]) => void;
 }

@@ -1,7 +1,6 @@
 import React, {createContext, useContext, useEffect, useState} from "react";
 import {auth} from "./auth";
 import Layout from "../components/Layout/Layout";
-import { useChromeStorage } from "../hooks/storage";
 import { useStorage } from "./StorageContext/StorageContext";
 
 const loadingIconPath = chrome.runtime.getURL("images/loading.gif");

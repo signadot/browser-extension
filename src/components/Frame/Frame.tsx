@@ -4,7 +4,6 @@ import {RoutingEntity} from "../ListRouteEntries/types";
 import ListRouteEntries from "../ListRouteEntries";
 import {useFetchRoutingEntries} from "../ListRouteEntries/hooks";
 import PinnedRouteGroup from "../PinnedRouteGroup";
-import {useChromeStorage} from "../../hooks/storage";
 import {Section, SectionCard} from "@blueprintjs/core";
 import Footer from "../Footer";
 import Settings from "../Settings/Settings";

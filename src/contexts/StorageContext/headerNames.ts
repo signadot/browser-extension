@@ -1,9 +1,6 @@
+import { Header } from "./types";
 
-export type Header = {
-    key: string;
-    value: string;
-    kind: 'basic' | 'extra';
-}
+export const HEADER_VALUE_TEMPLATE = "{routingKey}";
 
 export const BASIC_HEADERS: Header[] = [
     { key: "baggage", value: "sd-routing-key={routingKey},sd-sandbox={routingKey}", kind: 'basic' },
@@ -11,8 +8,8 @@ export const BASIC_HEADERS: Header[] = [
 ];
 
 export const HEADERS_BEFORE_V191: Header[] = [
-    { key: "ot-baggage-sd-routing-key", value: "{routingKey}", kind: 'extra' },
-    { key: "ot-baggage-sd-sandbox", value: "{routingKey}", kind: 'extra' },
-    { key: "uberctx-sd-routing-key", value: "{routingKey}", kind: 'extra' },
-    { key: "uberctx-sd-sandbox", value: "{routingKey}", kind: 'extra' },
+    { key: "ot-baggage-sd-routing-key", value: HEADER_VALUE_TEMPLATE, kind: 'extra' },
+    { key: "ot-baggage-sd-sandbox", value: HEADER_VALUE_TEMPLATE, kind: 'extra' },
+    { key: "uberctx-sd-routing-key", value: HEADER_VALUE_TEMPLATE, kind: 'extra' },
+    { key: "uberctx-sd-sandbox", value: HEADER_VALUE_TEMPLATE, kind: 'extra' },
 ];

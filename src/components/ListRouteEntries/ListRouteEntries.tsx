@@ -5,8 +5,8 @@ import {RoutingEntity} from "./types";
 import {ItemListRendererProps, ItemPredicate, ItemRenderer, Suggest} from "@blueprintjs/select";
 import {Menu, MenuItem} from "@blueprintjs/core";
 import styles from "./ListRouteEntries.module.css";
-import { useChromeStorage } from "../../hooks/storage";
-
+import { useStorage } from "../../contexts/StorageContext/StorageContext";
+import { BASIC_HEADERS, HEADER_VALUE_TEMPLATE } from "../../contexts/StorageContext/headerNames";
 const SELECT_LIST_ITEM_COUNT = 5;
 
 interface Props {
@@ -20,9 +20,7 @@ const ListRouteEntries: React.FC<Props> = ({
                                              setUserSelectedRoutingEntity,
                                              orgName,
                                            }) => {
-  const [userSelected, setUserSelected] = React.useState<RoutingEntity | undefined>(undefined);
-
-  const { setExtraHeaders, apiUrl } = useChromeStorage();
+  const { settings, setHeaders } = useStorage();
 
   const { data: clusters, isLoading, error, refetch } = useQuery({
     queryKey: ['clusters', orgName],
@@ -32,7 +30,7 @@ const ListRouteEntries: React.FC<Props> = ({
 
   useEffect(() => {
     refetch();
-  }, [apiUrl]);
+  }, [settings.signadotUrls.apiUrl]);
 
   const handleClick = React.useCallback(
       (name: string): void => {
@@ -41,13 +39,22 @@ const ListRouteEntries: React.FC<Props> = ({
         );
         const selected = filteredEntity?.[0];
         if (selected) {
-          setUserSelected(selected);
           setUserSelectedRoutingEntity(selected);
           const cluster = clusters?.find((c) => c.name === selected.cluster);
 
           if (!cluster) return;
           const clusterConfig = cluster.clusterConfig
-          setExtraHeaders(clusterConfig ? (clusterConfig?.routing?.customHeaders || []) : null);
+
+          let headers = BASIC_HEADERS;
+          if (clusterConfig) {  
+            headers = [...headers, ...(clusterConfig?.routing?.customHeaders?.map((header) => ({
+              key: header,
+              value: HEADER_VALUE_TEMPLATE,
+              kind: "extra" as const,
+            })) || [])];
+          }
+
+          setHeaders(headers);
         }
       },
       [routingEntities]

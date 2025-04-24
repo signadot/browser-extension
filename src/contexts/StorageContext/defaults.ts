@@ -7,6 +7,7 @@ export const DEFAULT_TRACEPARENT_VALUE = "00-abcdef0123456789-abcdef01-00";
 
 export const defaultSettings: Settings = {
     debugMode: false,
+    enabled: false,
     signadotUrls: {
         apiUrl: DEFAULT_SIGNADOT_API_URL,
         previewUrl: DEFAULT_SIGNADOT_PREVIEW_URL,

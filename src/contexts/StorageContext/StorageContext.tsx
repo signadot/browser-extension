@@ -1,6 +1,9 @@
 import React, { useEffect, useState, createContext, useContext } from "react";
-import { StorageContextType, StorageState } from "./types";
+import { Header, Settings, StorageContextType, StorageState } from "./types";
 import { defaultTraceparent, defaultSettings } from "./defaults";
+import { StorageBrowserKeys } from "./browserKeys";
+import { setBrowserStoreValue } from "./browserKeys";
+import { shouldInjectHeader } from "./utils";
 
 const StorageContext = createContext<StorageContextType | undefined>(undefined);
 
@@ -23,6 +26,37 @@ export const StorageProvider: React.FC<StorageProviderProps> = ({ children }) =>
         setIsStorageLoaded(true);
     }, []);
 
+    useEffect(() => {
+        const { isAuthenticated, currentRoutingKey, headers } = state;
+
+        if (shouldInjectHeader(isAuthenticated, currentRoutingKey, headers)) {
+            setBrowserStoreValue(StorageBrowserKeys.headers, JSON.stringify(headers));
+        } else {
+            setBrowserStoreValue(StorageBrowserKeys.headers, []);
+        }
+    }, [state])
+    
+
+    const handleSetRoutingKey = (value: string | undefined) => {
+        setState({ ...state, currentRoutingKey: value });
+        setBrowserStoreValue(StorageBrowserKeys.routingKey, value);
+    }
+
+    const handleSetTraceparent = (inject: boolean, value: undefined | string) => {
+        const valueToSet = value || defaultTraceparent.value;
+
+        setState({ ...state, traceparent: { value: valueToSet, inject } });
+    }
+
+    const handleUpdateSettings = (settings: Settings) => {
+        setState({ ...state, settings });
+
+        setBrowserStoreValue(StorageBrowserKeys.enabled, settings.enabled);
+        setBrowserStoreValue(StorageBrowserKeys.traceparentHeader, JSON.stringify(state.traceparent));
+        setBrowserStoreValue(StorageBrowserKeys.signadotUrls, JSON.stringify(settings.signadotUrls));
+        setBrowserStoreValue(StorageBrowserKeys.debugMode, JSON.stringify(settings.debugMode));
+    }
+
     const value = {
         init: isStorageLoaded,
         isAuthenticated: state.isAuthenticated,
@@ -31,7 +65,10 @@ export const StorageProvider: React.FC<StorageProviderProps> = ({ children }) =>
         headers: state.headers,
         currentRoutingKey: state.currentRoutingKey,
         setIsAuthenticated: (value: boolean) => setState({ ...state, isAuthenticated: value }),
-        setCurrentRoutingKey: (value: string | undefined) => setState({ ...state, currentRoutingKey: value }),
+        setCurrentRoutingKey: handleSetRoutingKey,
+        setTraceparent: (inject: boolean, value: undefined | string) => handleSetTraceparent(inject, value),
+        setSettings: (value: Settings) => handleUpdateSettings(value),
+        setHeaders: (value: Header[]) => setState({ ...state, headers: value }),
     };
 
     return (

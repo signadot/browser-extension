@@ -1,4 +1,4 @@
-import { StorageKey } from "../hooks/storage";
+import { StorageBrowserKeys } from "./StorageContext/browserKeys";
 
 type PostAuthCallbackFn = (authenticated: boolean) => void;
 const AUTH_SESSION_COOKIE_NAME = "signadot-auth";
@@ -42,9 +42,10 @@ export const auth = async (callback: AuthCallbackFn, options?: AuthOptions) => {
   let previewUrl = options?.previewUrl;
 
   if (!apiUrl || !previewUrl) {
-    chrome.storage.local.get([StorageKey.ApiUrl, StorageKey.PreviewUrl], (result) => {
-      apiUrl = result[StorageKey.ApiUrl];
-      previewUrl = result[StorageKey.PreviewUrl];
+    chrome.storage.local.get([StorageBrowserKeys.signadotUrls ], (result) => {
+      const signadotUrls = JSON.parse(result[StorageBrowserKeys.signadotUrls]);
+      apiUrl = signadotUrls.apiUrl;
+      previewUrl = signadotUrls.previewUrl;
 
       if (apiUrl === undefined || previewUrl === undefined) {
         callback(false);
