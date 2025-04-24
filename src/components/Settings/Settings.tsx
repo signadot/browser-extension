@@ -28,6 +28,8 @@ const Settings: React.FC<SettingsProps> = ({onClose}) => {
         dashboardUrl: storedDashboardUrl,
         traceparentHeaderEnabled: storedTraceparentEnabled,
         setTraceparentHeaderEnabled,
+        debugMode,
+        setDebugMode,
     } = useChromeStorage();
     const [isExtraSettingsOpen, setIsExtraSettingsOpen] = React.useState(false);
 
@@ -106,6 +108,14 @@ const Settings: React.FC<SettingsProps> = ({onClose}) => {
                         large={false}
                     />
                     <label htmlFor="traceparentEnabled">Enable Traceparent</label>
+                </div>
+                <div className={styles.traceparent}>
+                    <Switch
+                        onChange={(e) => setDebugMode(e.target.checked)}
+                        checked={debugMode}
+                        large={false}
+                    />
+                    <label htmlFor="debugEnabled">Debug Mode</label>
                 </div>
                 <div className={styles.formGroup}>
                     <label htmlFor="traceparentHeader">Traceparent Header Value:</label>

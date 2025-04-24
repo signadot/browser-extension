@@ -51,6 +51,10 @@ export const DebugPanel: React.FC = () => {
     };
   });
 
+  if (!storage.debugMode) {
+    return null;
+  }
+
   return (
     <div className={styles.debugContainer}>
       <Button

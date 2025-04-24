@@ -1,66 +1,119 @@
 import React from "react";
 import StorageChange = chrome.storage.StorageChange;
 import { getHeaders, Header } from "../service-worker";
-import { DEFAULT_API_URL, DEFAULT_PREVIEW_URL, DEFAULT_DASHBOARD_URL, DEFAULT_TRACEPARENT_HEADER } from "../components/Settings/Settings";
 
-export enum StorageKey {
-  RoutingKey = "routingKey",
-  Enabled = "enabled",
-  ExtraHeaders = "extraHeaders",
-  TraceparentHeader = "traceparentHeader",
-  TraceparentHeaderEnabled = "traceparentHeaderEnabled",
-  InjectedHeaders = "injectedHeaders",
-  ApiUrl = "apiUrl",
-  PreviewUrl = "previewUrl",
-  DashboardUrl = "dashboardUrl",
-}
-
-type StorageKeyToType = {
-  [StorageKey.RoutingKey]: string | undefined;
-  [StorageKey.Enabled]: boolean;
-  [StorageKey.ExtraHeaders]: string[] | null | undefined;
-  [StorageKey.TraceparentHeader]: string;
-  [StorageKey.TraceparentHeaderEnabled]: boolean;
-  [StorageKey.InjectedHeaders]: Record<string, Header> | undefined;
-  [StorageKey.ApiUrl]: string;
-  [StorageKey.PreviewUrl]: string;
-  [StorageKey.DashboardUrl]: string;
-}
-
-type StorageState = StorageKeyToType;
-
-const defaultValues: Partial<StorageState> = {
-  [StorageKey.Enabled]: true,
-  [StorageKey.TraceparentHeader]: DEFAULT_TRACEPARENT_HEADER,
-  [StorageKey.TraceparentHeaderEnabled]: false,
-  [StorageKey.ApiUrl]: DEFAULT_API_URL,
-  [StorageKey.PreviewUrl]: DEFAULT_PREVIEW_URL,
-  [StorageKey.DashboardUrl]: DEFAULT_DASHBOARD_URL,
+// Types for the storage structure
+export type SignadotUrls = {
+  apiUrl: string | undefined;
+  previewUrl: string | undefined;
+  dashboardUrl: string | undefined;
 };
 
-const useStorage = () => {
-  const [state, setState] = React.useState<StorageState>(() => ({
-    ...defaultValues,
-  } as StorageState));
+export type TraceparentConfig = {
+  inject: boolean;
+  value: string;
+};
 
-  const setStorageValue = React.useCallback(async <K extends StorageKey>(
+export type Settings = {
+  debugMode: boolean;
+  signadotUrls: SignadotUrls;
+};
+
+// Chrome storage types
+export type ChromeStorage = {
+  headers: [string, string][];
+  routingKey: string | undefined;
+  traceparent: string | undefined;
+  debugMode: boolean;
+};
+
+export type SignadotConfig = {
+  apiUrl: string | undefined;
+  previewUrl: string | undefined;
+  dashboardUrl: string | undefined;
+};
+
+// React state types
+export type StorageState = {
+  isAuthenticated: boolean;
+  settings: Settings;
+  traceparent: TraceparentConfig;
+  headers: Record<string, string>;
+  routingKey: string | undefined;
+};
+
+const defaultSettings: Settings = {
+  debugMode: false,
+  signadotUrls: {
+    apiUrl: undefined,
+    previewUrl: undefined,
+    dashboardUrl: undefined,
+  },
+};
+
+const defaultTraceparent: TraceparentConfig = {
+  inject: false,
+  value: "",
+};
+
+const defaultState: StorageState = {
+  isAuthenticated: false,
+  settings: defaultSettings,
+  traceparent: defaultTraceparent,
+  headers: {},
+  routingKey: undefined,
+};
+
+const setStorageValueFn = async <K extends keyof ChromeStorage>(
+  key: K,
+  value: ChromeStorage[K]
+): Promise<void> => {
+  await chrome.storage.local.set({ [key]: value });
+}
+
+const useStorage = () => {
+  const [state, setState] = React.useState<StorageState>(defaultState);
+
+  const setStorageValue = React.useCallback(async <K extends keyof ChromeStorage>(
     key: K,
-    value: StorageKeyToType[K]
+    value: ChromeStorage[K]
   ): Promise<void> => {
+    console.log("Setting storage value: ", key, value);
+
     if (value === undefined || value === null) {
       await chrome.storage.local.remove(key);
-      setState(prev => {
-        const next = { ...prev };
-        delete next[key];
-        return next;
-      });
     } else {
       await chrome.storage.local.set({ [key]: value });
-      setState(prev => {
-        const next = { ...prev };
-        (next[key] as StorageKeyToType[K]) = value;
-        return next;
-      });
+    }
+
+    // Update local state based on chrome storage changes
+    if (key === 'headers') {
+      setState(prev => ({
+        ...prev,
+        headers: Object.fromEntries(value as [string, string][]),
+      }));
+    } else if (key === 'routingKey') {
+      setState(prev => ({
+        ...prev,
+        routingKey: value as string | undefined,
+      }));
+    } else if (key === 'traceparent') {
+      setState(prev => ({
+        ...prev,
+        traceparent: {
+          ...prev.traceparent,
+          value: value as string | undefined || '',
+          inject: value !== undefined,
+        },
+      }));
+    } else if (key === 'debugMode') {
+      setState(prev => ({
+        ...prev,
+        settings: {
+          ...prev.settings,
+          debugMode: value as boolean,
+        },
+      }));
     }
   }, []);
 
@@ -68,16 +121,27 @@ const useStorage = () => {
   React.useEffect(() => {
     // Load all storage values
     chrome.storage.local.get(null, (result) => {
-      const newState = { ...defaultValues } as StorageState;
-      
-      // Type-safe way to handle each storage key
-      (Object.values(StorageKey) as StorageKey[]).forEach((key) => {
-        if (key in result) {
-          (newState[key] as any) = result[key];
-        }
-      });
+      const chromeStorage = result as ChromeStorage;
+      const signadotConfig = result as SignadotConfig;
 
-      setState(newState);
+      setState({
+        isAuthenticated: chromeStorage.headers.length > 0,
+        settings: {
+          ...defaultSettings,
+          debugMode: chromeStorage.debugMode ?? false,
+          signadotUrls: {
+            apiUrl: signadotConfig.apiUrl,
+            previewUrl: signadotConfig.previewUrl,
+            dashboardUrl: signadotConfig.dashboardUrl,
+          },
+        },
+        traceparent: {
+          inject: chromeStorage.traceparent !== undefined,
+          value: chromeStorage.traceparent || '',
+        },
+        headers: Object.fromEntries(chromeStorage.headers || []),
+        routingKey: chromeStorage.routingKey,
+      });
     });
 
     // Listen for changes
@@ -85,10 +149,19 @@ const useStorage = () => {
       setState(prev => {
         const next = { ...prev };
         Object.entries(changes).forEach(([key, change]) => {
-          if (key in StorageKey) {
-            const storageKey = key as StorageKey;
-            const defaultValue = defaultValues[storageKey];
-            (next[storageKey] as any) = change.newValue ?? defaultValue;
+          if (key === 'headers') {
+            next.headers = Object.fromEntries(change.newValue || []);
+          } else if (key === 'routingKey') {
+            next.routingKey = change.newValue;
+          } else if (key === 'traceparent') {
+            next.traceparent = {
+              inject: change.newValue !== undefined,
+              value: change.newValue || '',
+            };
+          } else if (key === 'debugMode') {
+            next.settings.debugMode = change.newValue;
+          } else if (key === 'apiUrl' || key === 'previewUrl' || key === 'dashboardUrl') {
+            next.settings.signadotUrls[key] = change.newValue;
           }
         });
         return next;
@@ -102,35 +175,25 @@ const useStorage = () => {
   return [state, setStorageValue] as const;
 };
 
-export const useChromeStorage = () => {
+type useChromeStorageReturn = {
+  init: boolean;
+  isAuthenticated: boolean;
+  settings: Settings;
+  traceparent: TraceparentConfig;
+  headers: Record<string, string>;
+  routingKey: string | undefined;
+  setHeaders: (headers: [string, string][]) => void;
+  setRoutingKey: (value: string | undefined) => void;
+  setTraceparent: (value: string | undefined) => void;
+  setDebugMode: (value: boolean) => void;
+  setApiUrl: (value: string | undefined) => void;
+  setPreviewUrl: (value: string | undefined) => void;
+  setDashboardUrl: (value: string | undefined) => void;
+}
+
+export const useChromeStorage = (): useChromeStorageReturn => {
   const [init, setInit] = React.useState(false);
-  const [injectedHeaders, setInjectedHeaders] = React.useState<Record<string, Header> | undefined>();
   const [storage, setStorage] = useStorage();
-
-  // Handle injected headers updates
-  React.useEffect(() => {
-    const headers = getHeaders(
-      storage[StorageKey.ExtraHeaders],
-      storage[StorageKey.TraceparentHeaderEnabled] ? storage[StorageKey.TraceparentHeader] : undefined
-    );
-    setInjectedHeaders(headers);
-  }, [
-    storage[StorageKey.ExtraHeaders],
-    storage[StorageKey.TraceparentHeader],
-    storage[StorageKey.TraceparentHeaderEnabled]
-  ]);
-
-  // Handle extension icon updates
-  React.useEffect(() => {
-    const iconState = (!storage[StorageKey.Enabled] || !storage[StorageKey.RoutingKey]) ? 'inactive' : 'active';
-    chrome.action.setIcon({
-      path: {
-        "16": `images/icons/icon16_${iconState}.png`,
-        "48": `images/icons/icon48_${iconState}.png`,
-        "128": `images/icons/icon128_${iconState}.png`,
-      }
-    });
-  }, [storage[StorageKey.Enabled], storage[StorageKey.RoutingKey]]);
 
   // Set init state once storage is loaded
   React.useEffect(() => {
@@ -139,22 +202,17 @@ export const useChromeStorage = () => {
 
   return {
     init,
-    enabled: storage[StorageKey.Enabled],
-    setEnabled: (value: boolean) => setStorage(StorageKey.Enabled, value),
-    routingKey: storage[StorageKey.RoutingKey],
-    setRoutingKeyFn: (value: string | undefined) => setStorage(StorageKey.RoutingKey, value),
-    extraHeaders: storage[StorageKey.ExtraHeaders],
-    setExtraHeaders: (value: string[] | null | undefined) => setStorage(StorageKey.ExtraHeaders, value),
-    traceparentHeader: storage[StorageKey.TraceparentHeader],
-    setTraceparentHeader: (value: string) => setStorage(StorageKey.TraceparentHeader, value),
-    traceparentHeaderEnabled: storage[StorageKey.TraceparentHeaderEnabled],
-    setTraceparentHeaderEnabled: (value: boolean) => setStorage(StorageKey.TraceparentHeaderEnabled, value),
-    injectedHeaders,
-    apiUrl: storage[StorageKey.ApiUrl],
-    setApiUrl: (value: string) => setStorage(StorageKey.ApiUrl, value),
-    previewUrl: storage[StorageKey.PreviewUrl],
-    setPreviewUrl: (value: string) => setStorage(StorageKey.PreviewUrl, value),
-    dashboardUrl: storage[StorageKey.DashboardUrl],
-    setDashboardUrl: (value: string) => setStorage(StorageKey.DashboardUrl, value),
+    isAuthenticated: storage.isAuthenticated,
+    settings: storage.settings,
+    traceparent: storage.traceparent,
+    headers: storage.headers,
+    routingKey: storage.routingKey,
+    setHeaders: (headers: [string, string][]) => setStorage('headers', headers),
+    setRoutingKey: (value: string | undefined) => setStorage('routingKey', value),
+    setTraceparent: (value: string | undefined) => setStorage('traceparent', value),
+    setDebugMode: (value: boolean) => setStorage('debugMode', value),
+    setApiUrl: (value: string | undefined) => setStorage('apiUrl', value),
+    setPreviewUrl: (value: string | undefined) => setStorage('previewUrl', value),
+    setDashboardUrl: (value: string | undefined) => setStorage('dashboardUrl', value),
   };
 };

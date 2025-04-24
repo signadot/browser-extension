@@ -63,10 +63,10 @@ const getRules = (
   headerKeys: Record<string, Header>,
   routingKey: string
 ): chrome.declarativeNetRequest.Rule[] => {
-	  	
+  let id = 1;
   return Object.keys(headerKeys).map(
     (key, idx) => ({
-      id: idx + 1,
+      id: id++,
       priority: 1,
       action: {
         type: chrome.declarativeNetRequest.RuleActionType.MODIFY_HEADERS,
@@ -88,13 +88,24 @@ const getRules = (
 }
 
 async function updateDynamicRules() {
-  chrome.storage.local.get([StorageKey.RoutingKey, StorageKey.Enabled, StorageKey.ExtraHeaders, StorageKey.TraceparentHeader, StorageKey.TraceparentHeaderEnabled], async (result) => {
+  chrome.storage.local.get([
+    StorageKey.RoutingKey,
+    StorageKey.Enabled,
+    StorageKey.ExtraHeaders,
+    StorageKey.TraceparentHeader,
+    StorageKey.TraceparentHeaderEnabled,
+    StorageKey.Authenticated
+  ], async (result) => {
     const currentRoutingKey = result[StorageKey.RoutingKey];
     const currentFeatureEnabled = !!result[StorageKey.Enabled];
     const currentExtraHeaders = result[StorageKey.ExtraHeaders];
     const currentTraceparentHeader = result[StorageKey.TraceparentHeader];
     const currentTraceparentHeaderEnabled = result[StorageKey.TraceparentHeaderEnabled];
-    if (currentFeatureEnabled && currentRoutingKey) {
+    const isAuthenticated = result[StorageKey.Authenticated];
+
+    console.log("isAuthenticated 2: ", currentFeatureEnabled && currentRoutingKey && isAuthenticated);
+    console.log({ currentRoutingKey, isAuthenticated, currentFeatureEnabled })
+    if (currentFeatureEnabled && currentRoutingKey && isAuthenticated) {
       try {
         const traceparentHeaderValue = currentTraceparentHeader === undefined ? DEFAULT_TRACEPARENT_HEADER : currentTraceparentHeader;
         const traceparentHeader = currentTraceparentHeaderEnabled ? traceparentHeaderValue : undefined;
@@ -106,9 +117,16 @@ async function updateDynamicRules() {
 
         await chrome.storage.local.set({[StorageKey.InjectedHeaders]: headerKeys});
 
+        await chrome.storage.local.set({[StorageKey.InjectedHeaders]: headerKeys});
+        await chrome.declarativeNetRequest.updateDynamicRules({
+          removeRuleIds: existingRules.map(rule => rule.id),
+        });
+
+        console.log("Removing rules: ", existingRules.map(rule => rule.id));
+        console.log("Adding rules: ", rules.map(rule => rule.id));
+
         await chrome.declarativeNetRequest.updateDynamicRules({
           addRules: rules,
-          removeRuleIds: existingRules.map(rule => rule.id),
         });
 
         console.log("Dynamic rules updated successfully.");
@@ -130,10 +148,17 @@ async function updateDynamicRules() {
   });
 }
 
+
 chrome.runtime.onInstalled.addListener(updateDynamicRules);
 chrome.runtime.onStartup.addListener(updateDynamicRules);
 chrome.storage.onChanged.addListener((changes, areaName) => {
-  if (areaName === "local" && (changes[StorageKey.RoutingKey] || changes[StorageKey.Enabled] || changes[StorageKey.TraceparentHeader] || changes[StorageKey.TraceparentHeaderEnabled])) {
+  if (areaName === "local" && (
+    changes[StorageKey.RoutingKey] ||
+    changes[StorageKey.Enabled] ||
+    changes[StorageKey.TraceparentHeader] ||
+    changes[StorageKey.TraceparentHeaderEnabled] ||
+    changes[StorageKey.Authenticated]
+  )) {
     updateDynamicRules();
   }
 });

@@ -1,7 +1,8 @@
-import React, {createContext, useContext, useState} from "react";
+import React, {createContext, useContext, useEffect, useState} from "react";
 import {auth} from "./auth";
 import Layout from "../components/Layout/Layout";
 import { useChromeStorage } from "../hooks/storage";
+import { useStorage } from "./StorageContext/StorageContext";
 
 const loadingIconPath = chrome.runtime.getURL("images/loading.gif");
 
@@ -48,10 +49,11 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 // AuthProvider component
 export const AuthProvider: React.FC<Props> = ({children}) => {
   const [authState, setAuthState] = useState<AuthState | undefined>(undefined);
-  const [authenticated, setAuthenticated] = React.useState<boolean | undefined>(undefined);
-  const { apiUrl, previewUrl } = useChromeStorage();
+  const [authenticated, setAuthenticated] = useState<boolean | undefined>(undefined);
+  const { settings, setIsAuthenticated } = useStorage();
+  const { apiUrl, previewUrl } = settings.signadotUrls; 
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!apiUrl || !previewUrl) return;
 
     auth(async (authenticated) => {
@@ -66,6 +68,7 @@ export const AuthProvider: React.FC<Props> = ({children}) => {
         
         if (response.status === 401 || !response.ok) {
           setAuthenticated(false);
+          setIsAuthenticated(false);
           return;
         }
 
@@ -85,12 +88,24 @@ export const AuthProvider: React.FC<Props> = ({children}) => {
         });
         
         setAuthenticated(true);
+        setIsAuthenticated(true);
       } catch (error) {
         console.error("Error fetching org:", error);
         setAuthenticated(false);
+        setIsAuthenticated(false);
       }
     }, { apiUrl, previewUrl });
   }, [apiUrl, previewUrl]);
+
+  useEffect(() => {
+    if (authState === undefined) {
+      setIsAuthenticated(false);
+    }
+
+    if (authState) {
+      setIsAuthenticated(true);
+    }
+  }, [authState])
 
   if (authenticated === undefined) {
     return (

@@ -4,7 +4,7 @@ import {useChromeStorage} from "../../hooks/storage";
 import {Switch, Tooltip} from "@blueprintjs/core";
 import { IoHomeSharp, IoSettingsSharp } from "react-icons/io5";
 import {useRouteView} from "../../contexts/RouteViewContext/RouteViewContext";
-
+import { DebugPanel } from "../DebugPanel/DebugPanel";
 const logoPath = chrome.runtime.getURL("images/signadot-full-logo.png");
 
 interface Props {
@@ -41,6 +41,7 @@ const Layout: React.FC<Props> = ({children}) => {
             </div>
         </div>
           {enabled ? <div className={styles.body}>{children}</div> : null}
+          <DebugPanel/>
       </div>
   );
 }

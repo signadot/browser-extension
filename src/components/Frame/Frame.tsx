@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import styles from "./Frame.module.css";
 import {RoutingEntity} from "../ListRouteEntries/types";
 import ListRouteEntries from "../ListRouteEntries";
@@ -10,29 +10,22 @@ import Footer from "../Footer";
 import Settings from "../Settings/Settings";
 import {useAuth} from "../../contexts/AuthContext";
 import {useRouteView} from "../../contexts/RouteViewContext/RouteViewContext";
-import { DebugPanel } from "../DebugPanel";
+import { useStorage } from "../../contexts/StorageContext/StorageContext";
 
 const Frame = () => {
-    const [debug, setDebug] = React.useState<boolean>(false);
-    const {routingKey, setRoutingKeyFn, enabled, extraHeaders} = useChromeStorage();
+    const {currentRoutingKey, setCurrentRoutingKey} = useStorage();
+
     const routingEntities: RoutingEntity[] = useFetchRoutingEntries();
-    const [userSelectedEntity, setUserSelectedEntity] = React.useState<RoutingEntity | undefined>(undefined);
     const {currentView, setCurrentView} = useRouteView();
     const {authState} = useAuth();
 
-    React.useEffect(() => {
-        if (userSelectedEntity) {
-            setRoutingKeyFn(userSelectedEntity.routingKey)
-        }
-    }, [userSelectedEntity]);
-
     const pinnedRoutingEntityData: RoutingEntity | undefined =
-        React.useMemo(() => {
+        useMemo(() => {
             const filteredList = routingEntities?.filter(
-                (entity) => entity.routingKey === routingKey
+                (entity) => entity.routingKey === currentRoutingKey
             );
             return filteredList?.[0];
-        }, [routingKey, routingEntities]);
+        }, [currentRoutingKey, routingEntities]);
 
     return (
         <div className={styles.container}>
@@ -43,16 +36,15 @@ const Frame = () => {
                     {pinnedRoutingEntityData && (
                         <PinnedRouteGroup
                             routingEntity={pinnedRoutingEntityData}
-                            onRemove={() => setUserSelectedEntity(undefined)}
+                            onRemove={() => setCurrentRoutingKey(undefined)}
                         />
                     )}
                     <ListRouteEntries
                         routingEntities={routingEntities}
-                        setUserSelectedRoutingEntity={setUserSelectedEntity}
+                        setUserSelectedRoutingEntity={(e) => setCurrentRoutingKey(e.routingKey)}
                         orgName={authState?.org.name}
                     />
                     <Footer/>
-                    <DebugPanel/>
                 </>
             )}
         </div>
