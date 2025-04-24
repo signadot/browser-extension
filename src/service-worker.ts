@@ -1,6 +1,6 @@
 // service-worker.ts
 
-import { StorageBrowserKeys } from "./contexts/StorageContext/browserKeys";
+import { getBrowserStoreValues, StorageBrowserKeys } from "./contexts/StorageContext/browserKeys";
 // import {getClusters} from "./components/ListRouteEntries/queries";
 
 export type Header = { value: string, kind: 'always' | 'extra' | 'defaultBeforeV191' }
@@ -86,6 +86,16 @@ const getRules = (
 }
 
 async function updateDynamicRules() {
+
+  const values = await getBrowserStoreValues([
+    StorageBrowserKeys.routingKey,
+    StorageBrowserKeys.enabled,
+    StorageBrowserKeys.headers,
+    StorageBrowserKeys.traceparentHeader,
+  ])
+
+  console.log({ values })
+
   chrome.storage.local.get([
     StorageBrowserKeys.routingKey,
     StorageBrowserKeys.enabled,
@@ -150,8 +160,13 @@ async function updateDynamicRules() {
 chrome.runtime.onInstalled.addListener(updateDynamicRules);
 chrome.runtime.onStartup.addListener(updateDynamicRules);
 chrome.storage.onChanged.addListener((changes, areaName) => {
+  console.log({ changes, areaName })
+
   if (areaName === "local" && (
-    changes[StorageBrowserKeys.headers]
+    changes[StorageBrowserKeys.headers] ||
+    changes[StorageBrowserKeys.routingKey] ||
+    changes[StorageBrowserKeys.enabled] ||
+    changes[StorageBrowserKeys.traceparentHeader]
   )) {
     updateDynamicRules();
   }
