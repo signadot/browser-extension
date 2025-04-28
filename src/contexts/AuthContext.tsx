@@ -2,6 +2,7 @@ import React, {createContext, useContext, useEffect, useState} from "react";
 import {auth} from "./auth";
 import Layout from "../components/Layout/Layout";
 import { useStorage } from "./StorageContext/StorageContext";
+import { Intent, Spinner, SpinnerSize } from "@blueprintjs/core";
 
 const loadingIconPath = chrome.runtime.getURL("images/loading.gif");
 
@@ -109,7 +110,13 @@ export const AuthProvider: React.FC<Props> = ({children}) => {
   if (authenticated === undefined) {
     return (
         <Layout>
-          <div><img src={loadingIconPath}/></div>
+          <div>
+              <Spinner
+                className="flex h-screen"
+                intent={Intent.PRIMARY}
+                size={SpinnerSize.SMALL}
+              />
+          </div>
         </Layout>
     );
   } else if (!authState) {
