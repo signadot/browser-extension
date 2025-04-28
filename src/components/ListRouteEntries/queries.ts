@@ -5,11 +5,11 @@ import {getApiUrl} from "../Settings/api";
 // an org name (and note that on popup open, we are reloading the auth)
 
 export const fetchSandboxes = async (
+    apiUrl: string,
     orgName?: string
 ): Promise<RoutingEntity[]> => {
   return new Promise(async (resolve, reject) => {
-    getApiUrl().then((apiUrl: string) => {
-      fetch(`${apiUrl}/api/v2/orgs/${orgName}/sandboxes`)
+    fetch(`${apiUrl}/api/v2/orgs/${orgName}/sandboxes`)
         .then((response) => {
           if (!response.ok) {
             throw new Error("Failed to fetch sandboxes");
@@ -18,16 +18,15 @@ export const fetchSandboxes = async (
         })
         .then((data) => resolve(data))
         .catch((error) => reject(error));
-    });
   });
 };
 
 export const fetchRouteGroups = async (
+    apiUrl: string,
     orgName?: string
 ): Promise<RoutingEntity[]> => {
   return new Promise(async (resolve, reject) => {
-    getApiUrl().then((apiUrl: string) => {
-      fetch(`${apiUrl}/api/v2/orgs/${orgName}/routegroups`)
+    fetch(`${apiUrl}/api/v2/orgs/${orgName}/routegroups`)
         .then((response) => {
           if (!response.ok) {
             throw new Error("Failed to fetch route groups");
@@ -36,18 +35,17 @@ export const fetchRouteGroups = async (
         })
         .then((data) => resolve(data))
         .catch((error) => reject(error));
-    });
   });
 };
 
 export const fetchClusters = async (
+    apiUrl: string,
     orgName: string
 ): Promise<Cluster[]> => {
     return new Promise(async (resolve, reject) => {
-      getApiUrl().then((apiUrl: string) => {
-        fetch(`${apiUrl}/api/v2/orgs/${orgName}/clusters`)
-            .then((response) => {
-                if (!response.ok) {
+      fetch(`${apiUrl}/api/v2/orgs/${orgName}/clusters`)
+          .then((response) => {
+              if (!response.ok) {
                     throw new Error("Failed to fetch clusters");
                 }
                 return response.json();
@@ -55,5 +53,4 @@ export const fetchClusters = async (
             .then((data) => resolve(data))
             .catch((error) => reject(error));
       });
-    });
 };
