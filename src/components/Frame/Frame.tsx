@@ -12,14 +12,16 @@ import {useRouteView} from "../../contexts/RouteViewContext/RouteViewContext";
 import { useStorage } from "../../contexts/StorageContext/StorageContext";
 
 const Frame = () => {
-    const {currentRoutingKey, setCurrentRoutingKey} = useStorage();
-
+    const {currentRoutingKey, setCurrentRoutingKey, settings} = useStorage();
     const routingEntities: RoutingEntity[] = useFetchRoutingEntries();
     const {currentView, setCurrentView} = useRouteView();
+
     const {authState} = useAuth();
 
+    const { enabled } = settings;
+
     const pinnedRoutingEntityData: RoutingEntity | undefined =
-        useMemo(() => {
+        React.useMemo(() => {
             const filteredList = routingEntities?.filter(
                 (entity) => entity.routingKey === currentRoutingKey
             );
@@ -27,24 +29,44 @@ const Frame = () => {
         }, [currentRoutingKey, routingEntities]);
 
     return (
-        <div className={styles.container}>
-            {currentView === "settings" ? (
-                <Settings onClose={() => setCurrentView("home")}/>
-            ) : (
-                <>
-                    {pinnedRoutingEntityData && (
-                        <PinnedRouteGroup
-                            routingEntity={pinnedRoutingEntityData}
-                            onRemove={() => setCurrentRoutingKey(undefined)}
-                        />
+        <div>
+            {enabled && (
+                <div className={styles.content}>
+                    {currentView === "settings" ? (
+                        <Settings onClose={() => setCurrentView("home")}/>
+                    ) : (
+                        <div className={styles.home}>
+                            <div>
+                                <ListRouteEntries
+                                    orgName={authState?.org.name}
+                                    routingEntities={routingEntities}
+                                    setUserSelectedRoutingEntity={(routingEntity) => setCurrentRoutingKey(routingEntity.routingKey)}
+                                />
+                                {pinnedRoutingEntityData ? (
+                                    <Section
+                                        compact
+                                        className={styles.pinned}
+                                    >
+                                        <SectionCard>
+                                            Headers are being set for:
+                                            <PinnedRouteGroup routingEntity={pinnedRoutingEntityData} onRemove={() => {
+                                                setCurrentRoutingKey(undefined);
+                                            }}/>
+                                        </SectionCard>
+                                    </Section>
+                                ) : <Section
+                                    compact
+                                    className={styles.pinned}
+                                >
+                                    <SectionCard className={styles.noSelectedMessage}>
+                                        No Sandbox or RouteGroup selected
+                                    </SectionCard>
+                                </Section>}
+                            </div>
+                            <Footer/>
+                        </div>
                     )}
-                    <ListRouteEntries
-                        routingEntities={routingEntities}
-                        setUserSelectedRoutingEntity={(e) => setCurrentRoutingKey(e.routingKey)}
-                        orgName={authState?.org.name}
-                    />
-                    <Footer/>
-                </>
+                </div>
             )}
         </div>
     );

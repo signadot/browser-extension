@@ -131,14 +131,7 @@ const Settings: React.FC<SettingsProps> = ({onClose}) => {
                     />
                     <label htmlFor="traceparentEnabled">Enable Traceparent</label>
                 </div>
-                <div className={styles.traceparent}>
-                    <Switch
-                        onChange={(e) => setTemporaryValues({...temporaryValues, debugMode: e.target.checked})}
-                        checked={temporaryValues.debugMode}
-                        large={false}
-                    />
-                    <label htmlFor="debugEnabled">Debug Mode</label>
-                </div>
+
                 <div className={styles.formGroup}>
                     <label htmlFor="traceparentHeader">Traceparent Header Value:</label>
                     <input
@@ -152,7 +145,22 @@ const Settings: React.FC<SettingsProps> = ({onClose}) => {
                 </div>
 
             </div>
+
             <div className={styles.section} data-hide-section={!isExtraSettingsOpen}>
+                <div className={styles.sectionHeader}>
+                    <h4 className={styles.sectionTitle}>General Settings</h4>
+                </div>
+                <div className={styles.traceparent}>
+                        <Switch
+                            onChange={(e) => setTemporaryValues({...temporaryValues, debugMode: e.target.checked})}
+                            checked={temporaryValues.debugMode}
+                            large={false}
+                        />
+                        <label htmlFor="debugEnabled">Debug Mode</label>
+                </div>
+            </div>
+            <div className={styles.section} data-hide-section={!isExtraSettingsOpen}>
+
                 <div className={styles.sectionHeader}>
                     <h4 className={styles.sectionTitle}>API Configuration</h4>
                 </div>
