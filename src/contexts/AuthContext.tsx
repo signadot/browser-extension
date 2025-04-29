@@ -1,137 +1,128 @@
-import React, {createContext, useContext, useEffect, useState} from "react";
-import {auth} from "./auth";
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { auth } from "./auth";
 import Layout from "../components/Layout/Layout";
 import { useStorage } from "./StorageContext/StorageContext";
 
 const loadingIconPath = chrome.runtime.getURL("images/loading.gif");
 
 interface Props {
-  children: React.ReactNode;
+	children: React.ReactNode;
 }
 
 interface AuthState {
-  org: {
-    name: string;
-    displayName?: string;
-  };
-  user: {
-    firstName?: string;
-    lastName?: string;
-  };
+	org: {
+		name: string;
+		displayName?: string;
+	};
+	user: {
+		firstName?: string;
+		lastName?: string;
+	};
 }
 
 // Define the shape of the context
 interface AuthContextType {
-  authState?: AuthState;
+	authState?: AuthState;
 }
 
 interface GetOrgsResponse {
-  orgs: {
-    name: string;
-    displayName: string;
-  }[];
-  user: {
-    firstName?: {
-      String?: string;
-      Valid: boolean;
-    };
-    lastName?: {
-      String?: string;
-      Valid: boolean;
-    };
-  };
+	orgs: {
+		name: string;
+		displayName: string;
+	}[];
+	user: {
+		firstName?: {
+			String?: string;
+			Valid: boolean;
+		};
+		lastName?: {
+			String?: string;
+			Valid: boolean;
+		};
+	};
 }
 
 // Create the context
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 // AuthProvider component
-export const AuthProvider: React.FC<Props> = ({children}) => {
-  const [authState, setAuthState] = useState<AuthState | undefined>(undefined);
-  const [authenticated, setAuthenticated] = useState<boolean | undefined>(undefined);
-  const { settings, setIsAuthenticated } = useStorage();
-  const { apiUrl, previewUrl } = settings.signadotUrls; 
+export const AuthProvider: React.FC<Props> = ({ children }) => {
+	const [authState, setAuthState] = useState<AuthState | undefined>(undefined);
+	const [authenticated, setAuthenticated] = useState<boolean | undefined>(
+		undefined,
+	);
+	const { settings, setIsAuthenticated } = useStorage();
+	const { apiUrl, previewUrl } = settings.signadotUrls;
 
-  useEffect(() => {
-    if (!apiUrl || !previewUrl) return;
+	useEffect(() => {
+		if (!apiUrl || !previewUrl) return;
 
-    auth(async (authenticated) => {
-      if (!authenticated) {
-        console.log("Not authenticated!");
-        setAuthenticated(false);
-        return;
-      }
+		auth(
+			async (authenticated) => {
+				if (!authenticated) {
+					console.log("Not authenticated!");
+					setAuthenticated(false);
+					return;
+				}
 
-      try {
-        const response = await fetch(`${apiUrl}/api/v1/orgs`);
-        
-        if (response.status === 401 || !response.ok) {
-          setAuthenticated(false);
-          setIsAuthenticated(false);
-          return;
-        }
+				try {
+					const response = await fetch(`${apiUrl}/api/v1/orgs`);
 
-        const data: GetOrgsResponse = await response.json();
-        
-        // Ensure we have orgs before accessing first item
-        if (!data.orgs?.length) {
-          throw new Error("No organizations found");
-        }
+					if (response.status === 401 || !response.ok) {
+						setAuthenticated(false);
+						setIsAuthenticated(false);
+						return;
+					}
 
-        setAuthState({
-          org: data.orgs[0],
-          user: {
-            firstName: data.user.firstName?.String,
-            lastName: data.user.lastName?.String,
-          },
-        });
-        
-        setAuthenticated(true);
-        setIsAuthenticated(true);
-      } catch (error) {
-        console.error("Error fetching org:", error);
-        setAuthenticated(false);
-        setIsAuthenticated(false);
-      }
-    }, { apiUrl, previewUrl });
-  }, [apiUrl, previewUrl]);
+					const data: GetOrgsResponse = await response.json();
 
-  useEffect(() => {
-    if (authState === undefined) {
-      setIsAuthenticated(false);
-    }
+					// Ensure we have orgs before accessing first item
+					if (!data.orgs?.length) {
+						throw new Error("No organizations found");
+					}
 
-    if (authState) {
-      setIsAuthenticated(true);
-    }
-  }, [authState])
+					setAuthState({
+						org: data.orgs[0],
+						user: {
+							firstName: data.user.firstName?.String,
+							lastName: data.user.lastName?.String,
+						},
+					});
 
-  if (authenticated === undefined) {
-    return (
-        <Layout>
-          <div><img src={loadingIconPath}/></div>
-        </Layout>
-    );
-  } else if (!authState) {
-    return (
-        <Layout>
-          <div>Please <a href={previewUrl} target="_blank">Login to Signadot</a> to continue.</div>
-        </Layout>
-    );
-  }
+					setAuthenticated(true);
+					setIsAuthenticated(true);
+				} catch (error) {
+					console.error("Error fetching org:", error);
+					setAuthenticated(false);
+					setIsAuthenticated(false);
+				}
+			},
+			{ apiUrl, previewUrl },
+		);
+	}, [apiUrl, previewUrl]);
 
-  return (
-      <AuthContext.Provider value={{authState}}>
-        <Layout>{children}</Layout>
-      </AuthContext.Provider>
-  );
+	useEffect(() => {
+		if (authState === undefined) {
+			setIsAuthenticated(false);
+		}
+
+		if (authState) {
+			setIsAuthenticated(true);
+		}
+	}, [authState]);
+
+	return (
+		<AuthContext.Provider value={{ authState }}>
+			<Layout>{children}</Layout>
+		</AuthContext.Provider>
+	);
 };
 
 // Hook to use the auth context
 export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
+	const context = useContext(AuthContext);
+	if (context === undefined) {
+		throw new Error("useAuth must be used within an AuthProvider");
+	}
+	return context;
 };
