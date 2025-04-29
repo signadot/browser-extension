@@ -23,6 +23,7 @@ interface AuthState {
 // Define the shape of the context
 interface AuthContextType {
 	authState?: AuthState;
+	isLoading: boolean;
 }
 
 interface GetOrgsResponse {
@@ -51,6 +52,7 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
 	const [authenticated, setAuthenticated] = useState<boolean | undefined>(
 		undefined,
 	);
+	const [isLoading, setIsLoading] = useState(true);
 	const { settings, setIsAuthenticated } = useStorage();
 	const { apiUrl, previewUrl } = settings.signadotUrls;
 
@@ -62,6 +64,7 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
 				if (!authenticated) {
 					console.log("Not authenticated!");
 					setAuthenticated(false);
+					setIsLoading(false);
 					return;
 				}
 
@@ -71,6 +74,7 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
 					if (response.status === 401 || !response.ok) {
 						setAuthenticated(false);
 						setIsAuthenticated(false);
+						setIsLoading(false);
 						return;
 					}
 
@@ -91,10 +95,12 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
 
 					setAuthenticated(true);
 					setIsAuthenticated(true);
+					setIsLoading(false);
 				} catch (error) {
 					console.error("Error fetching org:", error);
 					setAuthenticated(false);
 					setIsAuthenticated(false);
+					setIsLoading(false);
 				}
 			},
 			{ apiUrl, previewUrl },
@@ -112,7 +118,7 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
 	}, [authState]);
 
 	return (
-		<AuthContext.Provider value={{ authState }}>
+		<AuthContext.Provider value={{ authState, isLoading }}>
 			<Layout>{children}</Layout>
 		</AuthContext.Provider>
 	);
