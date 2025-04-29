@@ -142,9 +142,51 @@
 .input:disabled {
   background-color: #edf2f7;
   cursor: not-allowed;
+  color: #4a5568;
+  border-color: #e2e8f0;
+}
+
+.input.readOnly {
+  background-color: #f8fafc;
+  border-color: #e2e8f0;
+  color: #64748b;
+  cursor: not-allowed;
+}
+
+.envLockIcon {
+  margin-left: 8px;
+  color: #94a3b8;
+  font-size: 12px;
 }
 
 .button:disabled {
   background-color: #cbd5e0;
   cursor: not-allowed;
+}
+
+.envToggleGroup {
+  display: flex;
+  gap: 1px;
+  background-color: #e2e8f0;
+  border-radius: 4px;
+  padding: 2px;
+  margin-bottom: 16px;
+}
+
+.envToggleButton {
+  flex: 1;
+  padding: 6px 12px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 14px;
+  color: #475569;
+  border-radius: 3px;
+  transition: all 0.2s ease;
+}
+
+.envToggleButton[data-active="true"] {
+  background-color: white;
+  color: #2e77ff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
