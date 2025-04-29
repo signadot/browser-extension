@@ -26,7 +26,7 @@ export type StorageState = {
 export type Header = {
   key: string;
   value: string;
-  kind: "basic" | "extra";
+  kind: "default" | "extra";
 };
 
 export type StorageContextType = {

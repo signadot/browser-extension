@@ -87,9 +87,9 @@ const PinnedRouteGroup: React.FC<Props> = ({ routingEntity, onRemove }) => {
             <h4>Injected Headers</h4>
             <div>
               <h5>Default Headers</h5>
-              {groupedHeaders.basic.length > 0 ? (
+              {groupedHeaders.default.length > 0 ? (
                 <ul className={styles.headerItems}>
-                  {groupedHeaders.basic.map((header, index) => (
+                  {groupedHeaders.default.map((header, index) => (
                     <li key={index}>
                       <Tag minimal intent="primary">
                         {header.key}

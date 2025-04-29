@@ -1,10 +1,10 @@
 import React, { createContext, useContext, useState } from "react";
 
-type RouteView = "home" | "settings";
+export type RouteView = "home" | "settings" | "login" | "loading" | "none";
 
 interface RouteViewContextValue {
   currentView: RouteView;
-  setCurrentView: React.Dispatch<React.SetStateAction<RouteView>>;
+  goToView: React.Dispatch<React.SetStateAction<RouteView>>;
 }
 
 const RouteViewContext = createContext<RouteViewContextValue>({} as RouteViewContextValue);
@@ -14,9 +14,9 @@ interface RouteViewProviderProps {
 }
 
 export const RouteViewProvider: React.FC<RouteViewProviderProps> = ({ children }) => {
-  const [currentView, setCurrentView] = useState<RouteView>("home");
+  const [currentView, goToView] = useState<RouteView>("loading");
 
-  return <RouteViewContext.Provider value={{ currentView, setCurrentView }}>{children}</RouteViewContext.Provider>;
+  return <RouteViewContext.Provider value={{ currentView, goToView }}>{children}</RouteViewContext.Provider>;
 };
 
 export const useRouteView = (): RouteViewContextValue => {

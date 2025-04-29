@@ -17,7 +17,7 @@ interface SettingsProps {
 }
 
 const Settings: React.FC<SettingsProps> = ({ onClose }) => {
-  const [temporaryValues, setTemporaryValues] = useState<{
+  const [unsavedValues, setUnsavedValues] = useState<{
     apiUrl: string;
     previewUrl: string;
     dashboardUrl: string;
@@ -44,7 +44,7 @@ const Settings: React.FC<SettingsProps> = ({ onClose }) => {
   });
 
   useEffect(() => {
-    setTemporaryValues({
+    setUnsavedValues({
       apiUrl: settings.signadotUrls.apiUrl || DEFAULT_SIGNADOT_API_URL,
       previewUrl: settings.signadotUrls.previewUrl || DEFAULT_SIGNADOT_PREVIEW_URL,
       dashboardUrl: settings.signadotUrls.dashboardUrl || DEFAULT_SIGNADOT_DASHBOARD_URL,
@@ -55,9 +55,9 @@ const Settings: React.FC<SettingsProps> = ({ onClose }) => {
   }, [settings, traceparent]);
 
   const handleSave = () => {
-    const cleanApiUrl = temporaryValues.apiUrl.replace(/\/+$/, "");
-    const cleanPreviewUrl = temporaryValues.previewUrl.replace(/\/+$/, "");
-    const cleanDashboardUrl = temporaryValues.dashboardUrl.replace(/\/+$/, "");
+    const cleanApiUrl = unsavedValues.apiUrl.replace(/\/+$/, "");
+    const cleanPreviewUrl = unsavedValues.previewUrl.replace(/\/+$/, "");
+    const cleanDashboardUrl = unsavedValues.dashboardUrl.replace(/\/+$/, "");
 
     setSettings({
       enabled: settings.enabled,
@@ -66,11 +66,13 @@ const Settings: React.FC<SettingsProps> = ({ onClose }) => {
         previewUrl: cleanPreviewUrl,
         dashboardUrl: cleanDashboardUrl,
       },
-      debugMode: temporaryValues.debugMode,
+      debugMode: unsavedValues.debugMode,
     });
 
-    setTraceparent(temporaryValues.traceparentHeaderEnabled, temporaryValues.traceparentHeader);
+    setTraceparent(unsavedValues.traceparentHeaderEnabled, unsavedValues.traceparentHeader);
 
+    // TODO: This has been disabled because we are using the storage context to save the settings, however
+    // part of this logic have to be checked after issue#51 is merged
     // chrome.storage.local.set({
     //     apiUrl: cleanApiUrl,
     //     previewUrl: cleanPreviewUrl,
@@ -124,21 +126,30 @@ const Settings: React.FC<SettingsProps> = ({ onClose }) => {
         </div>
         <div className={styles.traceparent}>
           <Switch
-            onChange={(e) => setTemporaryValues({ ...temporaryValues, traceparentHeaderEnabled: e.target.checked })}
-            checked={temporaryValues.traceparentHeaderEnabled}
+            onChange={(e) =>
+              setUnsavedValues({
+                ...unsavedValues,
+                traceparentHeaderEnabled: e.target.checked,
+              })
+            }
+            checked={unsavedValues.traceparentHeaderEnabled}
             large={false}
           />
           <label htmlFor="traceparentEnabled">Enable Traceparent</label>
         </div>
-
         <div className={styles.formGroup}>
           <label htmlFor="traceparentHeader">Traceparent Header Value:</label>
           <input
             id="traceparentHeader"
             type="string"
-            value={temporaryValues.traceparentHeader}
-            disabled={!temporaryValues.traceparentHeaderEnabled}
-            onChange={(e) => setTemporaryValues({ ...temporaryValues, traceparentHeader: e.target.value })}
+            value={unsavedValues.traceparentHeader}
+            disabled={!unsavedValues.traceparentHeaderEnabled}
+            onChange={(e) =>
+              setUnsavedValues({
+                ...unsavedValues,
+                traceparentHeader: e.target.value,
+              })
+            }
             className={styles.input}
             placeholder="Enter Value (eg 00-abcdef0123456789-abcdef01-00)"
           />
@@ -151,8 +162,8 @@ const Settings: React.FC<SettingsProps> = ({ onClose }) => {
         </div>
         <div className={styles.traceparent}>
           <Switch
-            onChange={(e) => setTemporaryValues({ ...temporaryValues, debugMode: e.target.checked })}
-            checked={temporaryValues.debugMode}
+            onChange={(e) => setUnsavedValues({ ...unsavedValues, debugMode: e.target.checked })}
+            checked={unsavedValues.debugMode}
             large={false}
           />
           <label htmlFor="debugEnabled">Debug Mode</label>
@@ -167,8 +178,8 @@ const Settings: React.FC<SettingsProps> = ({ onClose }) => {
           <input
             id="apiUrl"
             type="url"
-            value={temporaryValues.apiUrl}
-            onChange={(e) => setTemporaryValues({ ...temporaryValues, apiUrl: e.target.value })}
+            value={unsavedValues.apiUrl}
+            onChange={(e) => setUnsavedValues({ ...unsavedValues, apiUrl: e.target.value })}
             className={styles.input}
             placeholder="Enter API URL"
           />
@@ -178,8 +189,13 @@ const Settings: React.FC<SettingsProps> = ({ onClose }) => {
           <input
             id="previewUrl"
             type="url"
-            value={temporaryValues.previewUrl}
-            onChange={(e) => setTemporaryValues({ ...temporaryValues, previewUrl: e.target.value })}
+            value={unsavedValues.previewUrl}
+            onChange={(e) =>
+              setUnsavedValues({
+                ...unsavedValues,
+                previewUrl: e.target.value,
+              })
+            }
             className={styles.input}
             placeholder="Enter Preview URL"
           />
@@ -189,8 +205,13 @@ const Settings: React.FC<SettingsProps> = ({ onClose }) => {
           <input
             id="dashboardUrl"
             type="url"
-            value={temporaryValues.dashboardUrl}
-            onChange={(e) => setTemporaryValues({ ...temporaryValues, dashboardUrl: e.target.value })}
+            value={unsavedValues.dashboardUrl}
+            onChange={(e) =>
+              setUnsavedValues({
+                ...unsavedValues,
+                dashboardUrl: e.target.value,
+              })
+            }
             className={styles.input}
             placeholder="Enter Dashboard URL"
           />

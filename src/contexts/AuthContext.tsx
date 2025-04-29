@@ -24,6 +24,7 @@ interface AuthState {
 // Define the shape of the context
 interface AuthContextType {
   authState?: AuthState;
+  isLoading: boolean;
 }
 
 interface GetOrgsResponse {
@@ -50,6 +51,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<Props> = ({ children }) => {
   const [authState, setAuthState] = useState<AuthState | undefined>(undefined);
   const [authenticated, setAuthenticated] = useState<boolean | undefined>(undefined);
+  const [isLoading, setIsLoading] = useState(true);
   const { settings, setIsAuthenticated } = useStorage();
   const { apiUrl, previewUrl } = settings.signadotUrls;
 
@@ -61,6 +63,7 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
         if (!authenticated) {
           console.log("Not authenticated!");
           setAuthenticated(false);
+          setIsLoading(false);
           return;
         }
 
@@ -70,6 +73,7 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
           if (response.status === 401 || !response.ok) {
             setAuthenticated(false);
             setIsAuthenticated(false);
+            setIsLoading(false);
             return;
           }
 
@@ -90,10 +94,12 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
 
           setAuthenticated(true);
           setIsAuthenticated(true);
+          setIsLoading(false);
         } catch (error) {
           console.error("Error fetching org:", error);
           setAuthenticated(false);
           setIsAuthenticated(false);
+          setIsLoading(false);
         }
       },
       { apiUrl, previewUrl },
@@ -110,30 +116,8 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
     }
   }, [authState]);
 
-  if (authenticated === undefined) {
-    return (
-      <Layout>
-        <div>
-          <Spinner className="flex h-screen" intent={Intent.PRIMARY} size={SpinnerSize.SMALL} />
-        </div>
-      </Layout>
-    );
-  } else if (!authState) {
-    return (
-      <Layout>
-        <div>
-          Please{" "}
-          <a href={previewUrl} target="_blank">
-            Login to Signadot
-          </a>{" "}
-          to continue.
-        </div>
-      </Layout>
-    );
-  }
-
   return (
-    <AuthContext.Provider value={{ authState }}>
+    <AuthContext.Provider value={{ authState, isLoading }}>
       <Layout>{children}</Layout>
     </AuthContext.Provider>
   );

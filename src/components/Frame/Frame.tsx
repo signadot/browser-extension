@@ -10,58 +10,87 @@ import Settings from "../Settings/Settings";
 import { useAuth } from "../../contexts/AuthContext";
 import { useRouteView } from "../../contexts/RouteViewContext/RouteViewContext";
 import { useStorage } from "../../contexts/StorageContext/StorageContext";
+import { Route } from "../Route";
+import { ProtectedRoute } from "../ProtectedRoute";
 
-const Frame = () => {
-  const { currentRoutingKey, setCurrentRoutingKey, settings } = useStorage();
+const Login = () => {
+  const { settings } = useStorage();
+  const { previewUrl } = settings.signadotUrls;
+
+  return (
+    <div>
+      Please{" "}
+      <a href={previewUrl} target="_blank">
+        Login to Signadot
+      </a>{" "}
+      to continue.
+    </div>
+  );
+};
+
+const Loading = () => {
+  return <div>Loading...</div>;
+};
+
+const Home = () => {
+  const { currentRoutingKey, setCurrentRoutingKey } = useStorage();
   const routingEntities: RoutingEntity[] = useFetchRoutingEntries();
-  const { currentView, setCurrentView } = useRouteView();
-
   const { authState } = useAuth();
 
-  const { enabled } = settings;
-
-  const pinnedRoutingEntityData: RoutingEntity | undefined = React.useMemo(() => {
+  const pinnedRoutingEntityData: RoutingEntity | undefined = useMemo(() => {
     const filteredList = routingEntities?.filter((entity) => entity.routingKey === currentRoutingKey);
     return filteredList?.[0];
   }, [currentRoutingKey, routingEntities]);
 
   return (
-    <div>
-      {enabled && (
-        <div className={styles.content}>
-          {currentView === "settings" ? (
-            <Settings onClose={() => setCurrentView("home")} />
-          ) : (
-            <div className={styles.home}>
-              <div>
-                <ListRouteEntries
-                  orgName={authState?.org.name}
-                  routingEntities={routingEntities}
-                  setUserSelectedRoutingEntity={(routingEntity) => setCurrentRoutingKey(routingEntity.routingKey)}
-                />
-                {pinnedRoutingEntityData ? (
-                  <Section compact className={styles.pinned}>
-                    <SectionCard>
-                      Headers are being set for:
-                      <PinnedRouteGroup
-                        routingEntity={pinnedRoutingEntityData}
-                        onRemove={() => {
-                          setCurrentRoutingKey(undefined);
-                        }}
-                      />
-                    </SectionCard>
-                  </Section>
-                ) : (
-                  <Section compact className={styles.pinned}>
-                    <SectionCard className={styles.noSelectedMessage}>No Sandbox or RouteGroup selected</SectionCard>
-                  </Section>
-                )}
-              </div>
-              <Footer />
-            </div>
-          )}
-        </div>
+    <>
+      <ListRouteEntries
+        routingEntities={routingEntities}
+        setUserSelectedRoutingEntity={(e) => setCurrentRoutingKey(e.routingKey)}
+        orgName={authState?.org.name}
+      />
+      {pinnedRoutingEntityData ? (
+        <Section compact className={styles.pinned}>
+          <SectionCard>
+            Headers are being set for:
+            <PinnedRouteGroup
+              routingEntity={pinnedRoutingEntityData}
+              onRemove={() => {
+                setCurrentRoutingKey(undefined);
+              }}
+            />
+          </SectionCard>
+        </Section>
+      ) : (
+        <Section compact className={styles.pinned}>
+          <SectionCard className={styles.noSelectedMessage}>No Sandbox or RouteGroup selected</SectionCard>
+        </Section>
       )}
+      <Footer />
+    </>
+  );
+};
+
+const Frame = () => {
+  const { authState, isLoading } = useAuth();
+  const { goToView } = useRouteView();
+
+  useEffect(() => {
+    if (isLoading) {
+      goToView("loading");
+    } else if (authState) {
+      goToView("home");
+    } else {
+      goToView("login");
+    }
+  }, [authState, isLoading]);
+
+  return (
+    <div className={styles.container}>
+      <Route view="loading" component={Loading} />
+      <Route view="login" component={Login} />
+      <ProtectedRoute view="home" component={Home} fallbackView="login" />
+      <Route view="settings" component={<Settings onClose={() => goToView("home")} />} />
     </div>
   );
 };

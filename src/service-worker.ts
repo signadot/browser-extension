@@ -54,7 +54,7 @@ async function updateDynamicRules() {
   ]);
 
   const { routingKey, enabled, headers, traceparentHeader } = values;
-  const injectHeaders = headers.length > 0 && enabled && routingKey;
+  const injectHeaders = headers && headers.length > 0 && enabled && routingKey;
 
   if (!injectHeaders) {
     try {

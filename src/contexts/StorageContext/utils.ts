@@ -1,15 +1,15 @@
 import { DEFAULT_SIGNADOT_DASHBOARD_URL, DEFAULT_SIGNADOT_API_URL, DEFAULT_SIGNADOT_PREVIEW_URL } from "./defaults";
 import { Settings, Header, SignadotUrlsConfig } from "./types";
 
-export const getGroupedHeadersByKind = (headers: Header[]): Record<"basic" | "extra", Header[]> => {
-  const groupedHeaders: Record<"basic" | "extra", Header[]> = {
-    basic: [],
+export const getGroupedHeadersByKind = (headers: Header[]): Record<"default" | "extra", Header[]> => {
+  const groupedHeaders: Record<"default" | "extra", Header[]> = {
+    default: [],
     extra: [],
   };
 
   headers.forEach((header) => {
-    if (header.kind === "basic") {
-      groupedHeaders.basic.push(header);
+    if (header.kind === "default") {
+      groupedHeaders.default.push(header);
       return;
     }
 
