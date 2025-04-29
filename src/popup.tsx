@@ -11,15 +11,15 @@ const queryClient = new QueryClient();
 const root = createRoot(document.getElementById("root")!);
 
 root.render(
-	<QueryClientProvider client={queryClient}>
-		<RouteViewProvider>
-			<StorageProvider>
-				<AuthProvider>
-					<React.StrictMode>
-						<Frame />
-					</React.StrictMode>
-				</AuthProvider>
-			</StorageProvider>
-		</RouteViewProvider>
-	</QueryClientProvider>,
+  <QueryClientProvider client={queryClient}>
+    <RouteViewProvider>
+      <StorageProvider>
+        <AuthProvider>
+          <React.StrictMode>
+            <Frame />
+          </React.StrictMode>
+        </AuthProvider>
+      </StorageProvider>
+    </RouteViewProvider>
+  </QueryClientProvider>,
 );

@@ -6,33 +6,29 @@ import { Route } from "./Route";
 import { useStorage } from "../contexts/StorageContext/StorageContext";
 
 type ProtectedRouteProps = {
-	view: RouteView;
-	component: React.ComponentType | React.ReactElement;
-	fallbackView: RouteView;
+  view: RouteView;
+  component: React.ComponentType | React.ReactElement;
+  fallbackView: RouteView;
 };
 
-export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
-	view,
-	component,
-	fallbackView,
-}) => {
-	const { authState } = useAuth();
-	const { goToView } = useRouteView();
-	const { isAuthenticated } = useStorage();
+export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ view, component, fallbackView }) => {
+  const { authState } = useAuth();
+  const { goToView } = useRouteView();
+  const { isAuthenticated } = useStorage();
 
-	React.useEffect(() => {
-		if (!authState && view === "home") {
-			goToView(fallbackView);
-		}
-	}, [authState, view, fallbackView]);
+  React.useEffect(() => {
+    if (!authState && view === "home") {
+      goToView(fallbackView);
+    }
+  }, [authState, view, fallbackView]);
 
-	if (!authState) {
-		return null;
-	}
+  if (!authState) {
+    return null;
+  }
 
-	if (!isAuthenticated) {
-		return null;
-	}
+  if (!isAuthenticated) {
+    return null;
+  }
 
-	return <Route view={view} component={component} />;
+  return <Route view={view} component={component} />;
 };
