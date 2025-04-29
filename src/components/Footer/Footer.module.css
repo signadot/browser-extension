@@ -1,8 +1,8 @@
 .container {
-    margin-top: 1rem;
+  margin-top: 1rem;
 }
 
 .links {
-    display: flex;
-    justify-content: space-between;
+  display: flex;
+  justify-content: space-between;
 }

@@ -6,10 +6,7 @@ import styles from "./Footer.module.css";
 interface Props {}
 
 const Footer: React.FC<Props> = () => (
-  <Section
-    icon="document"
-    className={styles.container}
-  >
+  <Section icon="document" className={styles.container}>
     <SectionCard>
       <div className={styles.links}>
         <AnchorButton

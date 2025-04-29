@@ -1,57 +1,57 @@
 @import "../../styles/colors.module.css";
 
 /* Reset default margin and padding */
-html, body {
-    margin: 0;
-    padding: 0;
-    background-color: var(--SIGNADOT-APP-BACKGROUND-COLOR);
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--SIGNADOT-APP-BACKGROUND-COLOR);
 }
 
 .container {
-    margin: 0px;
-    min-width: 480px;
+  margin: 0px;
+  min-width: 480px;
 }
 
 .topBar {
-    background-color: var(--SIGNADOT-APP-TOPBAR-COLOR);
-    text-transform: uppercase;
-    padding: 0px 1rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  background-color: var(--SIGNADOT-APP-TOPBAR-COLOR);
+  text-transform: uppercase;
+  padding: 0px 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .topRight {
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
-    flex-direction: row-reverse;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-direction: row-reverse;
 }
 
 .topRight button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: gray;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: gray;
 }
 
 .topRight button:hover {
-    color: var(--SIGNADOT-BLUE400);
+  color: var(--SIGNADOT-BLUE400);
 }
 
-
 .topRight button:focus {
-    border: none;
-    outline: none;
+  border: none;
+  outline: none;
 }
 
 .body {
-    padding: 1rem;
+  padding: 1rem;
 }
 
 .status {
-    background-color: var(--SIGNADOT-GREEN700);
-    padding: 0.5rem 1rem;
-    color: white;
-    font-size: 0.8rem;
+  background-color: var(--SIGNADOT-GREEN700);
+  padding: 0.5rem 1rem;
+  color: white;
+  font-size: 0.8rem;
 }

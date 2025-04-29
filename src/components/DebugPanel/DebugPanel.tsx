@@ -1,9 +1,9 @@
-import React from 'react';
-import { Card, H5, Pre, Tag, Collapse, Button } from '@blueprintjs/core';
-import { useStorage } from '../../contexts/StorageContext/StorageContext';
-import styles from './DebugPanel.module.css';
+import React from "react";
+import { Card, H5, Pre, Tag, Collapse, Button } from "@blueprintjs/core";
+import { useStorage } from "../../contexts/StorageContext/StorageContext";
+import styles from "./DebugPanel.module.css";
 
-type ValueType = 'string' | 'number' | 'boolean' | 'undefined' | 'object' | 'function' | 'array' | 'null';
+type ValueType = "string" | "number" | "boolean" | "undefined" | "object" | "function" | "array" | "null";
 
 interface StateEntry {
   key: string;
@@ -21,20 +21,20 @@ export const DebugPanel: React.FC = () => {
 
     // Format the value for display
     if (value === undefined) {
-      displayValue = 'undefined';
-      valueType = 'undefined';
+      displayValue = "undefined";
+      valueType = "undefined";
     } else if (value === null) {
-      displayValue = 'null';
-      valueType = 'null';
-    } else if (typeof value === 'function') {
-      displayValue = value.toString().split('{')[0].trim();
-      valueType = 'function';
+      displayValue = "null";
+      valueType = "null";
+    } else if (typeof value === "function") {
+      displayValue = value.toString().split("{")[0].trim();
+      valueType = "function";
     } else if (Array.isArray(value)) {
       displayValue = JSON.stringify(value, null, 2);
-      valueType = 'array';
-    } else if (typeof value === 'object') {
+      valueType = "array";
+    } else if (typeof value === "object") {
       displayValue = JSON.stringify(value, null, 2);
-      valueType = 'object';
+      valueType = "object";
     } else {
       displayValue = String(value);
       valueType = typeof value as ValueType;
@@ -70,15 +70,13 @@ export const DebugPanel: React.FC = () => {
         <Card className={styles.debugPanel}>
           <H5>Storage State Debug</H5>
           <div className={styles.stateList}>
-            {(storageEntries.filter(s => s !== null) as StateEntry[]).map(({ key, value, type }) => (
+            {(storageEntries.filter((s) => s !== null) as StateEntry[]).map(({ key, value, type }) => (
               <div key={key} className={styles.stateItem}>
                 <div className={styles.stateHeader}>
                   <span className={styles.stateKey}>{key}</span>
                   <Tag minimal>{type}</Tag>
                 </div>
-                <Pre className={styles.stateValue}>
-                  {value}
-                </Pre>
+                <Pre className={styles.stateValue}>{value}</Pre>
               </div>
             ))}
           </div>
@@ -86,4 +84,4 @@ export const DebugPanel: React.FC = () => {
       </Collapse>
     </div>
   );
-}; 
+};

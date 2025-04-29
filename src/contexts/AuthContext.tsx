@@ -1,5 +1,5 @@
-import React, {createContext, useContext, useEffect, useState} from "react";
-import {auth} from "./auth";
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { auth } from "./auth";
 import Layout from "../components/Layout/Layout";
 import { useStorage } from "./StorageContext/StorageContext";
 import { Intent, Spinner, SpinnerSize } from "@blueprintjs/core";
@@ -47,54 +47,57 @@ interface GetOrgsResponse {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 // AuthProvider component
-export const AuthProvider: React.FC<Props> = ({children}) => {
+export const AuthProvider: React.FC<Props> = ({ children }) => {
   const [authState, setAuthState] = useState<AuthState | undefined>(undefined);
   const [authenticated, setAuthenticated] = useState<boolean | undefined>(undefined);
   const { settings, setIsAuthenticated } = useStorage();
-  const { apiUrl, previewUrl } = settings.signadotUrls; 
+  const { apiUrl, previewUrl } = settings.signadotUrls;
 
   useEffect(() => {
     if (!apiUrl || !previewUrl) return;
 
-    auth(async (authenticated) => {
-      if (!authenticated) {
-        console.log("Not authenticated!");
-        setAuthenticated(false);
-        return;
-      }
-
-      try {
-        const response = await fetch(`${apiUrl}/api/v1/orgs`);
-        
-        if (response.status === 401 || !response.ok) {
+    auth(
+      async (authenticated) => {
+        if (!authenticated) {
+          console.log("Not authenticated!");
           setAuthenticated(false);
-          setIsAuthenticated(false);
           return;
         }
 
-        const data: GetOrgsResponse = await response.json();
-        
-        // Ensure we have orgs before accessing first item
-        if (!data.orgs?.length) {
-          throw new Error("No organizations found");
-        }
+        try {
+          const response = await fetch(`${apiUrl}/api/v1/orgs`);
 
-        setAuthState({
-          org: data.orgs[0],
-          user: {
-            firstName: data.user.firstName?.String,
-            lastName: data.user.lastName?.String,
-          },
-        });
-        
-        setAuthenticated(true);
-        setIsAuthenticated(true);
-      } catch (error) {
-        console.error("Error fetching org:", error);
-        setAuthenticated(false);
-        setIsAuthenticated(false);
-      }
-    }, { apiUrl, previewUrl });
+          if (response.status === 401 || !response.ok) {
+            setAuthenticated(false);
+            setIsAuthenticated(false);
+            return;
+          }
+
+          const data: GetOrgsResponse = await response.json();
+
+          // Ensure we have orgs before accessing first item
+          if (!data.orgs?.length) {
+            throw new Error("No organizations found");
+          }
+
+          setAuthState({
+            org: data.orgs[0],
+            user: {
+              firstName: data.user.firstName?.String,
+              lastName: data.user.lastName?.String,
+            },
+          });
+
+          setAuthenticated(true);
+          setIsAuthenticated(true);
+        } catch (error) {
+          console.error("Error fetching org:", error);
+          setAuthenticated(false);
+          setIsAuthenticated(false);
+        }
+      },
+      { apiUrl, previewUrl },
+    );
   }, [apiUrl, previewUrl]);
 
   useEffect(() => {
@@ -105,32 +108,34 @@ export const AuthProvider: React.FC<Props> = ({children}) => {
     if (authState) {
       setIsAuthenticated(true);
     }
-  }, [authState])
+  }, [authState]);
 
   if (authenticated === undefined) {
     return (
-        <Layout>
-          <div>
-              <Spinner
-                className="flex h-screen"
-                intent={Intent.PRIMARY}
-                size={SpinnerSize.SMALL}
-              />
-          </div>
-        </Layout>
+      <Layout>
+        <div>
+          <Spinner className="flex h-screen" intent={Intent.PRIMARY} size={SpinnerSize.SMALL} />
+        </div>
+      </Layout>
     );
   } else if (!authState) {
     return (
-        <Layout>
-          <div>Please <a href={previewUrl} target="_blank">Login to Signadot</a> to continue.</div>
-        </Layout>
+      <Layout>
+        <div>
+          Please{" "}
+          <a href={previewUrl} target="_blank">
+            Login to Signadot
+          </a>{" "}
+          to continue.
+        </div>
+      </Layout>
     );
   }
 
   return (
-      <AuthContext.Provider value={{authState}}>
-        <Layout>{children}</Layout>
-      </AuthContext.Provider>
+    <AuthContext.Provider value={{ authState }}>
+      <Layout>{children}</Layout>
+    </AuthContext.Provider>
   );
 };
 

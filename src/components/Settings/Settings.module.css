@@ -82,7 +82,7 @@
   margin-bottom: 24px;
 }
 
-.section[data-hide-section=true] {
+.section[data-hide-section="true"] {
   display: none;
 }
 
@@ -101,12 +101,12 @@
 .sectionTitle {
   font-size: 14px;
   font-weight: 500;
-  color: #4A5568;
+  color: #4a5568;
   margin: 0;
 }
 
 .headersList {
-  background: #F7FAFC;
+  background: #f7fafc;
   border-radius: 8px;
   padding: 12px;
   font-size: 13px;
@@ -123,12 +123,12 @@
 }
 
 .headerName {
-  color: #2D3748;
+  color: #2d3748;
   font-weight: 500;
 }
 
 .headerValue {
-  color: #4A5568;
+  color: #4a5568;
   margin-top: 4px;
   padding-left: 16px;
   font-size: 12px;
@@ -140,11 +140,11 @@
 }
 
 .input:disabled {
-  background-color: #EDF2F7;
+  background-color: #edf2f7;
   cursor: not-allowed;
 }
 
 .button:disabled {
-  background-color: #CBD5E0;
+  background-color: #cbd5e0;
   cursor: not-allowed;
-} 
+}

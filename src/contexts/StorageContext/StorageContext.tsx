@@ -1,11 +1,5 @@
 import React, { useEffect, useState, createContext, useContext } from "react";
-import {
-  Header,
-  Settings,
-  StorageContextType,
-  StorageState,
-  TraceparentConfig,
-} from "./types";
+import { Header, Settings, StorageContextType, StorageState, TraceparentConfig } from "./types";
 import { defaultTraceparent, defaultSettings } from "./defaults";
 import { StorageBrowserKeys } from "./browserKeys";
 import { setBrowserStoreValue } from "./browserKeys";
@@ -26,7 +20,7 @@ const populateRoutingKey = (input: string, routingKey: string): string => {
 const getHeaders = (
   currentRoutingKey: string,
   headers: Header[],
-  traceparent: TraceparentConfig
+  traceparent: TraceparentConfig,
 ): Array<[string, string]> => {
   const headersToInject = headers.map((header) => {
     return [header.key, header.value];
@@ -103,8 +97,7 @@ export const StorageProvider: React.FC<StorageProviderProps> = ({ children }) =>
               signadotUrls: {
                 apiUrl: urls.apiUrl || defaultSettings.signadotUrls.apiUrl,
                 previewUrl: urls.previewUrl || defaultSettings.signadotUrls.previewUrl,
-                dashboardUrl:
-                  urls.dashboardUrl || defaultSettings.signadotUrls.dashboardUrl,
+                dashboardUrl: urls.dashboardUrl || defaultSettings.signadotUrls.dashboardUrl,
               },
             };
           } catch {
@@ -118,9 +111,7 @@ export const StorageProvider: React.FC<StorageProviderProps> = ({ children }) =>
         // Traceparent
         if (storedValues[StorageBrowserKeys.traceparentHeader] !== undefined) {
           try {
-            const traceparent = JSON.parse(
-              storedValues[StorageBrowserKeys.traceparentHeader]
-            );
+            const traceparent = JSON.parse(storedValues[StorageBrowserKeys.traceparentHeader]);
             newState.traceparent = {
               inject: Boolean(traceparent.inject),
               value: traceparent.value || defaultTraceparent.value,
@@ -132,8 +123,7 @@ export const StorageProvider: React.FC<StorageProviderProps> = ({ children }) =>
 
         // Routing key
         if (storedValues[StorageBrowserKeys.routingKey] !== undefined) {
-          newState.currentRoutingKey =
-            storedValues[StorageBrowserKeys.routingKey] || undefined;
+          newState.currentRoutingKey = storedValues[StorageBrowserKeys.routingKey] || undefined;
         }
 
         return newState;
@@ -152,10 +142,7 @@ export const StorageProvider: React.FC<StorageProviderProps> = ({ children }) =>
       currentRoutingKey !== ""
     ) {
       const headersToInject = getHeaders(currentRoutingKey, headers, traceparent);
-      setBrowserStoreValue(
-        StorageBrowserKeys.headers,
-        JSON.stringify(headersToInject)
-      );
+      setBrowserStoreValue(StorageBrowserKeys.headers, JSON.stringify(headersToInject));
     } else {
       setBrowserStoreValue(StorageBrowserKeys.headers, JSON.stringify([]));
     }
@@ -170,34 +157,21 @@ export const StorageProvider: React.FC<StorageProviderProps> = ({ children }) =>
   const handleSetTraceparent = (inject: boolean, value: undefined | string) => {
     const valueToSet = value || defaultTraceparent.value;
 
-    setBrowserStoreValue(
-      StorageBrowserKeys.traceparentHeader,
-      JSON.stringify({ value: valueToSet, inject }),
-      () => {
-        setState((prev) => ({
-          ...prev,
-          traceparent: { value: valueToSet, inject },
-        }));
-      }
-    );
+    setBrowserStoreValue(StorageBrowserKeys.traceparentHeader, JSON.stringify({ value: valueToSet, inject }), () => {
+      setState((prev) => ({
+        ...prev,
+        traceparent: { value: valueToSet, inject },
+      }));
+    });
   };
 
   const handleUpdateSettings = (settings: Settings) => {
     setState((prev) => ({ ...prev, settings }));
 
     setBrowserStoreValue(StorageBrowserKeys.enabled, settings.enabled);
-    setBrowserStoreValue(
-      StorageBrowserKeys.traceparentHeader,
-      JSON.stringify(state.traceparent)
-    );
-    setBrowserStoreValue(
-      StorageBrowserKeys.signadotUrls,
-      JSON.stringify(settings.signadotUrls)
-    );
-    setBrowserStoreValue(
-      StorageBrowserKeys.debugMode,
-      JSON.stringify(settings.debugMode)
-    );
+    setBrowserStoreValue(StorageBrowserKeys.traceparentHeader, JSON.stringify(state.traceparent));
+    setBrowserStoreValue(StorageBrowserKeys.signadotUrls, JSON.stringify(settings.signadotUrls));
+    setBrowserStoreValue(StorageBrowserKeys.debugMode, JSON.stringify(settings.debugMode));
   };
 
   const value = {
@@ -207,19 +181,14 @@ export const StorageProvider: React.FC<StorageProviderProps> = ({ children }) =>
     traceparent: state.traceparent,
     headers: state.headers,
     currentRoutingKey: state.currentRoutingKey,
-    setIsAuthenticated: (value: boolean) =>
-      setState((prev) => ({ ...prev, isAuthenticated: value })),
+    setIsAuthenticated: (value: boolean) => setState((prev) => ({ ...prev, isAuthenticated: value })),
     setCurrentRoutingKey: handleSetRoutingKey,
-    setTraceparent: (inject: boolean, value: undefined | string) =>
-      handleSetTraceparent(inject, value),
+    setTraceparent: (inject: boolean, value: undefined | string) => handleSetTraceparent(inject, value),
     setSettings: (value: Settings) => handleUpdateSettings(value),
-    setHeaders: (value: Header[]) =>
-      setState((prev) => ({ ...prev, headers: value })),
+    setHeaders: (value: Header[]) => setState((prev) => ({ ...prev, headers: value })),
   };
 
-  return (
-    <StorageContext.Provider value={value}>{children}</StorageContext.Provider>
-  );
+  return <StorageContext.Provider value={value}>{children}</StorageContext.Provider>;
 };
 
 export const useStorage = (): StorageContextType => {
@@ -229,4 +198,3 @@ export const useStorage = (): StorageContextType => {
   }
   return context;
 };
-
