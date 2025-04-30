@@ -1,8 +1,41 @@
+@import "../../styles/colors.module.css";
+
 .container {
   margin-top: 1rem;
+}
+
+.footerContent {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .links {
   display: flex;
   justify-content: space-between;
+}
+
+.userInfo {
+  color: var(--SIGNADOT-NEUTRAL500);
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding-top: 8px;
+  border-top: 1px solid var(--SIGNADOT-BORDER-COLOR);
+  margin: 0 auto;
+}
+
+.logoutLink {
+  color: var(--SIGNADOT-NEUTRAL500);
+  cursor: pointer;
+  text-decoration: none;
+  opacity: var(--SIGNADOT-OPACITY800);
+  transition: all 0.2s ease;
+}
+
+.logoutLink:hover {
+  opacity: 1;
+  color: var(--SIGNADOT-NEUTRAL900);
 }

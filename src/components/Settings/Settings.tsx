@@ -3,7 +3,6 @@ import styles from "./Settings.module.css";
 import { useHotkeys } from "react-hotkeys-hook";
 import { Switch } from "@blueprintjs/core";
 import { useStorage } from "../../contexts/StorageContext/StorageContext";
-import { useAuth } from "../../contexts/AuthContext";
 import {
   DEFAULT_SIGNADOT_API_URL,
   DEFAULT_SIGNADOT_PREVIEW_URL,
@@ -16,7 +15,6 @@ interface SettingsProps {
 }
 
 const Settings: React.FC<SettingsProps> = ({ onClose }) => {
-  const { authState } = useAuth();
   const [unsavedValues, setUnsavedValues] = useState<{
     apiUrl: string;
     previewUrl: string;
@@ -34,10 +32,8 @@ const Settings: React.FC<SettingsProps> = ({ onClose }) => {
   });
 
   const { settings, traceparent, setSettings, setTraceparent } = useStorage();
-
   const [isExtraSettingsOpen, setIsExtraSettingsOpen] = React.useState(false);
 
-  // Use the hook to handle Ctrl+Shift+U
   useHotkeys("ctrl+shift+u", () => setIsExtraSettingsOpen(!isExtraSettingsOpen), {
     enableOnFormTags: true,
     preventDefault: true,
@@ -73,26 +69,8 @@ const Settings: React.FC<SettingsProps> = ({ onClose }) => {
     onClose();
   };
 
-  const handleLogout = () => {
-    const signoutUrl = `${settings.signadotUrls.dashboardUrl}/signout`;
-    window.open(signoutUrl, '_blank');
-  };
-
   return (
     <div className={styles.container}>
-      {authState?.user && (
-        <div className={styles.userInfo}>
-          <div className={styles.header}>
-            <h3 className={styles.title}>User</h3>
-          </div>
-          <div className={styles.userEmail}>
-            Logged in as {authState.user.email || 'Unknown User'}
-          </div>
-          <a onClick={handleLogout} className={styles.logoutLink}>
-            ← Log out
-          </a>
-        </div>
-      )}
       <div className={styles.header}>
         <h3 className={styles.title}>Settings</h3>
       </div>
@@ -190,14 +168,6 @@ const Settings: React.FC<SettingsProps> = ({ onClose }) => {
       </div>
     </div>
   );
-};
-
-export const getApiUrl = async (): Promise<string> => {
-  return new Promise((resolve) => {
-    chrome.storage.sync.get(["apiUrl"], (result) => {
-      resolve(result.apiUrl || DEFAULT_SIGNADOT_API_URL);
-    });
-  });
 };
 
 export default Settings;

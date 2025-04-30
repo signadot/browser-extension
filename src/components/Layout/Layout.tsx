@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import styles from "./Layout.module.css";
 import { Switch, Tooltip } from "@blueprintjs/core";
 import { IoHomeSharp, IoSettingsSharp } from "react-icons/io5";
@@ -16,11 +16,7 @@ const Layout: React.FC<Props> = ({ children }) => {
   const { init, settings, setSettings, isAuthenticated } = useStorage();
 
   const handleHomeChange = () => {
-    if (isAuthenticated) {
-      return "home";
-    } else {
-      return "login";
-    }
+    return isAuthenticated ? "home" : "login";
   };
 
   return (
@@ -28,7 +24,7 @@ const Layout: React.FC<Props> = ({ children }) => {
       <div className={styles.container}>
         <div className={styles.topBar}>
           <div>
-            <img src={logoPath} height={80} />
+            <img src={logoPath} height={80} alt="Signadot Logo" />
           </div>
           <div className={styles.topRight}>
             <Tooltip content={`Header injection ${settings.enabled ? "Enabled" : "Disabled"}`}>
@@ -44,7 +40,6 @@ const Layout: React.FC<Props> = ({ children }) => {
             </button>
           </div>
         </div>
-        {/* {settings.enabled ? <div className={styles.body}>{children}</div> : null} */}
         <div className={styles.body}>{children}</div>
         <DebugPanel />
       </div>
