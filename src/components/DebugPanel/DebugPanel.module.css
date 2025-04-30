@@ -1,18 +1,30 @@
+@import "../../styles/colors.module.css";
+
 .debugContainer {
   margin-top: 1rem;
-  border-top: 1px solid #e1e8ed;
+  border-top: 1px solid var(--SIGNADOT-NEUTRAL100);
   padding: 1rem;
 }
 
 .debugPanel {
   margin-top: 0.5rem;
-  background-color: #f5f8fa;
+  background-color: var(--SIGNADOT-NEUTRAL50);
+  border-radius: 8px;
+  padding: 1rem;
+  transition: all 0.2s ease;
 }
 
 .toggleButton {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  color: var(--SIGNADOT-NEUTRAL600);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.toggleButton:hover {
+  color: var(--SIGNADOT-NEUTRAL800);
 }
 
 .stateList {
@@ -23,30 +35,36 @@
 }
 
 .stateItem {
-  border: 1px solid #e1e8ed;
-  border-radius: 3px;
-  padding: 0.5rem;
   background-color: white;
+  border-radius: 6px;
+  padding: 0.75rem;
+  transition: all 0.2s ease;
+}
+
+.stateItem:hover {
+  background-color: var(--SIGNADOT-NEUTRAL50);
 }
 
 .stateHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
 }
 
 .stateKey {
-  font-weight: 600;
-  color: #182026;
+  font-weight: 500;
+  color: var(--SIGNADOT-NEUTRAL800);
+  font-size: 0.875rem;
 }
 
 .stateValue {
   margin: 0;
-  padding: 0.5rem;
-  background-color: #f5f8fa;
-  border-radius: 3px;
-  font-size: 12px;
+  padding: 0.75rem;
+  background-color: var(--SIGNADOT-NEUTRAL50);
+  border-radius: 4px;
+  font-size: 0.8125rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   max-height: 200px;
   overflow: auto;
 }

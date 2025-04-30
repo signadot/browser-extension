@@ -5,7 +5,9 @@ html,
 body {
   margin: 0;
   padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   background-color: var(--SIGNADOT-APP-BACKGROUND-COLOR);
+  color: var(--SIGNADOT-TEXT-COLOR-REGULAR);
 }
 
 .container {
@@ -33,7 +35,7 @@ body {
   background: none;
   border: none;
   cursor: pointer;
-  color: gray;
+  color: white;
 }
 
 .topRight button:hover {
@@ -46,12 +48,86 @@ body {
 }
 
 .body {
-  padding: 1rem;
+  padding: 1.5rem;
+  background-color: var(--SIGNADOT-APP-BACKGROUND-COLOR);
 }
 
-.status {
-  background-color: var(--SIGNADOT-GREEN700);
+/* Card styles */
+.card {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  transition: background-color 0.2s ease;
+}
+
+.card:hover {
+  background-color: var(--SIGNADOT-NEUTRAL50);
+}
+
+/* Section headers */
+.sectionTitle {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: var(--SIGNADOT-NEUTRAL900);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Status indicators */
+.statusRow {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  transition: background-color 0.2s ease;
+}
+
+.statusSuccess {
+  color: var(--SIGNADOT-GREEN600);
+  background-color: var(--SIGNADOT-GREEN50);
+}
+
+.statusError {
+  color: var(--SIGNADOT-RED600);
+  background-color: var(--SIGNADOT-RED50);
+}
+
+.statusWarning {
+  color: var(--SIGNADOT-ORANGE600);
+  background-color: var(--SIGNADOT-ORANGE50);
+}
+
+/* Action buttons */
+.actionButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
   padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: var(--SIGNADOT-NEUTRAL50);
+  color: var(--SIGNADOT-NEUTRAL800);
+  border: none;
+}
+
+.actionButton:hover {
+  background-color: var(--SIGNADOT-NEUTRAL100);
+}
+
+.actionButtonPrimary {
+  background-color: var(--SIGNADOT-BLUE500);
   color: white;
-  font-size: 0.8rem;
+}
+
+.actionButtonPrimary:hover {
+  background-color: var(--SIGNADOT-BLUE600);
 }

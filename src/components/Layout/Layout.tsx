@@ -5,7 +5,7 @@ import { IoHomeSharp, IoSettingsSharp } from "react-icons/io5";
 import { useRouteView } from "../../contexts/RouteViewContext/RouteViewContext";
 import { DebugPanel } from "../DebugPanel/DebugPanel";
 import { useStorage } from "../../contexts/StorageContext/StorageContext";
-const logoPath = chrome.runtime.getURL("images/signadot-full-logo.png");
+const logoPath = chrome.runtime.getURL("images/signadot-full-logo.svg");
 
 interface Props {
   children: React.ReactNode;
@@ -27,8 +27,12 @@ const Layout: React.FC<Props> = ({ children }) => {
     init && (
       <div className={styles.container}>
         <div className={styles.topBar}>
-          <div>
-            <img src={logoPath} height={80} />
+          <div style={{ padding: '0.75rem 0' }}>
+            <img 
+              src={logoPath} 
+              style={{ height: '40px', width: 'auto', maxWidth: '100%', display: 'block' }}
+              alt="Signadot Logo"
+            />
           </div>
           <div className={styles.topRight}>
             <Tooltip content={`Header injection ${settings.enabled ? "Enabled" : "Disabled"}`}>
