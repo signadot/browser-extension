@@ -24,6 +24,7 @@ interface AuthState {
 interface AuthContextType {
   authState?: AuthState;
   isLoading: boolean;
+  logout: () => Promise<void>;
 }
 
 interface GetOrgsResponse {
@@ -53,6 +54,25 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const { settings, setIsAuthenticated } = useStorage();
   const { apiUrl, previewUrl } = settings.signadotUrls;
+
+  const logout = async () => {
+    // Clear auth state
+    setAuthState(undefined);
+    setAuthenticated(false);
+    setIsAuthenticated(false);
+
+    // Clear the auth cookie if we have an API URL
+    if (apiUrl) {
+      console.log("Clearing auth cookie for", apiUrl);
+      await chrome.cookies.remove({
+        url: apiUrl,
+        name: "signadot-auth"
+      });
+    }
+
+    // Clear any auth-related storage
+    await chrome.storage.local.remove(['auth_token']);
+  };
 
   useEffect(() => {
     if (!apiUrl || !previewUrl) return;
@@ -116,7 +136,7 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
   }, [authState]);
 
   return (
-    <AuthContext.Provider value={{ authState, isLoading }}>
+    <AuthContext.Provider value={{ authState, isLoading, logout }}>
       <Layout>{children}</Layout>
     </AuthContext.Provider>
   );

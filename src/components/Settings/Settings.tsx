@@ -3,6 +3,7 @@ import styles from "./Settings.module.css";
 import { useHotkeys } from "react-hotkeys-hook";
 import { Switch } from "@blueprintjs/core";
 import { useStorage } from "../../contexts/StorageContext/StorageContext";
+import { useAuth } from "../../contexts/AuthContext";
 import {
   DEFAULT_SIGNADOT_API_URL,
   DEFAULT_SIGNADOT_PREVIEW_URL,
@@ -17,6 +18,7 @@ interface SettingsProps {
 }
 
 const Settings: React.FC<SettingsProps> = ({ onClose }) => {
+  const { logout } = useAuth();
   const [unsavedValues, setUnsavedValues] = useState<{
     apiUrl: string;
     previewUrl: string;
@@ -33,9 +35,10 @@ const Settings: React.FC<SettingsProps> = ({ onClose }) => {
     debugMode: false,
   });
 
-  const { settings, traceparent, setSettings, setTraceparent } = useStorage();
+  const { settings, traceparent, setSettings, setTraceparent, setIsAuthenticated } = useStorage();
 
   const [isExtraSettingsOpen, setIsExtraSettingsOpen] = React.useState(false);
+  const [showToast, setShowToast] = useState(false);
 
   // Use the hook to handle Ctrl+Shift+U
   useHotkeys("ctrl+shift+u", () => setIsExtraSettingsOpen(!isExtraSettingsOpen), {
@@ -114,8 +117,21 @@ const Settings: React.FC<SettingsProps> = ({ onClose }) => {
     onClose();
   };
 
+  const handleLogout = async () => {
+    setShowToast(true);
+    await logout();
+    setTimeout(() => {
+      setShowToast(false);
+    }, 2000);
+  };
+
   return (
     <div className={styles.container}>
+      {showToast && (
+        <div className={styles.toast}>
+          Successfully logged out
+        </div>
+      )}
       <div className={styles.header}>
         <h3 className={styles.title}>Settings</h3>
       </div>
@@ -222,6 +238,9 @@ const Settings: React.FC<SettingsProps> = ({ onClose }) => {
         </button>
         <button onClick={onClose} className={styles.cancel_action}>
           Cancel
+        </button>
+        <button onClick={handleLogout} className={styles.logout_button}>
+          Logout
         </button>
       </div>
     </div>
