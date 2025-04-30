@@ -4,7 +4,6 @@ import { RoutingEntity } from "../ListRouteEntries/types";
 import ListRouteEntries from "../ListRouteEntries";
 import { useFetchRoutingEntries } from "../ListRouteEntries/hooks";
 import PinnedRouteGroup from "../PinnedRouteGroup";
-import { Section, SectionCard } from "@blueprintjs/core";
 import Footer from "../Footer";
 import Settings from "../Settings/Settings";
 import { useAuth } from "../../contexts/AuthContext";
@@ -49,23 +48,20 @@ const Home = () => {
         setUserSelectedRoutingEntity={(e) => setCurrentRoutingKey(e.routingKey)}
         orgName={authState?.org.name}
       />
-      {pinnedRoutingEntityData ? (
-        <Section compact className={styles.pinned}>
-          <SectionCard>
-            Headers are being set for:
-            <PinnedRouteGroup
-              routingEntity={pinnedRoutingEntityData}
-              onRemove={() => {
-                setCurrentRoutingKey(undefined);
-              }}
-            />
-          </SectionCard>
-        </Section>
-      ) : (
-        <Section compact className={styles.pinned}>
-          <SectionCard className={styles.noSelectedMessage}>No Sandbox or RouteGroup selected</SectionCard>
-        </Section>
-      )}
+      <div className={styles.selectedEntity}>
+        {pinnedRoutingEntityData ? (
+          <PinnedRouteGroup
+            routingEntity={pinnedRoutingEntityData}
+            onRemove={() => {
+              setCurrentRoutingKey(undefined);
+            }}
+          />
+        ) : (
+          <div className={styles.noSelectedMessage}>
+            No Sandbox or RouteGroup selected
+          </div>
+        )}
+      </div>
       <Footer />
     </>
   );

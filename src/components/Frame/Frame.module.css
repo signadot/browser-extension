@@ -52,10 +52,20 @@
   flex: 1;
 }
 
-.pinned {
-  margin-top: 1rem;
+.selectedEntity {
+  margin-top: 1.5rem;
+  padding: 0;
+}
+
+.selectedEntityLabel {
+  color: var(--SIGNADOT-NEUTRAL600);
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
 }
 
 .noSelectedMessage {
+  color: var(--SIGNADOT-NEUTRAL600);
+  font-size: 0.875rem;
   text-align: center;
+  padding: 1rem 0;
 }
