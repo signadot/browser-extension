@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styles from "./Settings.module.css";
 import { useHotkeys } from "react-hotkeys-hook";
-import { Switch } from "@blueprintjs/core";
+import { Switch, Icon } from "@blueprintjs/core";
 import { useStorage } from "../../contexts/StorageContext/StorageContext";
 import { useAuth } from "../../contexts/AuthContext";
 import {
@@ -10,8 +10,6 @@ import {
   DEFAULT_SIGNADOT_DASHBOARD_URL,
   DEFAULT_TRACEPARENT_VALUE,
 } from "../../contexts/StorageContext/defaults";
-
-const AUTH_SESSION_COOKIE_NAME = "signadot-auth";
 
 interface SettingsProps {
   onClose: () => void;
@@ -35,10 +33,9 @@ const Settings: React.FC<SettingsProps> = ({ onClose }) => {
     debugMode: false,
   });
 
-  const { settings, traceparent, setSettings, setTraceparent, setIsAuthenticated } = useStorage();
+  const { settings, traceparent, setSettings, setTraceparent, setIsAuthenticated, isAuthenticated } = useStorage();
 
   const [isExtraSettingsOpen, setIsExtraSettingsOpen] = React.useState(false);
-  const [showToast, setShowToast] = useState(false);
 
   // Use the hook to handle Ctrl+Shift+U
   useHotkeys("ctrl+shift+u", () => setIsExtraSettingsOpen(!isExtraSettingsOpen), {
@@ -118,20 +115,13 @@ const Settings: React.FC<SettingsProps> = ({ onClose }) => {
   };
 
   const handleLogout = async () => {
-    setShowToast(true);
     await logout();
-    setTimeout(() => {
-      setShowToast(false);
-    }, 2000);
+    const signoutUrl = `${settings.signadotUrls.dashboardUrl}/signout`;
+    window.open(signoutUrl, '_blank');
   };
 
   return (
     <div className={styles.container}>
-      {showToast && (
-        <div className={styles.toast}>
-          Successfully logged out
-        </div>
-      )}
       <div className={styles.header}>
         <h3 className={styles.title}>Settings</h3>
       </div>
@@ -183,6 +173,12 @@ const Settings: React.FC<SettingsProps> = ({ onClose }) => {
             placeholder="Enter Value (eg 00-abcdef0123456789-abcdef01-00)"
           />
         </div>
+        {isAuthenticated && (
+          <button onClick={handleLogout} className={styles.logout_button}>
+            <Icon icon="log-out" size={14} className={styles.logout_icon} />
+            Sign out from Signadot
+          </button>
+        )}
       </div>
       <div className={styles.section} data-hide-section={!isExtraSettingsOpen}>
         <div className={styles.sectionHeader}>
@@ -238,9 +234,6 @@ const Settings: React.FC<SettingsProps> = ({ onClose }) => {
         </button>
         <button onClick={onClose} className={styles.cancel_action}>
           Cancel
-        </button>
-        <button onClick={handleLogout} className={styles.logout_button}>
-          Logout
         </button>
       </div>
     </div>
