@@ -18,6 +18,7 @@ interface AuthState {
   user: {
     firstName?: string;
     lastName?: string;
+    email?: string;
   };
 }
 
@@ -41,6 +42,7 @@ interface GetOrgsResponse {
       String?: string;
       Valid: boolean;
     };
+    email?: string;
   };
 }
 
@@ -89,6 +91,7 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
             user: {
               firstName: data.user.firstName?.String,
               lastName: data.user.lastName?.String,
+              email: data.user.email
             },
           });
 

@@ -43,10 +43,8 @@ const Settings: React.FC<SettingsProps> = ({ onClose }) => {
   });
 
   const { settings, traceparent, setSettings, setTraceparent } = useStorage();
-
   const [isExtraSettingsOpen, setIsExtraSettingsOpen] = React.useState(false);
 
-  // Use the hook to handle Ctrl+Shift+U
   useHotkeys("ctrl+shift+u", () => setIsExtraSettingsOpen(!isExtraSettingsOpen), {
     enableOnFormTags: true,
     preventDefault: true,
@@ -263,14 +261,6 @@ const Settings: React.FC<SettingsProps> = ({ onClose }) => {
       </div>
     </div>
   );
-};
-
-export const getApiUrl = async (): Promise<string> => {
-  return new Promise((resolve) => {
-    chrome.storage.sync.get(["apiUrl"], (result) => {
-      resolve(result.apiUrl || DEFAULT_SIGNADOT_API_URL);
-    });
-  });
 };
 
 export default Settings;
