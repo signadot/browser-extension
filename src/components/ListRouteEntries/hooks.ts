@@ -3,20 +3,26 @@ import { ApiError, RoutingEntity, RoutingEntityType } from "./types";
 import { fetchSandboxes, fetchRouteGroups } from "./queries";
 import { useAuth } from "../../contexts/AuthContext";
 import { useMemo } from "react";
+import { useStorage } from "../../contexts/StorageContext/StorageContext";
 
 // TODO: Move out orgName and apiKey from the function call
 export const useFetchRoutingEntries = () => {
   const { authState } = useAuth();
+  const { settings } = useStorage();
   const {
     data: sandboxes,
     error: sandboxesError,
     isLoading: sandboxesLoading,
-  } = useQuery<RoutingEntity[], ApiError>("sandboxes", () => fetchSandboxes(authState?.org.name));
+  } = useQuery<RoutingEntity[], ApiError>("sandboxes", () =>
+    fetchSandboxes(settings.signadotUrls.apiUrl || "", authState?.org.name || ""),
+  );
   const {
     data: routegroups,
     error: routegroupsError,
     isLoading: routegroupsLoading,
-  } = useQuery<RoutingEntity[], ApiError>("routegroups", () => fetchRouteGroups(authState?.org.name));
+  } = useQuery<RoutingEntity[], ApiError>("routegroups", () =>
+    fetchRouteGroups(settings.signadotUrls.apiUrl || "", authState?.org.name || ""),
+  );
   // TODO: Handle error and loading too.
 
   return useMemo(() => {

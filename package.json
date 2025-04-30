@@ -8,7 +8,7 @@
     "build": "webpack --config webpack/webpack.prod.js",
     "clean": "rimraf dist",
     "test": "npx jest",
-    "prettier:write": "prettier --write \"src/**/*.{ts,tsx}\""
+    "prettier:write": "biome format --write src"
   },
   "author": "",
   "license": "MIT",
@@ -26,6 +26,7 @@
     "react-query": "^3.39.3"
   },
   "devDependencies": {
+    "@biomejs/biome": "1.9.4",
     "@types/chrome": "^0.0.251",
     "@types/jest": "^29.5.0",
     "@types/react": "^18.0.29",

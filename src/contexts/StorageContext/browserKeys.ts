@@ -5,10 +5,6 @@ export enum StorageBrowserKeys {
   traceparentHeader = "traceparentHeader",
   headers = "headers",
   debugMode = "debugMode",
-
-  apiUrl = "apiUrl",
-  previewUrl = "previewUrl",
-  dashboardUrl = "dashboardUrl",
 }
 
 export const getBrowserStoreValues = async (keys: StorageBrowserKeys[]) => {
