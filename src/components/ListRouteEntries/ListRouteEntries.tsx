@@ -25,7 +25,7 @@ const ListRouteEntries: React.FC<Props> = ({ routingEntities, setUserSelectedRou
     refetch,
   } = useQuery({
     queryKey: ["clusters", orgName],
-    queryFn: () => fetchClusters(orgName!),
+    queryFn: () => fetchClusters(settings.signadotUrls.apiUrl || "", orgName || ""),
     enabled: !!orgName,
   });
 
