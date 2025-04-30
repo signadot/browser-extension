@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { auth } from "./auth";
 import Layout from "../components/Layout/Layout";
 import { useStorage } from "./StorageContext/StorageContext";
+import { Intent, Spinner, SpinnerSize } from "@blueprintjs/core";
 
 const loadingIconPath = chrome.runtime.getURL("images/loading.gif");
 
@@ -17,6 +18,7 @@ interface AuthState {
   user: {
     firstName?: string;
     lastName?: string;
+    email?: string;
   };
 }
 
@@ -24,7 +26,6 @@ interface AuthState {
 interface AuthContextType {
   authState?: AuthState;
   isLoading: boolean;
-  logout: () => Promise<void>;
 }
 
 interface GetOrgsResponse {
@@ -41,6 +42,7 @@ interface GetOrgsResponse {
       String?: string;
       Valid: boolean;
     };
+    email?: string;
   };
 }
 
@@ -54,25 +56,6 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const { settings, setIsAuthenticated } = useStorage();
   const { apiUrl, previewUrl } = settings.signadotUrls;
-
-  const logout = async () => {
-    // Clear auth state
-    setAuthState(undefined);
-    setAuthenticated(false);
-    setIsAuthenticated(false);
-
-    // Clear the auth cookie if we have an API URL
-    if (apiUrl) {
-      console.log("Clearing auth cookie for", apiUrl);
-      await chrome.cookies.remove({
-        url: apiUrl,
-        name: "signadot-auth"
-      });
-    }
-
-    // Clear any auth-related storage
-    await chrome.storage.local.remove(['auth_token']);
-  };
 
   useEffect(() => {
     if (!apiUrl || !previewUrl) return;
@@ -108,6 +91,7 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
             user: {
               firstName: data.user.firstName?.String,
               lastName: data.user.lastName?.String,
+              email: data.user.email
             },
           });
 
@@ -136,7 +120,7 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
   }, [authState]);
 
   return (
-    <AuthContext.Provider value={{ authState, isLoading, logout }}>
+    <AuthContext.Provider value={{ authState, isLoading }}>
       <Layout>{children}</Layout>
     </AuthContext.Provider>
   );

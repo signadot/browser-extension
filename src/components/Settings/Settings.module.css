@@ -3,9 +3,11 @@
 }
 
 .title {
-  font-size: 20px;
   font-weight: bold;
   margin-bottom: 16px;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 500;
 }
 
 .formGroup {
@@ -70,12 +72,6 @@
   display: flex;
   align-items: center;
   margin-bottom: 0.5rem;
-}
-
-.title {
-  margin: 0;
-  font-size: 16px;
-  font-weight: 500;
 }
 
 .section {

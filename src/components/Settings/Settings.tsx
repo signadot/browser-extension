@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styles from "./Settings.module.css";
 import { useHotkeys } from "react-hotkeys-hook";
-import { Switch, Icon } from "@blueprintjs/core";
+import { Switch } from "@blueprintjs/core";
 import { useStorage } from "../../contexts/StorageContext/StorageContext";
 import { useAuth } from "../../contexts/AuthContext";
 import {
@@ -16,7 +16,7 @@ interface SettingsProps {
 }
 
 const Settings: React.FC<SettingsProps> = ({ onClose }) => {
-  const { logout } = useAuth();
+  const { authState } = useAuth();
   const [unsavedValues, setUnsavedValues] = useState<{
     apiUrl: string;
     previewUrl: string;
@@ -33,7 +33,7 @@ const Settings: React.FC<SettingsProps> = ({ onClose }) => {
     debugMode: false,
   });
 
-  const { settings, traceparent, setSettings, setTraceparent, setIsAuthenticated, isAuthenticated } = useStorage();
+  const { settings, traceparent, setSettings, setTraceparent } = useStorage();
 
   const [isExtraSettingsOpen, setIsExtraSettingsOpen] = React.useState(false);
 
@@ -70,58 +70,29 @@ const Settings: React.FC<SettingsProps> = ({ onClose }) => {
     });
 
     setTraceparent(unsavedValues.traceparentHeaderEnabled, unsavedValues.traceparentHeader);
-
-    // TODO: This has been disabled because we are using the storage context to save the settings, however
-    // part of this logic have to be checked after issue#51 is merged
-    // chrome.storage.local.set({
-    //     apiUrl: cleanApiUrl,
-    //     previewUrl: cleanPreviewUrl,
-    //     dashboardUrl: cleanDashboardUrl,
-    //     traceparentHeader: temporaryValues.traceparentHeader,
-    //     traceparentHeaderEnabled: temporaryValues.traceparentHeaderEnabled,
-    //     debugMode: temporaryValues.debugMode,
-    // }, () => {
-    //     // After saving, update the cookie for the new domain
-    //     chrome.cookies.get(
-    //         {url: cleanPreviewUrl, name: AUTH_SESSION_COOKIE_NAME},
-    //         function (cookie) {
-    //             if (cookie) {
-    //                 // Set the cookie for the new API domain
-    //                 chrome.cookies.set(
-    //                     {
-    //                         url: cleanApiUrl,
-    //                         name: AUTH_SESSION_COOKIE_NAME,
-    //                         value: cookie.value,
-    //                     },
-    //                     () => {
-    //                         // Re-authenticate with the new API URL
-    //                         auth((authenticated) => {
-    //                             if (authenticated) {
-    //                                 alert('Settings saved and authenticated successfully!');
-    //                             } else {
-    //                                 alert('Settings saved but authentication failed. Please check your API URL and ensure you are logged in.');
-    //                             }
-    //                         });
-    //                     }
-    //                 );
-    //             } else {
-    //                 alert('Settings saved but no authentication cookie found. Please log in to Signadot first.');
-    //             }
-    //         }
-    //     );
-    // });
-
     onClose();
   };
 
-  const handleLogout = async () => {
-    await logout();
+  const handleLogout = () => {
     const signoutUrl = `${settings.signadotUrls.dashboardUrl}/signout`;
     window.open(signoutUrl, '_blank');
   };
 
   return (
     <div className={styles.container}>
+      {authState?.user && (
+        <div className={styles.userInfo}>
+          <div className={styles.header}>
+            <h3 className={styles.title}>User</h3>
+          </div>
+          <div className={styles.userEmail}>
+            Logged in as {authState.user.email || 'Unknown User'}
+          </div>
+          <a onClick={handleLogout} className={styles.logoutLink}>
+            ← Log out
+          </a>
+        </div>
+      )}
       <div className={styles.header}>
         <h3 className={styles.title}>Settings</h3>
       </div>
@@ -143,19 +114,6 @@ const Settings: React.FC<SettingsProps> = ({ onClose }) => {
           />
           <label htmlFor="traceparentEnabled">Enable Traceparent</label>
         </div>
-        <div className={styles.traceparent}>
-          <Switch
-            onChange={(e) =>
-              setUnsavedValues({
-                ...unsavedValues,
-                debugMode: e.target.checked,
-              })
-            }
-            checked={unsavedValues.debugMode}
-            large={false}
-          />
-          <label htmlFor="debugEnabled">Debug Mode</label>
-        </div>
         <div className={styles.formGroup}>
           <label htmlFor="traceparentHeader">Traceparent Header Value:</label>
           <input
@@ -173,12 +131,6 @@ const Settings: React.FC<SettingsProps> = ({ onClose }) => {
             placeholder="Enter Value (eg 00-abcdef0123456789-abcdef01-00)"
           />
         </div>
-        {isAuthenticated && (
-          <button onClick={handleLogout} className={styles.logout_button}>
-            <Icon icon="log-out" size={14} className={styles.logout_icon} />
-            Sign out from Signadot
-          </button>
-        )}
       </div>
       <div className={styles.section} data-hide-section={!isExtraSettingsOpen}>
         <div className={styles.sectionHeader}>
