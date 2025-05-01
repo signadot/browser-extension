@@ -1,39 +1,39 @@
 @import "../../styles/colors.module.css";
 
 .container {
-  margin-top: 2rem;
-  padding: 1.5rem 1.5rem 0.5rem 1.5rem;
-  border-top: 1px solid var(--SIGNADOT-NEUTRAL100);
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
 }
 
 .footerContent {
+  width: 100%;
+  padding: 16px;
+  border-top: 1px solid var(--SIGNADOT-BORDER-COLOR);
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 16px;
 }
 
 .links {
   display: flex;
+  gap: 24px;
   justify-content: center;
-  gap: 2rem;
 }
 
 .link {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 8px;
   color: var(--SIGNADOT-NEUTRAL600);
   text-decoration: none;
-  font-size: 0.875rem;
+  font-size: 14px;
   transition: color 0.2s ease;
 }
 
 .link:hover {
-  color: var(--SIGNADOT-NEUTRAL900);
-}
-
-.link svg {
-  font-size: 1.125rem;
+  color: var(--SIGNADOT-BLUE400);
 }
 
 .userInfo {
@@ -41,22 +41,17 @@
   font-size: 13px;
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: 4px;
-  padding-top: 8px;
-  border-top: 1px solid var(--SIGNADOT-BORDER-COLOR);
-  margin: 0 auto;
+  opacity: var(--SIGNADOT-OPACITY800);
 }
 
 .logoutLink {
   color: var(--SIGNADOT-NEUTRAL500);
   cursor: pointer;
   text-decoration: none;
-  opacity: var(--SIGNADOT-OPACITY800);
   transition: all 0.2s ease;
 }
 
 .logoutLink:hover {
-  opacity: 1;
-  color: var(--SIGNADOT-NEUTRAL900);
+  color: var(--SIGNADOT-BLUE400);
 }

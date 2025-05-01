@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { RoutingEntity, RoutingEntityType } from "../ListRouteEntries/types";
 import styles from "./PinnedRouteGroup.module.css";
-import { Button, Icon, Card, Tag } from "@blueprintjs/core";
+import { Button, Icon, Tag } from "@blueprintjs/core";
 import { useStorage } from "../../contexts/StorageContext/StorageContext";
 import { getGroupedHeadersByKind } from "../../contexts/StorageContext/utils";
 
@@ -38,7 +38,7 @@ const PinnedRouteGroup: React.FC<Props> = ({ routingEntity, onRemove }) => {
   }, [headers]);
 
   return (
-    <Card className={styles.container} elevation={1}>
+    <section className={styles.container}>
       <div className={styles.header}>
         <div className={styles.title}>
           {entityDashboardURL ? (
@@ -74,17 +74,18 @@ const PinnedRouteGroup: React.FC<Props> = ({ routingEntity, onRemove }) => {
 
         <Button
           minimal
-          small
-          icon={isExpanded ? "chevron-down" : "chevron-right"}
           onClick={() => setIsExpanded(!isExpanded)}
           className={styles.headerButton}
         >
-          {isExpanded ? "Hide Details" : "Show Details"}
+          <div className={styles.headerButtonText}>
+            <span>{isExpanded ? "Show Less" : "Show Details"}</span>
+            <Icon icon={isExpanded ? "chevron-up" : "chevron-down"} />
+          </div>
         </Button>
 
         {isExpanded && (
           <div className={styles.headersList}>
-            <h4>Injected Headers</h4>
+            <h4 className={styles.headersTitle}>Injected Headers</h4>
             <div>
               <h5>Default Headers</h5>
               {groupedHeaders.default.length > 0 ? (
@@ -117,7 +118,7 @@ const PinnedRouteGroup: React.FC<Props> = ({ routingEntity, onRemove }) => {
           </div>
         )}
       </div>
-    </Card>
+    </section>
   );
 };
 

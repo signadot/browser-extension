@@ -3,6 +3,8 @@
 .container {
   margin-block: 1rem;
   width: 100%;
+  padding: 1rem 0;
+  border-top: 1px solid var(--SIGNADOT-BORDER-COLOR);
 }
 
 .header {
@@ -40,13 +42,57 @@
 }
 
 .headerButton {
-  align-self: flex-start;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--SIGNADOT-NEUTRAL600);
+  padding: 12px 8px;
+  border-top: 1px solid var(--SIGNADOT-BORDER-COLOR);
+  margin-top: 16px;
+  transition: all 0.2s ease;
+}
+
+.headerButton:hover {
+  background-color: var(--SIGNADOT-NEUTRAL50);
+  color: var(--SIGNADOT-BLUE400);
+}
+
+.headerButtonText {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.headerButtonTitle {
+  font-weight: 600;
+  margin-right: 4px;
+}
+
+.headerButtonAction {
+  font-weight: 400;
+}
+
+.headerButtonIcon {
+  display: flex;
+  align-items: center;
 }
 
 .headersList {
-  margin-top: 0.5rem;
-  padding-top: 0.5rem;
-  border-top: 1px solid #e1e8ed;
+  padding: 8px 16px;
+  background-color: var(--SIGNADOT-APP-BACKGROUND-COLOR);
+  border: 1px solid var(--SIGNADOT-BORDER-COLOR);
+  border-radius: 6px;
+  margin-top: 8px;
+}
+
+.headersTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--SIGNADOT-NEUTRAL800);
+  margin-bottom: 12px;
+  margin-top: 4px;
 }
 
 .headerItems {
