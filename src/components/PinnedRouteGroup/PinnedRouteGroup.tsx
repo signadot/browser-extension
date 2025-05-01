@@ -12,9 +12,9 @@ interface Props {
 const getEntityDashboardURL = (dashboardUrl: string, routingEntity: RoutingEntity): string | undefined => {
   switch (routingEntity.type) {
     case RoutingEntityType.Sandbox:
-      return dashboardUrl + `/sandbox/name/${routingEntity.name}/overview`;
+      return new URL(`/sandbox/name/${routingEntity.name}/overview`, dashboardUrl).toString();
     case RoutingEntityType.RouteGroup:
-      return dashboardUrl + `/routegroups/${routingEntity.name}`;
+      return new URL(`/routegroups/${routingEntity.name}`, dashboardUrl).toString();
   }
   return undefined;
 };
