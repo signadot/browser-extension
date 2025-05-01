@@ -19,9 +19,9 @@ interface Org {
 }
 
 type AuthState = 
-  | { state: "loading"; user: undefined; org: undefined }
-  | { state: "not-authenticated"; user: undefined; org: undefined }
-  | { state: "authenticated"; user: User; org: Org };
+  | { status: "loading"; user: undefined; org: undefined }
+  | { status: "unauthenticated"; user: undefined; org: undefined }
+  | { status: "authenticated"; user: User; org: Org };
 
 // Define the shape of the context
 interface AuthContextType {
@@ -53,7 +53,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 // AuthProvider component
 export const AuthProvider: React.FC<Props> = ({ children }) => {
   const [authState, setAuthState] = useState<AuthState>({
-    state: "loading",
+    status: "loading",
     user: undefined,
     org: undefined
   });
@@ -62,7 +62,7 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
 
   const resetAuth = () => {
     setAuthState({
-      state: "not-authenticated",
+      status: "unauthenticated",
       user: undefined,
       org: undefined
     });
@@ -73,7 +73,7 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
     if (!apiUrl || !previewUrl || !isStoreLoaded) return;
 
     setAuthState({
-      state: "loading",
+      status: "loading",
       user: undefined,
       org: undefined
     });
@@ -83,7 +83,7 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
         if (!authenticated) {
           console.log("Not authenticated!");
           setAuthState({
-            state: "not-authenticated",
+            status: "unauthenticated",
             user: undefined,
             org: undefined
           });
@@ -96,7 +96,7 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
           if (response.status === 401 || !response.ok) {
             setIsAuthenticated(false);
             setAuthState({
-              state: "not-authenticated",
+              status: "unauthenticated",
               user: undefined,
               org: undefined
             });
@@ -111,7 +111,7 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
           }
 
           setAuthState({
-            state: "authenticated",
+            status: "authenticated",
             org: data.orgs[0],
             user: {
               firstName: data.user.firstName?.String,
@@ -125,7 +125,7 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
           console.error("Error fetching org:", error);
           setIsAuthenticated(false);
           setAuthState({
-            state: "not-authenticated",
+            status: "unauthenticated",
             user: undefined,
             org: undefined
           });
@@ -136,11 +136,11 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
   }, [apiUrl, previewUrl, isStoreLoaded]);
 
   useEffect(() => {
-    if (authState.state === "not-authenticated") {
+    if (authState.status === "unauthenticated") {
       setIsAuthenticated(false);
     }
 
-    if (authState.state === "authenticated") {
+    if (authState.status === "authenticated") {
       setIsAuthenticated(true);
     }
   }, [authState]);

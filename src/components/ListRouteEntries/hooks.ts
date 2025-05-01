@@ -16,7 +16,7 @@ export const useFetchRoutingEntries = () => {
   } = useQuery<RoutingEntity[], ApiError>(
     "sandboxes",
     () => {
-      if (authState.state !== "authenticated") {
+      if (authState.status !== "authenticated") {
         throw new Error("Not authenticated");
       }
       if (!settings.signadotUrls.apiUrl) {
@@ -25,7 +25,7 @@ export const useFetchRoutingEntries = () => {
       return fetchSandboxes(settings.signadotUrls.apiUrl, authState.org.name);
     },
     {
-      enabled: authState.state === "authenticated" && !!settings.signadotUrls.apiUrl
+      enabled: authState.status === "authenticated" && !!settings.signadotUrls.apiUrl
     }
   );
   const {
@@ -35,7 +35,7 @@ export const useFetchRoutingEntries = () => {
   } = useQuery<RoutingEntity[], ApiError>(
     "routegroups",
     () => {
-      if (authState.state !== "authenticated") {
+      if (authState.status !== "authenticated") {
         throw new Error("Not authenticated");
       }
       if (!settings.signadotUrls.apiUrl) {
@@ -44,7 +44,7 @@ export const useFetchRoutingEntries = () => {
       return fetchRouteGroups(settings.signadotUrls.apiUrl, authState.org.name);
     },
     {
-      enabled: authState.state === "authenticated" && !!settings.signadotUrls.apiUrl
+      enabled: authState.status === "authenticated" && !!settings.signadotUrls.apiUrl
     }
   );
   // TODO: Handle error and loading too.

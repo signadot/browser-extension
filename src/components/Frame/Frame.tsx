@@ -74,9 +74,9 @@ const Frame = () => {
   const { goToView } = useRouteView();
 
   useEffect(() => {
-    if (authState.state === "loading") {
+    if (authState.status === "loading") {
       goToView("loading");
-    } else if (authState.state === "authenticated") {
+    } else if (authState.status === "authenticated") {
       goToView("home");
     } else {
       goToView("login");
