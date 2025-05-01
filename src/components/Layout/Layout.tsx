@@ -1,6 +1,5 @@
 import React from "react";
 import styles from "./Layout.module.css";
-import { Switch, Tooltip } from "@blueprintjs/core";
 import { IoHomeSharp, IoSettingsSharp } from "react-icons/io5";
 import { useRouteView } from "../../contexts/RouteViewContext/RouteViewContext";
 import { DebugPanel } from "../DebugPanel/DebugPanel";
@@ -14,7 +13,7 @@ interface Props {
 
 const Layout: React.FC<Props> = ({ children }) => {
   const { currentView, goToView } = useRouteView();
-  const { isStoreLoaded, settings, setSettings, isAuthenticated } = useStorage();
+  const { isStoreLoaded, isAuthenticated } = useStorage();
   const { authState } = useAuth();
 
   const handleHomeChange = () => {
@@ -39,14 +38,6 @@ const Layout: React.FC<Props> = ({ children }) => {
             )}
           </div>
           <div className={styles.topRight}>
-            <Tooltip content={`Header injection ${settings.enabled ? "Enabled" : "Disabled"}`}>
-              <Switch
-                alignIndicator={"right"}
-                onChange={(e) => setSettings({ ...settings, enabled: e.target.checked })}
-                checked={settings.enabled}
-                large={true}
-              />
-            </Tooltip>
             <button onClick={() => goToView((prevView) => (prevView === "settings" ? handleHomeChange() : "settings"))}>
               {currentView === "settings" ? 
                 <IoHomeSharp size={20} /> : 

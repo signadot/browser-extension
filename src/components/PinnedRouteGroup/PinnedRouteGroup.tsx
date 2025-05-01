@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { RoutingEntity, RoutingEntityType } from "../ListRouteEntries/types";
 import styles from "./PinnedRouteGroup.module.css";
-import { Button, Icon, Tag } from "@blueprintjs/core";
+import { Button, Icon, Tag, Switch, Tooltip } from "@blueprintjs/core";
 import { useStorage } from "../../contexts/StorageContext/StorageContext";
 import { getGroupedHeadersByKind } from "../../contexts/StorageContext/utils";
 
@@ -26,7 +26,7 @@ interface Props {
 
 const PinnedRouteGroup: React.FC<Props> = ({ routingEntity, onRemove }) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const { headers, settings, setCurrentRoutingKey } = useStorage();
+  const { headers, settings, setSettings, setCurrentRoutingKey } = useStorage();
 
   let entityDashboardURL: string | undefined;
   if (settings.signadotUrls.dashboardUrl) {
@@ -51,9 +51,17 @@ const PinnedRouteGroup: React.FC<Props> = ({ routingEntity, onRemove }) => {
           ) : (
             routingEntity.name
           )}
+          <Tag minimal>{routingEntity.type}</Tag>
         </div>
         <div className={styles.headerActions}>
-          <Tag minimal>{routingEntity.type}</Tag>
+          <Tooltip content={`Header injection ${settings.enabled ? "Enabled" : "Disabled"}`}>
+            <Switch
+              alignIndicator={"right"}
+              onChange={(e) => setSettings({ ...settings, enabled: e.target.checked })}
+              checked={settings.enabled}
+              className="bp3-intent-success"
+            />
+          </Tooltip>
           <Button
             minimal
             small
