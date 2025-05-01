@@ -70,18 +70,18 @@ const Home = () => {
 };
 
 const Frame = () => {
-  const { authState, isLoading } = useAuth();
+  const { authState } = useAuth();
   const { goToView } = useRouteView();
 
   useEffect(() => {
-    if (isLoading) {
+    if (authState?.isLoading) {
       goToView("loading");
     } else if (authState) {
       goToView("home");
     } else {
       goToView("login");
     }
-  }, [authState, isLoading]);
+  }, [authState]);
 
   return (
     <div className={styles.container}>
