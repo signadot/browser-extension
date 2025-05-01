@@ -11,6 +11,7 @@ import { useRouteView } from "../../contexts/RouteViewContext/RouteViewContext";
 import { useStorage } from "../../contexts/StorageContext/StorageContext";
 import { Route } from "../Route";
 import { ProtectedRoute } from "../ProtectedRoute";
+import { Spinner, SpinnerSize, Intent } from "@blueprintjs/core";
 
 const Login = () => {
   const { settings } = useStorage();
@@ -28,7 +29,13 @@ const Login = () => {
 };
 
 const Loading = () => {
-  return <div>Loading...</div>;
+  return (
+    <Spinner
+      className="flex h-screen"
+      intent={Intent.PRIMARY}
+      size={SpinnerSize.SMALL}
+    />
+  );
 };
 
 const Home = () => {
