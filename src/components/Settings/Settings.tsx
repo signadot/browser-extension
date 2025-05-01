@@ -16,7 +16,7 @@ import {
   STAGING_SIGNADOT_DASHBOARD_URL,
 } from "../../contexts/StorageContext/defaults";
 import { useAuth } from "../../contexts/AuthContext";
-
+import { sanitizeUrl } from "@braintree/sanitize-url";
 const AUTH_SESSION_COOKIE_NAME = "signadot-auth";
 
 type Environment = "production" | "staging" | "custom";
@@ -107,9 +107,9 @@ const Settings: React.FC<SettingsProps> = ({ onClose }) => {
   const isReadOnly = selectedEnv === "production" || selectedEnv === "staging";
 
   const handleSave = () => {
-    const cleanApiUrl = unsavedValues.apiUrl.replace(/\/+$/, "");
-    const cleanPreviewUrl = unsavedValues.previewUrl.replace(/\/+$/, "");
-    const cleanDashboardUrl = unsavedValues.dashboardUrl.replace(/\/+$/, "");
+    const cleanApiUrl = sanitizeUrl(unsavedValues.apiUrl);
+    const cleanPreviewUrl = sanitizeUrl(unsavedValues.previewUrl);
+    const cleanDashboardUrl = sanitizeUrl(unsavedValues.dashboardUrl);
 
     // If there is a new apiUrl, we need to reset the auth state
     if (cleanApiUrl !== settings.signadotUrls.apiUrl || cleanPreviewUrl !== settings.signadotUrls.previewUrl || cleanDashboardUrl !== settings.signadotUrls.dashboardUrl) {

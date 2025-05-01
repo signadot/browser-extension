@@ -19,6 +19,7 @@
   "dependencies": {
     "@blueprintjs/core": "5.7.1",
     "@blueprintjs/select": "5.0.19",
+    "@braintree/sanitize-url": "^7.1.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hotkeys-hook": "^4.6.1",
