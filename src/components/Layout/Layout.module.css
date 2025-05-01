@@ -55,6 +55,12 @@ body {
   border: none;
   cursor: pointer;
   color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 30px;
+  width: 30px;
+  padding: 0;
 }
 
 .topRight button:hover {

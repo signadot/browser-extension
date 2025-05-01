@@ -48,7 +48,10 @@ const Layout: React.FC<Props> = ({ children }) => {
               />
             </Tooltip>
             <button onClick={() => goToView((prevView) => (prevView === "settings" ? handleHomeChange() : "settings"))}>
-              {currentView === "settings" ? <IoHomeSharp /> : <IoSettingsSharp />}
+              {currentView === "settings" ? 
+                <IoHomeSharp size={20} /> : 
+                <IoSettingsSharp size={20} />
+              }
             </button>
           </div>
         </div>
