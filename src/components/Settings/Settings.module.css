@@ -252,7 +252,7 @@
   border-radius: 4px;
   z-index: 1000;
   animation: slideDown 0.3s ease-out;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 @keyframes slideDown {

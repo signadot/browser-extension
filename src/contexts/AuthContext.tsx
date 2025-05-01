@@ -91,7 +91,7 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
             user: {
               firstName: data.user.firstName?.String,
               lastName: data.user.lastName?.String,
-              email: data.user.email
+              email: data.user.email,
             },
           });
 

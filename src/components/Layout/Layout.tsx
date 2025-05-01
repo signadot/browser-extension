@@ -23,10 +23,10 @@ const Layout: React.FC<Props> = ({ children }) => {
     init && (
       <div className={styles.container}>
         <div className={styles.topBar}>
-          <div style={{ padding: '0.75rem 0' }}>
-            <img 
-              src={logoPath} 
-              style={{ height: '40px', width: 'auto', maxWidth: '100%', display: 'block' }}
+          <div style={{ padding: "0.75rem 0" }}>
+            <img
+              src={logoPath}
+              style={{ height: "40px", width: "auto", maxWidth: "100%", display: "block" }}
               alt="Signadot Logo"
             />
           </div>

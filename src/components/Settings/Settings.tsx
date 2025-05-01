@@ -81,14 +81,14 @@ const Settings: React.FC<SettingsProps> = ({ onClose }) => {
   const handleEnvironmentChange = (env: Environment) => {
     setSelectedEnv(env);
     if (env === "production") {
-      setUnsavedValues(prev => ({
+      setUnsavedValues((prev) => ({
         ...prev,
         apiUrl: PROD_SIGNADOT_API_URL,
         previewUrl: PROD_SIGNADOT_PREVIEW_URL,
         dashboardUrl: PROD_SIGNADOT_DASHBOARD_URL,
       }));
     } else if (env === "staging") {
-      setUnsavedValues(prev => ({
+      setUnsavedValues((prev) => ({
         ...prev,
         apiUrl: STAGING_SIGNADOT_API_URL,
         previewUrl: STAGING_SIGNADOT_PREVIEW_URL,
@@ -98,7 +98,7 @@ const Settings: React.FC<SettingsProps> = ({ onClose }) => {
   };
 
   const handleUrlChange = (field: keyof typeof unsavedValues, value: string) => {
-    setUnsavedValues(prev => ({ ...prev, [field]: value }));
+    setUnsavedValues((prev) => ({ ...prev, [field]: value }));
     setSelectedEnv("custom");
   };
 
@@ -215,7 +215,7 @@ const Settings: React.FC<SettingsProps> = ({ onClose }) => {
             type="url"
             value={unsavedValues.apiUrl}
             onChange={(e) => handleUrlChange("apiUrl", e.target.value)}
-            className={`${styles.input} ${isReadOnly ? styles.readOnly : ''}`}
+            className={`${styles.input} ${isReadOnly ? styles.readOnly : ""}`}
             placeholder="Enter API URL"
             readOnly={isReadOnly}
           />
@@ -230,7 +230,7 @@ const Settings: React.FC<SettingsProps> = ({ onClose }) => {
             type="url"
             value={unsavedValues.previewUrl}
             onChange={(e) => handleUrlChange("previewUrl", e.target.value)}
-            className={`${styles.input} ${isReadOnly ? styles.readOnly : ''}`}
+            className={`${styles.input} ${isReadOnly ? styles.readOnly : ""}`}
             placeholder="Enter Preview URL"
             readOnly={isReadOnly}
           />
@@ -245,7 +245,7 @@ const Settings: React.FC<SettingsProps> = ({ onClose }) => {
             type="url"
             value={unsavedValues.dashboardUrl}
             onChange={(e) => handleUrlChange("dashboardUrl", e.target.value)}
-            className={`${styles.input} ${isReadOnly ? styles.readOnly : ''}`}
+            className={`${styles.input} ${isReadOnly ? styles.readOnly : ""}`}
             placeholder="Enter Dashboard URL"
             readOnly={isReadOnly}
           />
