@@ -5,6 +5,7 @@ import { IoHomeSharp, IoSettingsSharp } from "react-icons/io5";
 import { useRouteView } from "../../contexts/RouteViewContext/RouteViewContext";
 import { DebugPanel } from "../DebugPanel/DebugPanel";
 import { useStorage } from "../../contexts/StorageContext/StorageContext";
+import { useAuth } from "../../contexts/AuthContext";
 const logoPath = chrome.runtime.getURL("images/signadot-full-logo.svg");
 
 interface Props {
@@ -13,22 +14,29 @@ interface Props {
 
 const Layout: React.FC<Props> = ({ children }) => {
   const { currentView, goToView } = useRouteView();
-  const { isStoreLoaded: init, settings, setSettings, isAuthenticated } = useStorage();
+  const { isStoreLoaded, settings, setSettings, isAuthenticated } = useStorage();
+  const { authState } = useAuth();
 
   const handleHomeChange = () => {
     return isAuthenticated ? "home" : "login";
   };
 
   return (
-    init && (
+    isStoreLoaded && (
       <div className={styles.container}>
         <div className={styles.topBar}>
-          <div style={{ padding: '0.75rem 0' }}>
+          <div className={styles.logoContainer}>
             <img 
               src={logoPath} 
-              style={{ height: '40px', width: 'auto', maxWidth: '100%', display: 'block' }}
+              style={{ height: '30px', width: 'auto', maxWidth: '100%', display: 'block' }}
               alt="Signadot Logo"
             />
+            <div className={styles.divider}></div>
+            {authState?.org && (
+              <div className={styles.orgName}>
+                {authState.org.displayName || ""}
+              </div>
+            )}
           </div>
           <div className={styles.topRight}>
             <Tooltip content={`Header injection ${settings.enabled ? "Enabled" : "Disabled"}`}>
@@ -40,7 +48,10 @@ const Layout: React.FC<Props> = ({ children }) => {
               />
             </Tooltip>
             <button onClick={() => goToView((prevView) => (prevView === "settings" ? handleHomeChange() : "settings"))}>
-              {currentView === "settings" ? <IoHomeSharp /> : <IoSettingsSharp />}
+              {currentView === "settings" ? 
+                <IoHomeSharp size={20} /> : 
+                <IoSettingsSharp size={20} />
+              }
             </button>
           </div>
         </div>
