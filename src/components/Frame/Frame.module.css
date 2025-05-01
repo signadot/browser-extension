@@ -54,10 +54,11 @@
 
 .selectedEntity {
   margin-top: 1rem;
-  min-height: 140px;
   border: 1px solid var(--SIGNADOT-BORDER-COLOR);
   border-radius: 6px;
   padding: 0.5rem 1rem;
+  min-height: 120px;
+  display: flex;
 }
 
 .selectedEntityLabel {
@@ -67,10 +68,10 @@
 }
 
 .noSelectedContainer {
-  min-height: 140px;
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 100%;
 }
 
 .noSelectedMessage {

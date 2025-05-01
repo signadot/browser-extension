@@ -68,7 +68,7 @@ const PinnedRouteGroup: React.FC<Props> = ({ routingEntity, onRemove }) => {
         </div>
       </div>
 
-      <div className={styles.content}>
+      <div className={styles.content} style={{marginBottom: isExpanded ? undefined : 0}}>
         <div className={styles.routingKey}>
           <strong>Routing Key:</strong> {routingEntity.routingKey}
         </div>
@@ -77,6 +77,8 @@ const PinnedRouteGroup: React.FC<Props> = ({ routingEntity, onRemove }) => {
           minimal
           onClick={() => setIsExpanded(!isExpanded)}
           className={styles.headerButton}
+          fill
+          active={false}
         >
           <div className={styles.headerButtonText}>
             <span>{isExpanded ? "Show Less" : "Show Details"}</span>
