@@ -46,10 +46,6 @@ export const StorageProvider: React.FC<StorageProviderProps> = ({ children }) =>
 
   const [isStorageLoaded, setIsStorageLoaded] = useState(false);
 
-  useEffect(() => {
-    setIsStorageLoaded(true);
-  }, []);
-
   // Load initial values from browser storage
   useEffect(() => {
     const loadInitialValues = async () => {
@@ -128,6 +124,8 @@ export const StorageProvider: React.FC<StorageProviderProps> = ({ children }) =>
 
         return newState;
       });
+
+      setIsStorageLoaded(true);
     };
 
     loadInitialValues();
@@ -175,7 +173,7 @@ export const StorageProvider: React.FC<StorageProviderProps> = ({ children }) =>
   };
 
   const value = {
-    init: isStorageLoaded,
+    isStoreLoaded: isStorageLoaded,
     isAuthenticated: state.isAuthenticated,
     settings: state.settings,
     traceparent: state.traceparent,

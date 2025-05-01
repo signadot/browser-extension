@@ -51,17 +51,17 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<Props> = ({ children }) => {
   const [authState, setAuthState] = useState<AuthState | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(true);
-  const { settings, setIsAuthenticated } = useStorage();
+  const { settings, isStoreLoaded, setIsAuthenticated } = useStorage();
   const { apiUrl, previewUrl } = settings.signadotUrls;
 
   const resetAuth = () => {
     setAuthState(undefined);
-    setIsLoading(true);
+    setIsLoading(false);
     setIsAuthenticated(false);
   };
 
   useEffect(() => {
-    if (!apiUrl || !previewUrl) return;
+    if (!apiUrl || !previewUrl || !isStoreLoaded) return;
 
     auth(
       async (authenticated) => {
@@ -106,7 +106,7 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
       },
       { apiUrl, previewUrl },
     );
-  }, [apiUrl, previewUrl]);
+  }, [apiUrl, previewUrl, isStoreLoaded]);
 
   useEffect(() => {
     if (authState === undefined) {

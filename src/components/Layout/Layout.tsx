@@ -13,7 +13,7 @@ interface Props {
 
 const Layout: React.FC<Props> = ({ children }) => {
   const { currentView, goToView } = useRouteView();
-  const { init, settings, setSettings, isAuthenticated } = useStorage();
+  const { isStoreLoaded: init, settings, setSettings, isAuthenticated } = useStorage();
 
   const handleHomeChange = () => {
     return isAuthenticated ? "home" : "login";

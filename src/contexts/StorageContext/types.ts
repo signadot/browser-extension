@@ -30,7 +30,7 @@ export type Header = {
 };
 
 export type StorageContextType = {
-  init: boolean;
+  isStoreLoaded: boolean;
   isAuthenticated: boolean;
   settings: Settings;
   traceparent: TraceparentConfig;
