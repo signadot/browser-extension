@@ -63,6 +63,7 @@ const PinnedRouteGroup: React.FC<Props> = ({ routingEntity, onRemove }) => {
               onRemove(routingEntity);
             }}
             title="Remove"
+            className={styles.removeButton}
           />
         </div>
       </div>
