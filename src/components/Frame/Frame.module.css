@@ -53,8 +53,8 @@
 }
 
 .selectedEntity {
-  margin-top: 1.5rem;
-  padding: 0;
+  margin-top: 1rem;
+  min-height: 120px;
 }
 
 .selectedEntityLabel {
@@ -63,9 +63,15 @@
   margin-bottom: 0.5rem;
 }
 
+.noSelectedContainer {
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .noSelectedMessage {
   color: var(--SIGNADOT-NEUTRAL600);
   font-size: 0.875rem;
   text-align: center;
-  padding: 1rem 0;
 }

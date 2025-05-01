@@ -57,8 +57,10 @@ const Home = () => {
             }}
           />
         ) : (
-          <div className={styles.noSelectedMessage}>
-            No Sandbox or RouteGroup selected
+          <div className={styles.noSelectedContainer}>
+            <div className={styles.noSelectedMessage}>
+              No Sandbox or RouteGroup selected
+            </div>
           </div>
         )}
       </div>
