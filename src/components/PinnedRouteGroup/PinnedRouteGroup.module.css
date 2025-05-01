@@ -79,11 +79,9 @@
 }
 
 .headersList {
-  padding: 8px 16px;
-  background-color: var(--SIGNADOT-APP-BACKGROUND-COLOR);
-  border: 1px solid var(--SIGNADOT-BORDER-COLOR);
-  border-radius: 6px;
+  padding: 8px 0;
   margin-top: 8px;
+  border-top: 1px solid var(--SIGNADOT-BORDER-COLOR);
 }
 
 .headersTitle {

@@ -54,7 +54,10 @@
 
 .selectedEntity {
   margin-top: 1rem;
-  min-height: 120px;
+  min-height: 140px;
+  border: 1px solid var(--SIGNADOT-BORDER-COLOR);
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
 }
 
 .selectedEntityLabel {
@@ -64,7 +67,7 @@
 }
 
 .noSelectedContainer {
-  height: 120px;
+  min-height: 140px;
   display: flex;
   align-items: center;
   justify-content: center;
