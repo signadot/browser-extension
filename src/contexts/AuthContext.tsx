@@ -2,9 +2,6 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { auth } from "./auth";
 import Layout from "../components/Layout/Layout";
 import { useStorage } from "./StorageContext/StorageContext";
-import { Intent, Spinner, SpinnerSize } from "@blueprintjs/core";
-
-const loadingIconPath = chrome.runtime.getURL("images/loading.gif");
 
 interface Props {
   children: React.ReactNode;
@@ -26,6 +23,7 @@ interface AuthState {
 interface AuthContextType {
   authState?: AuthState;
   isLoading: boolean;
+  resetAuth: () => void;
 }
 
 interface GetOrgsResponse {
@@ -52,10 +50,15 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 // AuthProvider component
 export const AuthProvider: React.FC<Props> = ({ children }) => {
   const [authState, setAuthState] = useState<AuthState | undefined>(undefined);
-  const [authenticated, setAuthenticated] = useState<boolean | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(true);
   const { settings, setIsAuthenticated } = useStorage();
   const { apiUrl, previewUrl } = settings.signadotUrls;
+
+  const resetAuth = () => {
+    setAuthState(undefined);
+    setIsLoading(true);
+    setIsAuthenticated(false);
+  };
 
   useEffect(() => {
     if (!apiUrl || !previewUrl) return;
@@ -64,7 +67,6 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
       async (authenticated) => {
         if (!authenticated) {
           console.log("Not authenticated!");
-          setAuthenticated(false);
           setIsLoading(false);
           return;
         }
@@ -73,7 +75,6 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
           const response = await fetch(`${apiUrl}/api/v1/orgs`);
 
           if (response.status === 401 || !response.ok) {
-            setAuthenticated(false);
             setIsAuthenticated(false);
             setIsLoading(false);
             return;
@@ -95,12 +96,10 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
             },
           });
 
-          setAuthenticated(true);
           setIsAuthenticated(true);
           setIsLoading(false);
         } catch (error) {
           console.error("Error fetching org:", error);
-          setAuthenticated(false);
           setIsAuthenticated(false);
           setIsLoading(false);
         }
@@ -120,7 +119,7 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
   }, [authState]);
 
   return (
-    <AuthContext.Provider value={{ authState, isLoading }}>
+    <AuthContext.Provider value={{ authState, isLoading, resetAuth }}>
       <Layout>{children}</Layout>
     </AuthContext.Provider>
   );

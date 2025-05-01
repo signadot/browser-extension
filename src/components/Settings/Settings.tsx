@@ -15,6 +15,7 @@ import {
   STAGING_SIGNADOT_PREVIEW_URL,
   STAGING_SIGNADOT_DASHBOARD_URL,
 } from "../../contexts/StorageContext/defaults";
+import { useAuth } from "../../contexts/AuthContext";
 
 const AUTH_SESSION_COOKIE_NAME = "signadot-auth";
 
@@ -44,6 +45,7 @@ const Settings: React.FC<SettingsProps> = ({ onClose }) => {
 
   const { settings, traceparent, setSettings, setTraceparent } = useStorage();
   const [isExtraSettingsOpen, setIsExtraSettingsOpen] = React.useState(false);
+  const { resetAuth } = useAuth();
 
   useHotkeys("ctrl+shift+u", () => setIsExtraSettingsOpen(!isExtraSettingsOpen), {
     enableOnFormTags: true,
@@ -108,6 +110,11 @@ const Settings: React.FC<SettingsProps> = ({ onClose }) => {
     const cleanApiUrl = unsavedValues.apiUrl.replace(/\/+$/, "");
     const cleanPreviewUrl = unsavedValues.previewUrl.replace(/\/+$/, "");
     const cleanDashboardUrl = unsavedValues.dashboardUrl.replace(/\/+$/, "");
+
+    // If there is a new apiUrl, we need to reset the auth state
+    if (cleanApiUrl !== settings.signadotUrls.apiUrl) {
+      resetAuth();
+    }
 
     setSettings({
       enabled: settings.enabled,
