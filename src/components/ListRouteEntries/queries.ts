@@ -6,7 +6,7 @@ import { getApiUrl } from "../Settings/api";
 
 export const fetchSandboxes = async (apiUrl: string, orgName?: string): Promise<RoutingEntity[]> => {
   return new Promise(async (resolve, reject) => {
-    fetch(`${apiUrl}/api/v2/orgs/${orgName}/sandboxes`)
+    fetch(new URL(`/api/v2/orgs/${orgName}/sandboxes`, apiUrl).toString())
       .then((response) => {
         if (!response.ok) {
           throw new Error("Failed to fetch sandboxes");
@@ -20,7 +20,7 @@ export const fetchSandboxes = async (apiUrl: string, orgName?: string): Promise<
 
 export const fetchRouteGroups = async (apiUrl: string, orgName?: string): Promise<RoutingEntity[]> => {
   return new Promise(async (resolve, reject) => {
-    fetch(`${apiUrl}/api/v2/orgs/${orgName}/routegroups`)
+    fetch(new URL(`/api/v2/orgs/${orgName}/routegroups`, apiUrl).toString())
       .then((response) => {
         if (!response.ok) {
           throw new Error("Failed to fetch route groups");
@@ -34,7 +34,7 @@ export const fetchRouteGroups = async (apiUrl: string, orgName?: string): Promis
 
 export const fetchClusters = async (apiUrl: string, orgName: string): Promise<Cluster[]> => {
   return new Promise(async (resolve, reject) => {
-    fetch(`${apiUrl}/api/v2/orgs/${orgName}/clusters`)
+    fetch(new URL(`/api/v2/orgs/${orgName}/clusters`, apiUrl).toString())
       .then((response) => {
         if (!response.ok) {
           throw new Error("Failed to fetch clusters");

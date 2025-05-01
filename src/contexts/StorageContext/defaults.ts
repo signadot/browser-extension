@@ -1,14 +1,14 @@
 import { Settings, TraceparentConfig } from "./types";
 
 // Production environment URLs
-export const PROD_SIGNADOT_PREVIEW_URL = "https://browser-extension-auth-redirect.preview.signadot.com";
-export const PROD_SIGNADOT_DASHBOARD_URL = "https://app.signadot.com";
-export const PROD_SIGNADOT_API_URL = "https://api.signadot.com";
+export const PROD_SIGNADOT_PREVIEW_URL = "https://browser-extension-auth-redirect.preview.signadot.com/";
+export const PROD_SIGNADOT_DASHBOARD_URL = "https://app.signadot.com/";
+export const PROD_SIGNADOT_API_URL = "https://api.signadot.com/";
 
 // Staging environment URLs
-export const STAGING_SIGNADOT_PREVIEW_URL = "https://browser-extension-auth-redirect.preview.staging.signadot.com";
-export const STAGING_SIGNADOT_DASHBOARD_URL = "https://app.staging.signadot.com";
-export const STAGING_SIGNADOT_API_URL = "https://api.staging.signadot.com";
+export const STAGING_SIGNADOT_PREVIEW_URL = "https://browser-extension-auth-redirect.preview.staging.signadot.com/";
+export const STAGING_SIGNADOT_DASHBOARD_URL = "https://app.staging.signadot.com/";
+export const STAGING_SIGNADOT_API_URL = "https://api.staging.signadot.com/";
 
 // Default URLs (using production)
 export const DEFAULT_SIGNADOT_PREVIEW_URL = PROD_SIGNADOT_PREVIEW_URL;

@@ -13,15 +13,39 @@ export const useFetchRoutingEntries = () => {
     data: sandboxes,
     error: sandboxesError,
     isLoading: sandboxesLoading,
-  } = useQuery<RoutingEntity[], ApiError>("sandboxes", () =>
-    fetchSandboxes(settings.signadotUrls.apiUrl || "", authState?.org.name || ""),
+  } = useQuery<RoutingEntity[], ApiError>(
+    "sandboxes",
+    () => {
+      if (authState.state !== "authenticated") {
+        throw new Error("Not authenticated");
+      }
+      if (!settings.signadotUrls.apiUrl) {
+        throw new Error("API URL not configured");
+      }
+      return fetchSandboxes(settings.signadotUrls.apiUrl, authState.org.name);
+    },
+    {
+      enabled: authState.state === "authenticated" && !!settings.signadotUrls.apiUrl
+    }
   );
   const {
     data: routegroups,
     error: routegroupsError,
     isLoading: routegroupsLoading,
-  } = useQuery<RoutingEntity[], ApiError>("routegroups", () =>
-    fetchRouteGroups(settings.signadotUrls.apiUrl || "", authState?.org.name || ""),
+  } = useQuery<RoutingEntity[], ApiError>(
+    "routegroups",
+    () => {
+      if (authState.state !== "authenticated") {
+        throw new Error("Not authenticated");
+      }
+      if (!settings.signadotUrls.apiUrl) {
+        throw new Error("API URL not configured");
+      }
+      return fetchRouteGroups(settings.signadotUrls.apiUrl, authState.org.name);
+    },
+    {
+      enabled: authState.state === "authenticated" && !!settings.signadotUrls.apiUrl
+    }
   );
   // TODO: Handle error and loading too.
 

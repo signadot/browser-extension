@@ -7,22 +7,25 @@ interface Props {
   children: React.ReactNode;
 }
 
-interface AuthState {
-  org: {
-    name: string;
-    displayName?: string;
-  };
-  user: {
-    firstName?: string;
-    lastName?: string;
-    email?: string;
-  };
-  isLoading: boolean;
+interface User {
+  firstName?: string;
+  lastName?: string;
+  email?: string;
 }
+
+interface Org {
+  name: string;
+  displayName?: string;
+}
+
+type AuthState = 
+  | { state: "loading"; user: undefined; org: undefined }
+  | { state: "not-authenticated"; user: undefined; org: undefined }
+  | { state: "authenticated"; user: User; org: Org };
 
 // Define the shape of the context
 interface AuthContextType {
-  authState?: AuthState;
+  authState: AuthState;
   resetAuth: () => void;
 }
 
@@ -49,43 +52,54 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 // AuthProvider component
 export const AuthProvider: React.FC<Props> = ({ children }) => {
-  const [authState, setAuthState] = useState<AuthState | undefined>(undefined);
+  const [authState, setAuthState] = useState<AuthState>({
+    state: "loading",
+    user: undefined,
+    org: undefined
+  });
   const { settings, isStoreLoaded, setIsAuthenticated } = useStorage();
   const { apiUrl, previewUrl } = settings.signadotUrls;
 
   const resetAuth = () => {
-    setAuthState(undefined);
+    setAuthState({
+      state: "not-authenticated",
+      user: undefined,
+      org: undefined
+    });
     setIsAuthenticated(false);
   };
 
   useEffect(() => {
     if (!apiUrl || !previewUrl || !isStoreLoaded) return;
 
-    setAuthState((prev) => ({
-      ...(prev || { org: { name: '' }, user: {} }),
-      isLoading: true
-    }));
+    setAuthState({
+      state: "loading",
+      user: undefined,
+      org: undefined
+    });
 
     auth(
       async (authenticated) => {
         if (!authenticated) {
           console.log("Not authenticated!");
-          setAuthState((prev) => ({
-            ...(prev || { org: { name: '' }, user: {} }),
-            isLoading: false
-          }));
+          setAuthState({
+            state: "not-authenticated",
+            user: undefined,
+            org: undefined
+          });
           return;
         }
 
         try {
-          const response = await fetch(`${apiUrl}/api/v1/orgs`);
+          const response = await fetch(new URL("/api/v1/orgs", apiUrl).toString());
 
           if (response.status === 401 || !response.ok) {
             setIsAuthenticated(false);
-            setAuthState((prev) => ({
-              ...(prev || { org: { name: '' }, user: {} }),
-              isLoading: false
-            }));
+            setAuthState({
+              state: "not-authenticated",
+              user: undefined,
+              org: undefined
+            });
             return;
           }
 
@@ -97,23 +111,24 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
           }
 
           setAuthState({
+            state: "authenticated",
             org: data.orgs[0],
             user: {
               firstName: data.user.firstName?.String,
               lastName: data.user.lastName?.String,
               email: data.user.email
-            },
-            isLoading: false
+            }
           });
 
           setIsAuthenticated(true);
         } catch (error) {
           console.error("Error fetching org:", error);
           setIsAuthenticated(false);
-          setAuthState((prev) => ({
-            ...(prev || { org: { name: '' }, user: {} }),
-            isLoading: false
-          }));
+          setAuthState({
+            state: "not-authenticated",
+            user: undefined,
+            org: undefined
+          });
         }
       },
       { apiUrl, previewUrl },
@@ -121,11 +136,11 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
   }, [apiUrl, previewUrl, isStoreLoaded]);
 
   useEffect(() => {
-    if (authState === undefined) {
+    if (authState.state === "not-authenticated") {
       setIsAuthenticated(false);
     }
 
-    if (authState) {
+    if (authState.state === "authenticated") {
       setIsAuthenticated(true);
     }
   }, [authState]);

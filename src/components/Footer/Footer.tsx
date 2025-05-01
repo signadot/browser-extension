@@ -9,7 +9,7 @@ const Footer: React.FC = () => {
   const { settings } = useStorage();
 
   const handleLogout = () => {
-    const signoutUrl = `${settings.signadotUrls.dashboardUrl}/signout`;
+    const signoutUrl = new URL(`/signout`, settings.signadotUrls.dashboardUrl).toString();
     window.open(signoutUrl, '_blank');
     resetAuth();
   };
