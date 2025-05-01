@@ -25,7 +25,7 @@ export const shouldInjectHeader = (
   headers: Header[],
   enabled: boolean,
 ): boolean => {
-  return isAuthenticated && typeof routingKey === "string" && headers.length > 0 && enabled;
+  return enabled && isAuthenticated && typeof routingKey === "string" && headers.length > 0;
 };
 
 export const parseSignadotConfig = (settings: Settings) => {

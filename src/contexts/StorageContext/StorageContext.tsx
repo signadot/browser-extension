@@ -37,9 +37,21 @@ const getHeaders = (
 
 const updateIcon = (shouldInject: boolean) => {
   if (shouldInject) {
-    chrome.action.setIcon({ path: "images/icons/icon16_active.png" });
+    chrome.action.setIcon({
+      path: {
+        "16": "images/icons/icon16_active.png",
+        "48": "images/icons/icon48_active.png",
+        "128": "images/icons/icon128_active.png"
+      }
+    });
   } else {
-    chrome.action.setIcon({ path: "images/icons/icon16_inactive.png" });
+    chrome.action.setIcon({
+      path: {
+        "16": "images/icons/icon16_inactive.png",
+        "48": "images/icons/icon48_inactive.png",
+        "128": "images/icons/icon128_inactive.png"
+      }
+    });
   }
 };
 
