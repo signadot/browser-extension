@@ -33,7 +33,7 @@ const Loading = () => {
     <Spinner
       className="flex h-screen"
       intent={Intent.PRIMARY}
-      size={SpinnerSize.STANDARD}
+      size={30}
     />
   );
 };
