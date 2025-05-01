@@ -112,7 +112,7 @@ const Settings: React.FC<SettingsProps> = ({ onClose }) => {
     const cleanDashboardUrl = unsavedValues.dashboardUrl.replace(/\/+$/, "");
 
     // If there is a new apiUrl, we need to reset the auth state
-    if (cleanApiUrl !== settings.signadotUrls.apiUrl) {
+    if (cleanApiUrl !== settings.signadotUrls.apiUrl || cleanPreviewUrl !== settings.signadotUrls.previewUrl || cleanDashboardUrl !== settings.signadotUrls.dashboardUrl) {
       resetAuth();
     }
 
