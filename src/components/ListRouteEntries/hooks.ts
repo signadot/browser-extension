@@ -25,8 +25,8 @@ export const useFetchRoutingEntries = () => {
       return fetchSandboxes(settings.signadotUrls.apiUrl, authState.org.name);
     },
     {
-      enabled: authState.status === "authenticated" && !!settings.signadotUrls.apiUrl
-    }
+      enabled: authState.status === "authenticated" && !!settings.signadotUrls.apiUrl,
+    },
   );
   const {
     data: routegroups,
@@ -44,8 +44,8 @@ export const useFetchRoutingEntries = () => {
       return fetchRouteGroups(settings.signadotUrls.apiUrl, authState.org.name);
     },
     {
-      enabled: authState.status === "authenticated" && !!settings.signadotUrls.apiUrl
-    }
+      enabled: authState.status === "authenticated" && !!settings.signadotUrls.apiUrl,
+    },
   );
   // TODO: Handle error and loading too.
 

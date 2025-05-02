@@ -10,7 +10,7 @@ const Footer: React.FC = () => {
 
   const handleLogout = () => {
     const signoutUrl = new URL(`/signout`, settings.signadotUrls.dashboardUrl).toString();
-    window.open(signoutUrl, '_blank');
+    window.open(signoutUrl, "_blank");
     resetAuth();
   };
 
@@ -27,30 +27,22 @@ const Footer: React.FC = () => {
             <FaSlack />
             <span>Slack</span>
           </a>
-          <a
-            href="https://github.com/signadot"
-            target="_blank"
-            className={styles.link}
-            rel="noopener noreferrer"
-          >
+          <a href="https://github.com/signadot" target="_blank" className={styles.link} rel="noopener noreferrer">
             <FaGithub />
             <span>GitHub</span>
           </a>
-          <a
-            href="https://www.signadot.com/docs/"
-            target="_blank"
-            className={styles.link}
-            rel="noopener noreferrer"
-          >
+          <a href="https://www.signadot.com/docs/" target="_blank" className={styles.link} rel="noopener noreferrer">
             <FaBook />
             <span>Documentation</span>
           </a>
         </div>
         {authState?.user && (
           <div className={styles.userInfo}>
-            <span>{authState.user.email || ''}</span>
+            <span>{authState.user.email || ""}</span>
             <span>·</span>
-            <a onClick={handleLogout} className={styles.logoutLink}>Log out</a>
+            <a onClick={handleLogout} className={styles.logoutLink}>
+              Log out
+            </a>
           </div>
         )}
       </div>

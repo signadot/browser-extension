@@ -29,13 +29,7 @@ const Login = () => {
 };
 
 const Loading = () => {
-  return (
-    <Spinner
-      className="flex h-screen"
-      intent={Intent.PRIMARY}
-      size={30}
-    />
-  );
+  return <Spinner className="flex h-screen" intent={Intent.PRIMARY} size={30} />;
 };
 
 const Home = () => {
@@ -65,9 +59,7 @@ const Home = () => {
           />
         ) : (
           <div className={styles.noSelectedContainer}>
-            <div className={styles.noSelectedMessage}>
-              No Sandbox or RouteGroup selected
-            </div>
+            <div className={styles.noSelectedMessage}>No Sandbox or RouteGroup selected</div>
           </div>
         )}
       </div>

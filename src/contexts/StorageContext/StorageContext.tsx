@@ -41,20 +41,19 @@ const updateIcon = (shouldInject: boolean) => {
       path: {
         "16": "images/icons/icon16_active.png",
         "48": "images/icons/icon48_active.png",
-        "128": "images/icons/icon128_active.png"
-      }
+        "128": "images/icons/icon128_active.png",
+      },
     });
   } else {
     chrome.action.setIcon({
       path: {
         "16": "images/icons/icon16_inactive.png",
         "48": "images/icons/icon48_inactive.png",
-        "128": "images/icons/icon128_inactive.png"
-      }
+        "128": "images/icons/icon128_inactive.png",
+      },
     });
   }
 };
-
 
 export const StorageProvider: React.FC<StorageProviderProps> = ({ children }) => {
   const [state, setState] = useState<StorageState>({

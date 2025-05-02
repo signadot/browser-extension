@@ -25,24 +25,17 @@ const Layout: React.FC<Props> = ({ children }) => {
       <div className={styles.container}>
         <div className={styles.topBar}>
           <div className={styles.logoContainer}>
-            <img 
-              src={logoPath} 
-              style={{ height: '30px', width: 'auto', maxWidth: '100%', display: 'block' }}
+            <img
+              src={logoPath}
+              style={{ height: "30px", width: "auto", maxWidth: "100%", display: "block" }}
               alt="Signadot Logo"
             />
             <div className={styles.divider}></div>
-            {authState?.org && (
-              <div className={styles.orgName}>
-                {authState.org.displayName || ""}
-              </div>
-            )}
+            {authState?.org && <div className={styles.orgName}>{authState.org.displayName || ""}</div>}
           </div>
           <div className={styles.topRight}>
             <button onClick={() => goToView((prevView) => (prevView === "settings" ? handleHomeChange() : "settings"))}>
-              {currentView === "settings" ? 
-                <IoHomeSharp size={20} /> : 
-                <IoSettingsSharp size={20} />
-              }
+              {currentView === "settings" ? <IoHomeSharp size={20} /> : <IoSettingsSharp size={20} />}
             </button>
           </div>
         </div>

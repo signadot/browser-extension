@@ -100,12 +100,18 @@ const ListRouteEntries: React.FC<Props> = ({ routingEntities, setUserSelectedRou
     const filteredItems = items.filter((item) => filterFunction(query, item)).slice(0, SELECT_LIST_ITEM_COUNT);
 
     if (filteredItems.length === 0) {
-      return <Menu ulRef={itemsParentRef}>
-        <MenuItem disabled={true} text="No results" roleStructure="listoption" className={styles.menu}/>
-      </Menu>;
+      return (
+        <Menu ulRef={itemsParentRef}>
+          <MenuItem disabled={true} text="No results" roleStructure="listoption" className={styles.menu} />
+        </Menu>
+      );
     }
 
-    return <Menu ulRef={itemsParentRef} className={styles.menu}>{filteredItems.map(renderItem)}</Menu>;
+    return (
+      <Menu ulRef={itemsParentRef} className={styles.menu}>
+        {filteredItems.map(renderItem)}
+      </Menu>
+    );
   };
 
   const itemRenderer: ItemRenderer<RoutingEntity> = (routingEntity, { handleClick, handleFocus, modifiers, query }) => {
