@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Signadot",
   "description": "Browser Extension to enable preview functionality when using Signadot Sandboxes & Route Groups through the injection of headers",
-  "version": "1.2.0",
+  "version": "2.0.0",
   "icons": {
     "16": "images/icons/icon16_active.png",
     "48": "images/icons/icon48_active.png",
