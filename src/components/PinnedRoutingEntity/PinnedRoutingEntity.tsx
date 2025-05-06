@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { RoutingEntity, RoutingEntityType } from "../ListRouteEntries/types";
-import styles from "./PinnedRouteGroup.module.css";
+import styles from "./PinnedRoutingEntity.module.css";
 import { Button, Icon, Tag, Switch, Tooltip } from "@blueprintjs/core";
 import { useStorage } from "../../contexts/StorageContext/StorageContext";
 import { getGroupedHeadersByKind } from "../../contexts/StorageContext/utils";
@@ -24,7 +24,7 @@ interface Props {
   onRemove: (routingEntity: RoutingEntity) => void;
 }
 
-const PinnedRouteGroup: React.FC<Props> = ({ routingEntity, onRemove }) => {
+const PinnedRoutingEntity: React.FC<Props> = ({ routingEntity, onRemove }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const { headers, settings, setSettings, setCurrentRoutingKey } = useStorage();
 
@@ -127,4 +127,4 @@ const PinnedRouteGroup: React.FC<Props> = ({ routingEntity, onRemove }) => {
   );
 };
 
-export default PinnedRouteGroup;
+export default PinnedRoutingEntity;
