@@ -1,5 +1,5 @@
 import { auth } from "../../contexts/auth";
-import { RoutingEntity } from "../ListRouteEntries/types";
+import { RoutingEntity } from "../ListRoutingEntities/types";
 import { getBrowserStoreValue, StorageBrowserKeys } from "../../contexts/StorageContext/browserKeys";
 
 export const DEFAULT_API_URL = "https://api.signadot.com";

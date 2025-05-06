@@ -1,5 +1,4 @@
 import { Cluster, RoutingEntity } from "./types";
-import { getApiUrl } from "../Settings/api";
 
 // These function assumes the user is authenticated, otherwise we wouldn't have
 // an org name (and note that on popup open, we are reloading the auth)
@@ -44,4 +43,4 @@ export const fetchClusters = async (apiUrl: string, orgName: string): Promise<Cl
       .then((data) => resolve(data))
       .catch((error) => reject(error));
   });
-};
+}; 

@@ -4,7 +4,7 @@ import { fetchClusters } from "./queries";
 import { RoutingEntity } from "./types";
 import { ItemListRendererProps, ItemPredicate, ItemRenderer, Suggest } from "@blueprintjs/select";
 import { Menu, MenuItem } from "@blueprintjs/core";
-import styles from "./ListRouteEntries.module.css";
+import styles from "./ListRoutingEntities.module.css";
 import { useStorage } from "../../contexts/StorageContext/StorageContext";
 import { BASIC_HEADERS, HEADER_VALUE_TEMPLATE } from "../../contexts/StorageContext/headerNames";
 const SELECT_LIST_ITEM_COUNT = 5;
@@ -15,7 +15,7 @@ interface Props {
   orgName?: string;
 }
 
-const ListRouteEntries: React.FC<Props> = ({ routingEntities, setUserSelectedRoutingEntity, orgName }) => {
+const ListRoutingEntities: React.FC<Props> = ({ routingEntities, setUserSelectedRoutingEntity, orgName }) => {
   const { settings, setHeaders, currentRoutingKey } = useStorage();
 
   const {
@@ -158,4 +158,4 @@ const ListRouteEntries: React.FC<Props> = ({ routingEntities, setUserSelectedRou
   );
 };
 
-export default ListRouteEntries;
+export default ListRoutingEntities; 

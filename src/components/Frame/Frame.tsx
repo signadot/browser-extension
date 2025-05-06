@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo, useState } from "react";
 import styles from "./Frame.module.css";
-import { RoutingEntity } from "../ListRouteEntries/types";
-import ListRouteEntries from "../ListRouteEntries";
-import { useFetchRoutingEntries } from "../ListRouteEntries/hooks";
+import { RoutingEntity } from "../ListRoutingEntities/types";
+import ListRoutingEntities from "../ListRoutingEntities";
+import { useFetchRoutingEntries } from "../ListRoutingEntities/hooks";
 import PinnedRouteGroup from "../PinnedRouteGroup";
 import Footer from "../Footer";
 import Settings from "../Settings/Settings";
@@ -44,7 +44,7 @@ const Home = () => {
 
   return (
     <>
-      <ListRouteEntries
+      <ListRoutingEntities
         routingEntities={routingEntities}
         setUserSelectedRoutingEntity={(e) => setCurrentRoutingKey(e.routingKey)}
         orgName={authState.org?.name}
