@@ -35,14 +35,8 @@ interface GetOrgsResponse {
     displayName: string;
   }[];
   user: {
-    firstName?: {
-      String?: string;
-      Valid: boolean;
-    };
-    lastName?: {
-      String?: string;
-      Valid: boolean;
-    };
+    firstName?: string;
+    lastName?: string;
     email?: string;
   };
 }
@@ -91,7 +85,7 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
         }
 
         try {
-          const response = await fetch(new URL("/api/v1/orgs", apiUrl).toString());
+          const response = await fetch(new URL("/api/v2/orgs", apiUrl).toString());
 
           if (response.status === 401 || !response.ok) {
             setIsAuthenticated(false);
@@ -114,8 +108,8 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
             status: "authenticated",
             org: data.orgs[0],
             user: {
-              firstName: data.user.firstName?.String,
-              lastName: data.user.lastName?.String,
+              firstName: data.user.firstName,
+              lastName: data.user.lastName,
               email: data.user.email,
             },
           });
