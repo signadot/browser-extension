@@ -3,7 +3,7 @@ import styles from "./Frame.module.css";
 import { RoutingEntity } from "../ListRoutingEntities/types";
 import ListRoutingEntities from "../ListRoutingEntities";
 import { useFetchRoutingEntries } from "../ListRoutingEntities/hooks";
-import PinnedRouteGroup from "../PinnedRouteGroup";
+import PinnedRoutingEntity from "../PinnedRoutingEntity";
 import Footer from "../Footer";
 import Settings from "../Settings/Settings";
 import { useAuth } from "../../contexts/AuthContext";
@@ -51,7 +51,7 @@ const Home = () => {
       />
       <div className={styles.selectedEntity}>
         {pinnedRoutingEntityData ? (
-          <PinnedRouteGroup
+          <PinnedRoutingEntity
             routingEntity={pinnedRoutingEntityData}
             onRemove={() => {
               setCurrentRoutingKey(undefined);
