@@ -18,6 +18,7 @@ export interface RoutingEntity {
   routingKey: string;
   type: RoutingEntityType;
   cluster: string;
+  matchedSandboxes?: string[];
 }
 
 export interface Cluster {

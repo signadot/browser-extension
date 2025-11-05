@@ -68,6 +68,7 @@ export const useFetchRoutingEntries = () => {
           routingKey: routeGroup.routingKey,
           type: RoutingEntityType.RouteGroup,
           cluster: (routeGroup as any).spec.cluster,
+          matchedSandboxes: (routeGroup as any).status?.matchedSandboxes || [],
         } as RoutingEntity);
       });
     }
