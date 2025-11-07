@@ -1,12 +1,13 @@
 import React, { useEffect } from "react";
 import { useQuery } from "react-query";
-import { fetchClusters } from "./queries";
+import { fetchClusters, fetchSandboxes } from "./queries";
 import { RoutingEntity } from "./types";
 import { ItemListRendererProps, ItemPredicate, ItemRenderer, Suggest } from "@blueprintjs/select";
 import { Menu, MenuItem } from "@blueprintjs/core";
 import styles from "./ListRoutingEntities.module.css";
 import { useStorage } from "../../contexts/StorageContext/StorageContext";
 import { BASIC_HEADERS, HEADER_VALUE_TEMPLATE } from "../../contexts/StorageContext/headerNames";
+import { Header } from "../../contexts/StorageContext/types";
 const SELECT_LIST_ITEM_COUNT = 5;
 
 interface Props {
@@ -29,29 +30,78 @@ const ListRoutingEntities: React.FC<Props> = ({ routingEntities, setUserSelected
     enabled: !!orgName,
   });
 
+  const {
+    data: sandboxes,
+    refetch: refetchSandboxes,
+  } = useQuery({
+    queryKey: ["sandboxes-for-headers", orgName],
+    queryFn: () => fetchSandboxes(settings.signadotUrls.apiUrl || "", orgName || ""),
+    enabled: !!orgName,
+  });
+
   useEffect(() => {
     refetch();
+    refetchSandboxes();
   }, [settings.signadotUrls.apiUrl]);
 
-  const calculateHeaders = (routingEntity: RoutingEntity) => {
-    const cluster = clusters?.find((c) => c.name === routingEntity.cluster);
+  const calculateHeaders = (routingEntity: RoutingEntity): Header[] => {
+    // Handle regular single-cluster entities (sandboxes or route groups with a cluster specified)
+    if (routingEntity.cluster) {
+      const cluster = clusters?.find((c) => c.name === routingEntity.cluster);
+      if (!cluster) return [];
 
-    if (!cluster) return [];
-    const clusterConfig = cluster.clusterConfig;
-
-    let headers = BASIC_HEADERS;
-    if (clusterConfig) {
-      headers = [
-        ...headers,
-        ...(clusterConfig?.routing?.customHeaders?.map((header) => ({
-          key: header,
-          value: HEADER_VALUE_TEMPLATE,
-          kind: "extra" as const,
-        })) || []),
-      ];
+      const clusterConfig = cluster.clusterConfig;
+      let headers = BASIC_HEADERS;
+      if (clusterConfig) {
+        headers = [
+          ...headers,
+          ...(clusterConfig?.routing?.customHeaders?.map((header) => ({
+            key: header,
+            value: HEADER_VALUE_TEMPLATE,
+            kind: "extra" as const,
+          })) || []),
+        ];
+      }
+      return headers;
     }
 
-    return headers;
+    // Handle multi-cluster route groups (no cluster specified)
+    const matchedSandboxes = routingEntity.matchedSandboxes || [];
+
+    if (matchedSandboxes.length === 0) {
+      return BASIC_HEADERS;
+    }
+
+    const sandboxClusters = new Set<string>();
+    matchedSandboxes.forEach((sandboxName) => {
+      const sandbox = sandboxes?.find((s: any) => s.name === sandboxName);
+      if (sandbox && (sandbox as any).spec?.cluster) {
+        sandboxClusters.add((sandbox as any).spec.cluster);
+      }
+    });
+
+    const headersMap = new Map<string, Header>();
+    BASIC_HEADERS.forEach((header) => {
+      headersMap.set(header.key, header);
+    });
+
+    // Add custom headers from each cluster
+    sandboxClusters.forEach((clusterName) => {
+      const cluster = clusters?.find((c) => c.name === clusterName);
+      if (cluster?.clusterConfig?.routing?.customHeaders) {
+        cluster.clusterConfig.routing.customHeaders.forEach((customHeader) => {
+          if (!headersMap.has(customHeader)) {
+            headersMap.set(customHeader, {
+              key: customHeader,
+              value: HEADER_VALUE_TEMPLATE,
+              kind: "extra" as const,
+            });
+          }
+        });
+      }
+    });
+
+    return Array.from(headersMap.values());
   };
 
   useEffect(() => {
@@ -62,7 +112,7 @@ const ListRoutingEntities: React.FC<Props> = ({ routingEntities, setUserSelected
         setHeaders(headers);
       }
     }
-  }, [currentRoutingKey, routingEntities]);
+  }, [currentRoutingKey, routingEntities, clusters, sandboxes]);
 
   const handleClick = React.useCallback(
     (name: string): void => {
@@ -75,7 +125,7 @@ const ListRoutingEntities: React.FC<Props> = ({ routingEntities, setUserSelected
         setHeaders(headers);
       }
     },
-    [routingEntities],
+    [routingEntities, clusters, sandboxes],
   );
 
   const filterFunction = (query: string, item: RoutingEntity): boolean => {
