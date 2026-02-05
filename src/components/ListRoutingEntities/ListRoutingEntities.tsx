@@ -146,8 +146,8 @@ const ListRoutingEntities: React.FC<Props> = ({ routingEntities, setUserSelected
     return filterFunction(query, routingEntity);
   };
 
-  const listRenderer = ({ items, itemsParentRef, renderItem, query }: ItemListRendererProps<RoutingEntity>) => {
-    const filteredItems = items.filter((item) => filterFunction(query, item)).slice(0, SELECT_LIST_ITEM_COUNT);
+  const listRenderer = ({ items, itemsParentRef, renderItem, query, activeItem }: ItemListRendererProps<RoutingEntity>) => {
+    const filteredItems = items.filter((item) => filterFunction(query, item));
 
     if (filteredItems.length === 0) {
       return (
@@ -157,9 +157,20 @@ const ListRoutingEntities: React.FC<Props> = ({ routingEntities, setUserSelected
       );
     }
 
+    let startIndex = 0;
+    if (activeItem && "routingKey" in activeItem) {
+      const activeIndex = filteredItems.findIndex((item) => item.routingKey === activeItem.routingKey);
+      if (activeIndex >= 0) {
+        startIndex = Math.max(0, activeIndex - SELECT_LIST_ITEM_COUNT + 1);
+        startIndex = Math.min(startIndex, Math.max(0, filteredItems.length - SELECT_LIST_ITEM_COUNT));
+      }
+    }
+
+    const windowedItems = filteredItems.slice(startIndex, startIndex + SELECT_LIST_ITEM_COUNT);
+
     return (
       <Menu ulRef={itemsParentRef} className={styles.menu}>
-        {filteredItems.map(renderItem)}
+        {windowedItems.map((item, index) => renderItem(item, startIndex + index))}
       </Menu>
     );
   };
