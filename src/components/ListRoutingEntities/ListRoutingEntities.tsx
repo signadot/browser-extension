@@ -18,6 +18,7 @@ interface Props {
 
 const ListRoutingEntities: React.FC<Props> = ({ routingEntities, setUserSelectedRoutingEntity, orgName }) => {
   const { settings, setHeaders, currentRoutingKey } = useStorage();
+  const windowStartIndexRef = React.useRef(0);
 
   const {
     data: clusters,
@@ -157,20 +158,27 @@ const ListRoutingEntities: React.FC<Props> = ({ routingEntities, setUserSelected
       );
     }
 
-    let startIndex = 0;
+    let windowStartIndex = windowStartIndexRef.current;
     if (activeItem && "routingKey" in activeItem) {
       const activeIndex = filteredItems.findIndex((item) => item.routingKey === activeItem.routingKey);
       if (activeIndex >= 0) {
-        startIndex = Math.max(0, activeIndex - SELECT_LIST_ITEM_COUNT + 1);
-        startIndex = Math.min(startIndex, Math.max(0, filteredItems.length - SELECT_LIST_ITEM_COUNT));
+        if (activeIndex >= windowStartIndex + SELECT_LIST_ITEM_COUNT) {
+          windowStartIndex = activeIndex - SELECT_LIST_ITEM_COUNT + 1;
+        }
+        else if (activeIndex < windowStartIndex) {
+          windowStartIndex = activeIndex;
+        }
       }
     }
 
-    const windowedItems = filteredItems.slice(startIndex, startIndex + SELECT_LIST_ITEM_COUNT);
+    windowStartIndex = Math.max(0, Math.min(windowStartIndex, Math.max(0, filteredItems.length - SELECT_LIST_ITEM_COUNT)));
+    windowStartIndexRef.current = windowStartIndex;
+
+    const windowedItems = filteredItems.slice(windowStartIndex, windowStartIndex + SELECT_LIST_ITEM_COUNT);
 
     return (
       <Menu ulRef={itemsParentRef} className={styles.menu}>
-        {windowedItems.map((item, index) => renderItem(item, startIndex + index))}
+        {windowedItems.map((item, index) => renderItem(item, windowStartIndex + index))}
       </Menu>
     );
   };
