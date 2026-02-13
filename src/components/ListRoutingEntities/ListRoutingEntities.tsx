@@ -18,6 +18,7 @@ interface Props {
 
 const ListRoutingEntities: React.FC<Props> = ({ routingEntities, setUserSelectedRoutingEntity, orgName }) => {
   const { settings, setHeaders, currentRoutingKey } = useStorage();
+  const windowStartIndexRef = React.useRef(0);
 
   const {
     data: clusters,
@@ -146,8 +147,8 @@ const ListRoutingEntities: React.FC<Props> = ({ routingEntities, setUserSelected
     return filterFunction(query, routingEntity);
   };
 
-  const listRenderer = ({ items, itemsParentRef, renderItem, query }: ItemListRendererProps<RoutingEntity>) => {
-    const filteredItems = items.filter((item) => filterFunction(query, item)).slice(0, SELECT_LIST_ITEM_COUNT);
+  const listRenderer = ({ items, itemsParentRef, renderItem, query, activeItem }: ItemListRendererProps<RoutingEntity>) => {
+    const filteredItems = items.filter((item) => filterFunction(query, item));
 
     if (filteredItems.length === 0) {
       return (
@@ -157,9 +158,27 @@ const ListRoutingEntities: React.FC<Props> = ({ routingEntities, setUserSelected
       );
     }
 
+    let windowStartIndex = windowStartIndexRef.current;
+    if (activeItem && "routingKey" in activeItem) {
+      const activeIndex = filteredItems.findIndex((item) => item.routingKey === activeItem.routingKey);
+      if (activeIndex >= 0) {
+        if (activeIndex >= windowStartIndex + SELECT_LIST_ITEM_COUNT) {
+          windowStartIndex = activeIndex - SELECT_LIST_ITEM_COUNT + 1;
+        }
+        else if (activeIndex < windowStartIndex) {
+          windowStartIndex = activeIndex;
+        }
+      }
+    }
+
+    windowStartIndex = Math.max(0, Math.min(windowStartIndex, Math.max(0, filteredItems.length - SELECT_LIST_ITEM_COUNT)));
+    windowStartIndexRef.current = windowStartIndex;
+
+    const windowedItems = filteredItems.slice(windowStartIndex, windowStartIndex + SELECT_LIST_ITEM_COUNT);
+
     return (
       <Menu ulRef={itemsParentRef} className={styles.menu}>
-        {filteredItems.map(renderItem)}
+        {windowedItems.map((item, index) => renderItem(item, windowStartIndex + index))}
       </Menu>
     );
   };
