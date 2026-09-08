@@ -59,6 +59,17 @@ describe("fetchSandboxes", () => {
 		expect(fetchMock).toHaveBeenCalledTimes(1);
 	});
 
+	it("accepts the legacy bare-array response during rollout", async () => {
+		fetchMock.mockReturnValueOnce(
+			response([sandbox("legacy-a"), sandbox("legacy-b")]),
+		);
+
+		await expect(
+			fetchSandboxes("https://api.example.test", "acme"),
+		).resolves.toEqual([sandbox("legacy-a"), sandbox("legacy-b")]);
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+	});
+
 	it("rejects a non-success response", async () => {
 		fetchMock.mockReturnValueOnce(response({}, false));
 

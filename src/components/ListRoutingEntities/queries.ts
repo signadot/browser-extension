@@ -32,7 +32,14 @@ export const fetchSandboxes = async (
 			throw new Error("Failed to fetch sandboxes");
 		}
 
-		const data = (await response.json()) as PaginatedRoutingEntities;
+		const data = (await response.json()) as
+			| PaginatedRoutingEntities
+			| RoutingEntity[];
+		// Keep the extension usable while an older API server still returns the
+		// legacy bare array. That response already contains the complete list.
+		if (Array.isArray(data)) {
+			return sandboxes.concat(data);
+		}
 		sandboxes.push(...data.items);
 
 		if (!data.hasMore) {
