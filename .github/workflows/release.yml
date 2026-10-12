@@ -1,0 +1,46 @@
+name: release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22.x
+          cache: yarn
+      - run: yarn install --frozen-lockfile
+
+      - name: Check that the tag matches the manifest version
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          manifest="$(node -p "require('./public/manifest.json').version")"
+          pkg="$(node -p "require('./package.json').version")"
+          if [ "$tag" != "$manifest" ] || [ "$tag" != "$pkg" ]; then
+            echo "tag v$tag does not match manifest.json ($manifest) / package.json ($pkg)"
+            exit 1
+          fi
+
+      - run: yarn build
+
+      - name: Package the extension
+        run: |
+          cd dist
+          zip -r "../signadot-browser-extension-${GITHUB_REF_NAME}.zip" .
+
+      - name: Create the GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" \
+            --title "$GITHUB_REF_NAME" \
+            --generate-notes \
+            "signadot-browser-extension-${GITHUB_REF_NAME}.zip"

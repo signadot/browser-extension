@@ -1,20 +1,25 @@
 {
-  "name": "Signadot",
+  "name": "signadot-browser-extension",
   "version": "2.1.0",
-  "description": "Signadot",
-  "main": "index.js",
+  "description": "Signadot browser extension: route your browser's requests to Signadot sandboxes and route groups",
+  "private": true,
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/signadot/browser-extension.git"
+  },
+  "homepage": "https://chromewebstore.google.com/detail/signadot/aigejiccjejdeiikegdjlofgcjhhnkim",
+  "engines": {
+    "node": ">=20.9"
+  },
   "scripts": {
     "watch": "webpack --config webpack/webpack.dev.js --watch",
     "build": "webpack --config webpack/webpack.prod.js",
     "clean": "rimraf dist",
-    "test": "npx jest",
-    "prettier:write": "biome format --write src"
-  },
-  "author": "",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/signadot/chrome-extension.git"
+    "lint": "biome ci src",
+    "format": "biome check --write src",
+    "typecheck": "tsc --noEmit",
+    "test": "jest --passWithNoTests"
   },
   "dependencies": {
     "@blueprintjs/core": "5.7.1",

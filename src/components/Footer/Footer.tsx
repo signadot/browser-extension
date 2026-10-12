@@ -9,7 +9,7 @@ const Footer: React.FC = () => {
   const { settings } = useStorage();
 
   const handleLogout = () => {
-    const signoutUrl = new URL(`/signout`, settings.signadotUrls.dashboardUrl).toString();
+    const signoutUrl = new URL("/signout", settings.signadotUrls.dashboardUrl).toString();
     window.open(signoutUrl, "_blank");
     resetAuth();
   };
@@ -40,9 +40,9 @@ const Footer: React.FC = () => {
           <div className={styles.userInfo}>
             <span>{authState.user.email || ""}</span>
             <span>·</span>
-            <a onClick={handleLogout} className={styles.logoutLink}>
+            <button type="button" onClick={handleLogout} className={styles.logoutLink}>
               Log out
-            </a>
+            </button>
           </div>
         )}
       </div>
