@@ -9,6 +9,7 @@
     "rootDir": "src",
     "outDir": "dist/js",
     "noEmitOnError": true,
+    "skipLibCheck": true,
     "jsx": "react",
     "typeRoots": [
       "node_modules/@types"
