@@ -12,24 +12,12 @@
     "default_icon": "images/signadot-logo.png",
     "default_popup": "popup.html"
   },
-  "content_scripts": [
-    {
-      "matches": [
-        "<all_urls>"
-      ],
-      "js": [
-        "js/vendor.js",
-        "js/content_script.js"
-      ]
-    }
-  ],
   "background": {
     "service_worker": "js/background.js"
   },
   "permissions": [
     "storage",
     "declarativeNetRequest",
-    "declarativeNetRequestFeedback",
     "declarativeNetRequestWithHostAccess",
     "cookies"
   ],
