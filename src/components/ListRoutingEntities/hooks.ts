@@ -1,5 +1,5 @@
 import { useQuery } from "react-query";
-import { ApiError, RoutingEntity, RoutingEntityType } from "./types";
+import { type ApiError, type RoutingEntity, RoutingEntityType } from "./types";
 import { fetchSandboxes, fetchRouteGroups } from "./queries";
 import { useAuth } from "../../contexts/AuthContext";
 import { useMemo } from "react";
@@ -74,4 +74,4 @@ export const useFetchRoutingEntries = () => {
     }
     return result;
   }, [sandboxes, routegroups]);
-}; 
+};

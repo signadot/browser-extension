@@ -1,4 +1,4 @@
-import { Header } from "./types";
+import type { Header } from "./types";
 
 export const HEADER_VALUE_TEMPLATE = "{routingKey}";
 

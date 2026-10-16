@@ -1,20 +1,25 @@
 {
-  "name": "Signadot",
+  "name": "signadot-browser-extension",
   "version": "2.1.0",
-  "description": "Signadot",
-  "main": "index.js",
+  "description": "Signadot browser extension: route your browser's requests to Signadot sandboxes and route groups",
+  "private": true,
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/signadot/browser-extension.git"
+  },
+  "homepage": "https://chromewebstore.google.com/detail/signadot/aigejiccjejdeiikegdjlofgcjhhnkim",
+  "engines": {
+    "node": ">=20.9"
+  },
   "scripts": {
     "watch": "webpack --config webpack/webpack.dev.js --watch",
     "build": "webpack --config webpack/webpack.prod.js",
     "clean": "rimraf dist",
-    "test": "npx jest",
-    "prettier:write": "biome format --write src"
-  },
-  "author": "",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/signadot/chrome-extension.git"
+    "lint": "biome ci src",
+    "format": "biome check --write src",
+    "typecheck": "tsc --noEmit",
+    "test": "jest --passWithNoTests"
   },
   "dependencies": {
     "@blueprintjs/core": "5.7.1",
@@ -32,12 +37,10 @@
     "@types/jest": "^29.5.0",
     "@types/react": "^18.0.29",
     "@types/react-dom": "^18.0.11",
-    "copy-webpack-plugin": "^9.0.1",
+    "copy-webpack-plugin": "^14.0.0",
     "css-loader": "^6.8.1",
-    "glob": "^7.1.6",
     "jest": "^29.5.0",
-    "prettier": "^2.2.1",
-    "rimraf": "^3.0.2 ",
+    "rimraf": "^3.0.2",
     "style-loader": "^3.3.3",
     "ts-jest": "^29.1.0",
     "ts-loader": "^8.0.0",
