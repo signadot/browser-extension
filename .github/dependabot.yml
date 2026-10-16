@@ -8,6 +8,9 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    # The default of 5 held back most of the pending majors; 20 lets
+    # Dependabot propose them all at once.
+    open-pull-requests-limit: 20
     groups:
       minor-and-patch:
         update-types: ["minor", "patch"]
