@@ -1,4 +1,4 @@
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 import { type ApiError, type RoutingEntity, RoutingEntityType } from "./types";
 import { fetchSandboxes, fetchRouteGroups } from "./queries";
 import { useAuth } from "../../contexts/AuthContext";
@@ -13,9 +13,9 @@ export const useFetchRoutingEntries = () => {
     data: sandboxes,
     error: sandboxesError,
     isLoading: sandboxesLoading,
-  } = useQuery<RoutingEntity[], ApiError>(
-    "sandboxes",
-    () => {
+  } = useQuery<RoutingEntity[], ApiError>({
+    queryKey: ["sandboxes"],
+    queryFn: () => {
       if (authState.status !== "authenticated") {
         throw new Error("Not authenticated");
       }
@@ -24,17 +24,15 @@ export const useFetchRoutingEntries = () => {
       }
       return fetchSandboxes(settings.signadotUrls.apiUrl, authState.org.name);
     },
-    {
-      enabled: authState.status === "authenticated" && !!settings.signadotUrls.apiUrl,
-    },
-  );
+    enabled: authState.status === "authenticated" && !!settings.signadotUrls.apiUrl,
+  });
   const {
     data: routegroups,
     error: routegroupsError,
     isLoading: routegroupsLoading,
-  } = useQuery<RoutingEntity[], ApiError>(
-    "routegroups",
-    () => {
+  } = useQuery<RoutingEntity[], ApiError>({
+    queryKey: ["routegroups"],
+    queryFn: () => {
       if (authState.status !== "authenticated") {
         throw new Error("Not authenticated");
       }
@@ -43,10 +41,8 @@ export const useFetchRoutingEntries = () => {
       }
       return fetchRouteGroups(settings.signadotUrls.apiUrl, authState.org.name);
     },
-    {
-      enabled: authState.status === "authenticated" && !!settings.signadotUrls.apiUrl,
-    },
-  );
+    enabled: authState.status === "authenticated" && !!settings.signadotUrls.apiUrl,
+  });
   // TODO: Handle error and loading too.
 
   return useMemo(() => {
