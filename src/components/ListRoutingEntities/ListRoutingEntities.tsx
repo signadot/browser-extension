@@ -1,13 +1,13 @@
 import React, { useEffect } from "react";
 import { useQuery } from "react-query";
 import { fetchClusters, fetchSandboxes } from "./queries";
-import { RoutingEntity } from "./types";
-import { ItemListRendererProps, ItemPredicate, ItemRenderer, Suggest } from "@blueprintjs/select";
+import type { RoutingEntity } from "./types";
+import { type ItemListRendererProps, type ItemPredicate, type ItemRenderer, Suggest } from "@blueprintjs/select";
 import { Menu, MenuItem } from "@blueprintjs/core";
 import styles from "./ListRoutingEntities.module.css";
 import { useStorage } from "../../contexts/StorageContext/StorageContext";
 import { BASIC_HEADERS, HEADER_VALUE_TEMPLATE } from "../../contexts/StorageContext/headerNames";
-import { Header } from "../../contexts/StorageContext/types";
+import type { Header } from "../../contexts/StorageContext/types";
 const SELECT_LIST_ITEM_COUNT = 5;
 
 interface Props {
@@ -31,10 +31,7 @@ const ListRoutingEntities: React.FC<Props> = ({ routingEntities, setUserSelected
     enabled: !!orgName,
   });
 
-  const {
-    data: sandboxes,
-    refetch: refetchSandboxes,
-  } = useQuery({
+  const { data: sandboxes, refetch: refetchSandboxes } = useQuery({
     queryKey: ["sandboxes-for-headers", orgName],
     queryFn: () => fetchSandboxes(settings.signadotUrls.apiUrl || "", orgName || ""),
     enabled: !!orgName,
@@ -147,7 +144,13 @@ const ListRoutingEntities: React.FC<Props> = ({ routingEntities, setUserSelected
     return filterFunction(query, routingEntity);
   };
 
-  const listRenderer = ({ items, itemsParentRef, renderItem, query, activeItem }: ItemListRendererProps<RoutingEntity>) => {
+  const listRenderer = ({
+    items,
+    itemsParentRef,
+    renderItem,
+    query,
+    activeItem,
+  }: ItemListRendererProps<RoutingEntity>) => {
     const filteredItems = items.filter((item) => filterFunction(query, item));
 
     if (filteredItems.length === 0) {
@@ -164,14 +167,16 @@ const ListRoutingEntities: React.FC<Props> = ({ routingEntities, setUserSelected
       if (activeIndex >= 0) {
         if (activeIndex >= windowStartIndex + SELECT_LIST_ITEM_COUNT) {
           windowStartIndex = activeIndex - SELECT_LIST_ITEM_COUNT + 1;
-        }
-        else if (activeIndex < windowStartIndex) {
+        } else if (activeIndex < windowStartIndex) {
           windowStartIndex = activeIndex;
         }
       }
     }
 
-    windowStartIndex = Math.max(0, Math.min(windowStartIndex, Math.max(0, filteredItems.length - SELECT_LIST_ITEM_COUNT)));
+    windowStartIndex = Math.max(
+      0,
+      Math.min(windowStartIndex, Math.max(0, filteredItems.length - SELECT_LIST_ITEM_COUNT)),
+    );
     windowStartIndexRef.current = windowStartIndex;
 
     const windowedItems = filteredItems.slice(windowStartIndex, windowStartIndex + SELECT_LIST_ITEM_COUNT);
@@ -227,4 +232,4 @@ const ListRoutingEntities: React.FC<Props> = ({ routingEntities, setUserSelected
   );
 };
 
-export default ListRoutingEntities; 
+export default ListRoutingEntities;
