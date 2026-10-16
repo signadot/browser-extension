@@ -1,3 +1,3 @@
 import ListRoutingEntities from "./ListRoutingEntities";
 
-export default ListRoutingEntities; 
+export default ListRoutingEntities;

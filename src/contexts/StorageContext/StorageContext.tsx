@@ -1,5 +1,6 @@
-import React, { useEffect, useState, createContext, useContext } from "react";
-import { Header, Settings, StorageContextType, StorageState, TraceparentConfig } from "./types";
+import React from "react";
+import { useEffect, useState, createContext, useContext } from "react";
+import type { Header, Settings, StorageContextType, StorageState, TraceparentConfig } from "./types";
 import { defaultTraceparent, defaultSettings } from "./defaults";
 import { StorageBrowserKeys } from "./browserKeys";
 import { setBrowserStoreValue } from "./browserKeys";

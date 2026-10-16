@@ -20,7 +20,7 @@ const doAuth = async (callback: AuthCallbackFn, options: AuthOptions) => {
   await refreshPreviewDomainCookies(previewUrl);
 
   // Get auth session cookie from preview subdomain
-  chrome.cookies.get({ url: previewUrl, name: AUTH_SESSION_COOKIE_NAME }, function (cookie) {
+  chrome.cookies.get({ url: previewUrl, name: AUTH_SESSION_COOKIE_NAME }, (cookie) => {
     if (cookie) {
       chrome.cookies.set({
         url: apiUrl!,
