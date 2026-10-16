@@ -329,21 +329,22 @@
   resolved "https://registry.yarnpkg.com/@biomejs/cli-win32-x64/-/cli-win32-x64-1.9.4.tgz#4c7afa90e3970213599b4095e62f87e5972b2340"
   integrity sha512-8Y5wMhVIPaWe6jw2H+KlEm4wP/f7EW3810ZLmDlrEEy5KvBsb9ECEfu/kMWD484ijfQ8+nIi0giMgu9g1UAuuA==
 
-"@blueprintjs/colors@^5.0.7", "@blueprintjs/colors@^5.1.8":
+"@blueprintjs/colors@^5.1.16", "@blueprintjs/colors@^5.1.8":
   version "5.1.16"
   resolved "https://registry.yarnpkg.com/@blueprintjs/colors/-/colors-5.1.16.tgz#910f605caf97327e61dad13a9ba9384b6ac5e61a"
   integrity sha512-P9uX0Aj2TP9+6aUcori1iPl4snxM/Vgq0LZbhUl1l5bHTgNxxwm/0+IoS/SlQg93HBRl8KTAM1evEqtPbwV10A==
   dependencies:
     tslib "~2.6.2"
 
-"@blueprintjs/core@5.7.1":
-  version "5.7.1"
-  resolved "https://registry.yarnpkg.com/@blueprintjs/core/-/core-5.7.1.tgz#7ed18bcc3adcf8c6475d50681cf99529b82728b4"
-  integrity sha512-nbOyMTyOAMKAm8WQH161toU6H/1997yQO9hP0vVzLHNmkgpf3sMfeZW5kaZUvx1uV6yWkcJOLqz6j/knt30imQ==
+"@blueprintjs/core@6.21.0":
+  version "6.21.0"
+  resolved "https://registry.yarnpkg.com/@blueprintjs/core/-/core-6.21.0.tgz#9e19c93c34a20a0831f57e67a09f6f858394d9bd"
+  integrity sha512-s4RrTRir+5cze76oHZp0jgodk1UR7RyzcbdDklIiDV1swgdTvOI4cZxcVJNhQBHdU9Sl0wCdKbXwo3J0nSEhvA==
   dependencies:
-    "@blueprintjs/colors" "^5.0.7"
-    "@blueprintjs/icons" "^5.4.1"
-    "@popperjs/core" "^2.11.7"
+    "@blueprintjs/colors" "^5.1.16"
+    "@blueprintjs/icons" "^6.14.1"
+    "@floating-ui/react" "^0.27.13"
+    "@popperjs/core" "^2.11.8"
     classnames "^2.3.1"
     normalize.css "^8.0.1"
     react-popper "^2.3.0"
@@ -370,6 +371,15 @@
   version "5.23.0"
   resolved "https://registry.yarnpkg.com/@blueprintjs/icons/-/icons-5.23.0.tgz#c01dc80fbadb4dfef20d34abdee14a23b6f5d00b"
   integrity sha512-yxQ+A0V79/UsyIw4XYuEvaFqr3FIaRlp79rKh+ZdHLafedqPfp4LO6xtF6EziWFCvuHOTJdFCfSC8AoQeSENMw==
+  dependencies:
+    change-case "^4.1.2"
+    classnames "^2.3.1"
+    tslib "~2.6.2"
+
+"@blueprintjs/icons@^6.14.1":
+  version "6.14.1"
+  resolved "https://registry.yarnpkg.com/@blueprintjs/icons/-/icons-6.14.1.tgz#fb8c40d5093ea46a15d659912c23424c751c6d9f"
+  integrity sha512-90HyoIIxaBTj+4whFUPU+lkdKLSx/R5GpSbbVug2xDZNSy6sptvAFSTmIVWvdFnFI8T1mlJPMniA/yP2s5GgZg==
   dependencies:
     change-case "^4.1.2"
     classnames "^2.3.1"
@@ -416,6 +426,42 @@
   integrity sha512-uTII7OYF+/Mes/MrcIOYp5yOtSMLBWSIoLPpcgwipoiKbli6k322tcoFsxoIIxPDqW01SQGAgko4EzZi2BNv2w==
   dependencies:
     tslib "^2.4.0"
+
+"@floating-ui/core@^1.8.0":
+  version "1.8.0"
+  resolved "https://registry.yarnpkg.com/@floating-ui/core/-/core-1.8.0.tgz#d01c0bbea02e4a57f6fd7d5de6fc2c5c7dca40e1"
+  integrity sha512-0CIZ5itps/8x7BG8dEIhs53BvCUH2PCoogtakwRTut+Arm58sJooJ0AuZhLw2HJYIR5cMLNPBSS728sPho2khQ==
+  dependencies:
+    "@floating-ui/utils" "^0.2.12"
+
+"@floating-ui/dom@^1.8.0":
+  version "1.8.0"
+  resolved "https://registry.yarnpkg.com/@floating-ui/dom/-/dom-1.8.0.tgz#8a20e6facbe2456afdbeb6c8b968a72df689cf63"
+  integrity sha512-yXSrzeHZBTZadLOlfyhCkJHNeLJnHRnRInwdZ40L7ZiaAtrBwoYlsDrX3v5zB1Utk7CLfzcOVnVVWoXEky7Ceg==
+  dependencies:
+    "@floating-ui/core" "^1.8.0"
+    "@floating-ui/utils" "^0.2.12"
+
+"@floating-ui/react-dom@^2.1.9":
+  version "2.1.9"
+  resolved "https://registry.yarnpkg.com/@floating-ui/react-dom/-/react-dom-2.1.9.tgz#f42a5f469ea56d6f2e2751efa1cf936243a87355"
+  integrity sha512-JDjEFGCpImxDCA7JJKviA0M9+RtmJdj0m/NVU5IMgBK+AmZouAQQ7/+2GLH0GXXY0YMw9oXPB8hKdbPYg5QLYg==
+  dependencies:
+    "@floating-ui/dom" "^1.8.0"
+
+"@floating-ui/react@^0.27.13":
+  version "0.27.20"
+  resolved "https://registry.yarnpkg.com/@floating-ui/react/-/react-0.27.20.tgz#353664b4a2b329e9f91f8d9150f7992b5ace20f4"
+  integrity sha512-CMqMy7OaXl9W0eq1Uy7L7i2Y/anPvHmFmESd2CEw0t5YvZhcVCeo4MBevAmswRllX7Y2dEidA4ozGPunLSTQpw==
+  dependencies:
+    "@floating-ui/react-dom" "^2.1.9"
+    "@floating-ui/utils" "^0.2.12"
+    tabbable "^6.0.0"
+
+"@floating-ui/utils@^0.2.12":
+  version "0.2.12"
+  resolved "https://registry.yarnpkg.com/@floating-ui/utils/-/utils-0.2.12.tgz#afefe785949f16ac4cdd1e695935a321572dd56a"
+  integrity sha512-HpCo8tmWzLVad5s2d19EhAz5zqrrQ6s69qd6moPMQvkOuSwDT1YgRfWSVuc4ennqrgv3OHppiOGMQ7oC13yIww==
 
 "@isaacs/cliui@^8.0.2":
   version "8.0.2"
@@ -817,7 +863,7 @@
   resolved "https://registry.yarnpkg.com/@pkgr/core/-/core-0.3.6.tgz#3569708bd4be4d8870ba32bf1c456dac81600d97"
   integrity sha512-SEeaJLb3qBNF/OaXnaR1NmmBbFYk1zC0ZH/52fATcRPLFg/p791YrcyFFy44Bo9sLaGuSuLp5Q6axbb/O+v/RA==
 
-"@popperjs/core@^2.11.7", "@popperjs/core@^2.11.8":
+"@popperjs/core@^2.11.8":
   version "2.11.8"
   resolved "https://registry.yarnpkg.com/@popperjs/core/-/core-2.11.8.tgz#6b79032e760a0899cd4204710beede972a3a185f"
   integrity sha512-P1st0aksCrn9sGZhp8GMYwBnQsbvAWsZAX44oXNNvLHGqAOcoVxmjZiohstwQ7SqKnbR47akdNi+uleWD8+g6A==
@@ -3435,6 +3481,11 @@ synckit@^0.11.8:
   integrity sha512-eNRKgb3z66Yp3D2CixVujOUvXLFUTij/zVnV8KRyvFdQwpz7I5DS8UfRkTeLzb64u+dkzDSdelE24izu+zSSUg==
   dependencies:
     "@pkgr/core" "^0.3.6"
+
+tabbable@^6.0.0:
+  version "6.5.0"
+  resolved "https://registry.yarnpkg.com/tabbable/-/tabbable-6.5.0.tgz#a65101385a4fd6cbd580b7546da0170f307b535d"
+  integrity sha512-wieBHXygIm7OyQOu5hQlkk62/WyCFYGlWg7L6/ZCUZwx0o398Zkn4pVmMyfYhfMG8kGrj/Krt8eIk6UKC6VzwA==
 
 tapable@^1.0.0:
   version "1.1.3"
