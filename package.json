@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@blueprintjs/core": "5.7.1",
-    "@blueprintjs/select": "5.0.19",
+    "@blueprintjs/select": "6.4.0",
     "@braintree/sanitize-url": "^7.1.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
