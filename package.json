@@ -22,7 +22,7 @@
     "test": "jest --passWithNoTests"
   },
   "dependencies": {
-    "@blueprintjs/core": "5.7.1",
+    "@blueprintjs/core": "6.21.0",
     "@blueprintjs/select": "6.4.0",
     "@braintree/sanitize-url": "^7.1.1",
     "react": "^18.2.0",
