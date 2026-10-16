@@ -195,6 +195,7 @@ const Settings: React.FC<SettingsProps> = ({ onClose }) => {
         </div>
         <div className={styles.envToggleGroup}>
           <button
+            type="button"
             className={styles.envToggleButton}
             data-active={selectedEnv === "production"}
             onClick={() => handleEnvironmentChange("production")}
@@ -202,6 +203,7 @@ const Settings: React.FC<SettingsProps> = ({ onClose }) => {
             Production
           </button>
           <button
+            type="button"
             className={styles.envToggleButton}
             data-active={selectedEnv === "staging"}
             onClick={() => handleEnvironmentChange("staging")}
@@ -209,6 +211,7 @@ const Settings: React.FC<SettingsProps> = ({ onClose }) => {
             Staging
           </button>
           <button
+            type="button"
             className={styles.envToggleButton}
             data-active={selectedEnv === "custom"}
             onClick={() => handleEnvironmentChange("custom")}
@@ -263,10 +266,10 @@ const Settings: React.FC<SettingsProps> = ({ onClose }) => {
         </div>
       </div>
       <div className={styles.actions}>
-        <button onClick={handleSave} className={styles.button}>
+        <button type="button" onClick={handleSave} className={styles.button}>
           Save Settings
         </button>
-        <button onClick={onClose} className={styles.cancel_action}>
+        <button type="button" onClick={onClose} className={styles.cancel_action}>
           Cancel
         </button>
       </div>

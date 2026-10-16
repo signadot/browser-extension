@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import styles from "./Frame.module.css";
-import { RoutingEntity } from "../ListRoutingEntities/types";
+import type { RoutingEntity } from "../ListRoutingEntities/types";
 import ListRoutingEntities from "../ListRoutingEntities";
 import { useFetchRoutingEntries } from "../ListRoutingEntities/hooks";
 import PinnedRoutingEntity from "../PinnedRoutingEntity";
@@ -20,7 +20,7 @@ const Login = () => {
   return (
     <div>
       Please{" "}
-      <a href={previewUrl} target="_blank">
+      <a href={previewUrl} target="_blank" rel="noreferrer">
         Login to Signadot
       </a>{" "}
       to continue.

@@ -30,11 +30,14 @@ const Layout: React.FC<Props> = ({ children }) => {
               style={{ height: "30px", width: "auto", maxWidth: "100%", display: "block" }}
               alt="Signadot Logo"
             />
-            <div className={styles.divider}></div>
+            <div className={styles.divider} />
             {authState?.org && <div className={styles.orgName}>{authState.org.displayName || ""}</div>}
           </div>
           <div className={styles.topRight}>
-            <button onClick={() => goToView((prevView) => (prevView === "settings" ? handleHomeChange() : "settings"))}>
+            <button
+              type="button"
+              onClick={() => goToView((prevView) => (prevView === "settings" ? handleHomeChange() : "settings"))}
+            >
               {currentView === "settings" ? <IoHomeSharp size={20} /> : <IoSettingsSharp size={20} />}
             </button>
           </div>

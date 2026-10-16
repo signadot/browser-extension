@@ -1,5 +1,5 @@
 import { DEFAULT_SIGNADOT_DASHBOARD_URL, DEFAULT_SIGNADOT_API_URL, DEFAULT_SIGNADOT_PREVIEW_URL } from "./defaults";
-import { Settings, Header, SignadotUrlsConfig } from "./types";
+import type { Settings, Header, SignadotUrlsConfig } from "./types";
 
 export const getGroupedHeadersByKind = (headers: Header[]): Record<"default" | "extra", Header[]> => {
   const groupedHeaders: Record<"default" | "extra", Header[]> = {

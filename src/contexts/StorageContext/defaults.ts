@@ -1,4 +1,4 @@
-import { Settings, TraceparentConfig } from "./types";
+import type { Settings, TraceparentConfig } from "./types";
 
 // Production environment URLs
 export const PROD_SIGNADOT_PREVIEW_URL = "https://browser-extension-auth-redirect.preview.signadot.com/";

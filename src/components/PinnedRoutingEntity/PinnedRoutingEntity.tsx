@@ -1,5 +1,6 @@
-import React, { useMemo, useState } from "react";
-import { RoutingEntity, RoutingEntityType } from "../ListRoutingEntities/types";
+import React from "react";
+import { useMemo, useState } from "react";
+import { type RoutingEntity, RoutingEntityType } from "../ListRoutingEntities/types";
 import styles from "./PinnedRoutingEntity.module.css";
 import { Button, Icon, Tag, Switch, Tooltip } from "@blueprintjs/core";
 import { useStorage } from "../../contexts/StorageContext/StorageContext";
