@@ -36,6 +36,10 @@ module.exports = {
             loader: 'css-loader',
             options: {
               modules: {
+                // css-loader 7 defaults to named exports; the components use
+                // `import styles from "./X.module.css"`, so keep the default export.
+                namedExport: false,
+                exportLocalsConvention: "as-is",
                 localIdentName: "[name]__[local]___[hash:base64:5]",
               },
               importLoaders: 1,
