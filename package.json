@@ -22,8 +22,8 @@
     "test": "jest --passWithNoTests"
   },
   "dependencies": {
-    "@blueprintjs/core": "5.7.1",
-    "@blueprintjs/select": "5.0.19",
+    "@blueprintjs/core": "6.21.0",
+    "@blueprintjs/select": "6.4.0",
     "@braintree/sanitize-url": "^7.1.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -44,7 +44,7 @@
     "style-loader": "^4.0.0",
     "ts-jest": "^29.1.0",
     "ts-loader": "^9.6.2",
-    "typescript": "^5.0.4",
+    "typescript": "^6.0.3",
     "webpack": "^5.76.0",
     "webpack-cli": "^7.2.3",
     "webpack-merge": "^6.0.1"
