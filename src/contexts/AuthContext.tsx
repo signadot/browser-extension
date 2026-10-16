@@ -76,7 +76,6 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
     auth(
       async (authenticated) => {
         if (!authenticated) {
-          console.log("Not authenticated!");
           setAuthState({
             status: "unauthenticated",
             user: undefined,

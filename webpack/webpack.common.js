@@ -7,7 +7,6 @@ module.exports = {
   entry: {
     popup: path.join(srcDir, 'popup.tsx'),
     background: path.join(srcDir, 'service-worker.ts'),
-    content_script: path.join(srcDir, 'content_script.tsx'),
   },
   output: {
     path: path.join(__dirname, "../dist/js"),
