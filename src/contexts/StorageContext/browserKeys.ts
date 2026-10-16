@@ -8,12 +8,12 @@ export enum StorageBrowserKeys {
 }
 
 export const getBrowserStoreValues = async (keys: StorageBrowserKeys[]) => {
-  const result = await chrome.storage.local.get(keys);
+  const result = await chrome.storage.local.get<Record<string, any>>(keys);
   return result;
 };
 
 export const getBrowserStoreValue = async (key: StorageBrowserKeys, onResult: (result: any) => void) => {
-  const result = await chrome.storage.local.get([key]);
+  const result = await chrome.storage.local.get<Record<string, any>>([key]);
   onResult(result[key]);
 };
 
