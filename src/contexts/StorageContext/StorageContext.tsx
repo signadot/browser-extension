@@ -70,7 +70,7 @@ export const StorageProvider: React.FC<StorageProviderProps> = ({ children }) =>
   // Load initial values from browser storage
   useEffect(() => {
     const loadInitialValues = async () => {
-      const storedValues = await chrome.storage.local.get([
+      const storedValues = await chrome.storage.local.get<Record<string, any>>([
         StorageBrowserKeys.enabled,
         StorageBrowserKeys.debugMode,
         StorageBrowserKeys.signadotUrls,

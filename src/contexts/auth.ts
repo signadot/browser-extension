@@ -39,7 +39,7 @@ export const auth = async (callback: AuthCallbackFn, options?: AuthOptions) => {
   let previewUrl = options?.previewUrl;
 
   if (!apiUrl || !previewUrl) {
-    chrome.storage.local.get([StorageBrowserKeys.signadotUrls], (result) => {
+    chrome.storage.local.get<Record<string, any>>([StorageBrowserKeys.signadotUrls], (result) => {
       const signadotUrls = JSON.parse(result[StorageBrowserKeys.signadotUrls]);
       apiUrl = signadotUrls.apiUrl;
       previewUrl = signadotUrls.previewUrl;
