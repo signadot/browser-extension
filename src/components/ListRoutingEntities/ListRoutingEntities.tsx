@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 import { fetchClusters, fetchSandboxes } from "./queries";
 import type { RoutingEntity } from "./types";
 import { type ItemListRendererProps, type ItemPredicate, type ItemRenderer, Suggest } from "@blueprintjs/select";
