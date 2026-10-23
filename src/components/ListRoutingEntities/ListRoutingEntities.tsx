@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { fetchClusters, fetchSandboxes } from "./queries";
-import type { RoutingEntity } from "./types";
+import { fetchClusters } from "./queries";
+import { type RoutingEntity, RoutingEntityType } from "./types";
 import { type ItemListRendererProps, type ItemPredicate, type ItemRenderer, Suggest } from "@blueprintjs/select";
 import { Menu, MenuItem } from "@blueprintjs/core";
 import styles from "./ListRoutingEntities.module.css";
@@ -37,19 +37,8 @@ const ListRoutingEntities: React.FC<Props> = ({
     enabled: !!orgName,
   });
 
-  const {
-    data: sandboxes,
-    isLoading: sandboxesLoading,
-    refetch: refetchSandboxes,
-  } = useQuery({
-    queryKey: ["sandboxes-for-headers", orgName],
-    queryFn: () => fetchSandboxes(settings.signadotUrls.apiUrl || "", orgName || ""),
-    enabled: !!orgName,
-  });
-
   useEffect(() => {
     refetch();
-    refetchSandboxes();
   }, [settings.signadotUrls.apiUrl]);
 
   const calculateHeaders = (routingEntity: RoutingEntity): Header[] => {
@@ -82,9 +71,11 @@ const ListRoutingEntities: React.FC<Props> = ({
 
     const sandboxClusters = new Set<string>();
     matchedSandboxes.forEach((sandboxName) => {
-      const sandbox = sandboxes?.find((s: any) => s.name === sandboxName);
-      if (sandbox && (sandbox as any).spec?.cluster) {
-        sandboxClusters.add((sandbox as any).spec.cluster);
+      const cluster = routingEntities.find(
+        (e) => e.type === RoutingEntityType.Sandbox && e.name === sandboxName,
+      )?.cluster;
+      if (cluster) {
+        sandboxClusters.add(cluster);
       }
     });
 
@@ -120,7 +111,7 @@ const ListRoutingEntities: React.FC<Props> = ({
         setHeaders(headers);
       }
     }
-  }, [currentRoutingKey, routingEntities, clusters, sandboxes]);
+  }, [currentRoutingKey, routingEntities, clusters]);
 
   const handleClick = React.useCallback(
     (name: string): void => {
@@ -133,7 +124,7 @@ const ListRoutingEntities: React.FC<Props> = ({
         setHeaders(headers);
       }
     },
-    [routingEntities, clusters, sandboxes],
+    [routingEntities, clusters],
   );
 
   const filterFunction = (query: string, item: RoutingEntity): boolean => {
@@ -216,7 +207,7 @@ const ListRoutingEntities: React.FC<Props> = ({
   };
 
   const renderInputValue = (re: RoutingEntity) => re.name;
-  const loading = isLoading || sandboxesLoading || routingEntitiesLoading;
+  const loading = isLoading || routingEntitiesLoading;
 
   return (
     <div className={styles.container}>
