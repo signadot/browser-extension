@@ -12,7 +12,7 @@ const SELECT_LIST_ITEM_COUNT = 5;
 
 interface Props {
   routingEntities: RoutingEntity[];
-  routingEntitiesLoading?: boolean;
+  routingEntitiesLoading: boolean;
   setUserSelectedRoutingEntity: (routingEntity: RoutingEntity) => void;
   orgName?: string;
 }
@@ -37,7 +37,11 @@ const ListRoutingEntities: React.FC<Props> = ({
     enabled: !!orgName,
   });
 
-  const { data: sandboxes, refetch: refetchSandboxes } = useQuery({
+  const {
+    data: sandboxes,
+    isLoading: sandboxesLoading,
+    refetch: refetchSandboxes,
+  } = useQuery({
     queryKey: ["sandboxes-for-headers", orgName],
     queryFn: () => fetchSandboxes(settings.signadotUrls.apiUrl || "", orgName || ""),
     enabled: !!orgName,
@@ -212,11 +216,11 @@ const ListRoutingEntities: React.FC<Props> = ({
   };
 
   const renderInputValue = (re: RoutingEntity) => re.name;
-  const loading = isLoading || routingEntitiesLoading;
+  const loading = isLoading || sandboxesLoading || routingEntitiesLoading;
 
   return (
     <div className={styles.container}>
-      {/* {error && <div>Error: {error?.message || 'An unknown error occurred'}</div>} */}
+      {error && <div className={styles.error}>Failed to load clusters</div>}
       {!error && (
         <Suggest<RoutingEntity>
           disabled={loading}

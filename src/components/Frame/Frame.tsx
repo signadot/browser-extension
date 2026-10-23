@@ -66,7 +66,7 @@ const Home = () => {
                 <div className={styles.noSelectedMessage}>Loading sandboxes and route groups...</div>
               </>
             ) : error ? (
-              <div className={styles.errorMessage}>Failed to load sandboxes and route groups</div>
+              <div className={styles.errorMessage}>Failed to load sandboxes or route groups</div>
             ) : (
               <div className={styles.noSelectedMessage}>No Sandbox or RouteGroup selected</div>
             )}
