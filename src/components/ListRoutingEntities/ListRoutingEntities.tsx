@@ -12,11 +12,17 @@ const SELECT_LIST_ITEM_COUNT = 5;
 
 interface Props {
   routingEntities: RoutingEntity[];
+  routingEntitiesLoading?: boolean;
   setUserSelectedRoutingEntity: (routingEntity: RoutingEntity) => void;
   orgName?: string;
 }
 
-const ListRoutingEntities: React.FC<Props> = ({ routingEntities, setUserSelectedRoutingEntity, orgName }) => {
+const ListRoutingEntities: React.FC<Props> = ({
+  routingEntities,
+  routingEntitiesLoading,
+  setUserSelectedRoutingEntity,
+  orgName,
+}) => {
   const { settings, setHeaders, currentRoutingKey } = useStorage();
   const windowStartIndexRef = React.useRef(0);
 
@@ -206,13 +212,15 @@ const ListRoutingEntities: React.FC<Props> = ({ routingEntities, setUserSelected
   };
 
   const renderInputValue = (re: RoutingEntity) => re.name;
+  const loading = isLoading || routingEntitiesLoading;
 
   return (
     <div className={styles.container}>
-      {isLoading && <div>Loading...</div>}
       {/* {error && <div>Error: {error?.message || 'An unknown error occurred'}</div>} */}
-      {!isLoading && !error && (
+      {!error && (
         <Suggest<RoutingEntity>
+          disabled={loading}
+          inputProps={{ placeholder: loading ? "Loading..." : "Search..." }}
           items={routingEntities}
           itemPredicate={predicate}
           itemRenderer={itemRenderer}

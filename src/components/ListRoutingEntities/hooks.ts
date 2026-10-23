@@ -43,9 +43,8 @@ export const useFetchRoutingEntries = () => {
     },
     enabled: authState.status === "authenticated" && !!settings.signadotUrls.apiUrl,
   });
-  // TODO: Handle error and loading too.
 
-  return useMemo(() => {
+  const routingEntities = useMemo(() => {
     const result: RoutingEntity[] = [];
     if (Array.isArray(sandboxes)) {
       sandboxes.forEach((sandbox) => {
@@ -70,4 +69,10 @@ export const useFetchRoutingEntries = () => {
     }
     return result;
   }, [sandboxes, routegroups]);
+
+  return {
+    routingEntities,
+    isLoading: sandboxesLoading || routegroupsLoading,
+    error: sandboxesError || routegroupsError,
+  };
 };
