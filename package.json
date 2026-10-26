@@ -1,6 +1,6 @@
 {
   "name": "signadot-browser-extension",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "Signadot browser extension: route your browser's requests to Signadot sandboxes and route groups",
   "private": true,
   "license": "Apache-2.0",
