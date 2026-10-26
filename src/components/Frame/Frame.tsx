@@ -34,7 +34,7 @@ const Loading = () => {
 
 const Home = () => {
   const { currentRoutingKey, setCurrentRoutingKey } = useStorage();
-  const routingEntities: RoutingEntity[] = useFetchRoutingEntries();
+  const { routingEntities, isLoading, error } = useFetchRoutingEntries();
   const { authState } = useAuth();
 
   const pinnedRoutingEntityData: RoutingEntity | undefined = useMemo(() => {
@@ -46,6 +46,7 @@ const Home = () => {
     <>
       <ListRoutingEntities
         routingEntities={routingEntities}
+        routingEntitiesLoading={isLoading}
         setUserSelectedRoutingEntity={(e) => setCurrentRoutingKey(e.routingKey)}
         orgName={authState.org?.name}
       />
@@ -59,7 +60,16 @@ const Home = () => {
           />
         ) : (
           <div className={styles.noSelectedContainer}>
-            <div className={styles.noSelectedMessage}>No Sandbox or RouteGroup selected</div>
+            {isLoading ? (
+              <>
+                <Spinner size={SpinnerSize.SMALL} />
+                <div className={styles.noSelectedMessage}>Loading sandboxes and route groups...</div>
+              </>
+            ) : error ? (
+              <div className={styles.errorMessage}>Failed to load sandboxes or route groups</div>
+            ) : (
+              <div className={styles.noSelectedMessage}>No Sandbox or RouteGroup selected</div>
+            )}
           </div>
         )}
       </div>

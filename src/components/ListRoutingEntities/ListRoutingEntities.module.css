@@ -1,3 +1,10 @@
+@import "../../styles/colors.module.css";
+
 .container {
   width: 100%;
+}
+
+.error {
+  color: var(--ERROR700);
+  font-size: 0.875rem;
 }
