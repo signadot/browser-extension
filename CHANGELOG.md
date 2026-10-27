@@ -2,10 +2,14 @@
 
 All notable changes to the Signadot browser extension. Versions match the `version` in `public/manifest.json` and the Chrome Web Store listing.
 
-## Unreleased
+## 2.2.0 - 2026-10-26
 
-- Routing entity list uses a sliding window so long lists stay responsive (#84).
-- GitHub Actions are pinned to commit SHAs and kept current by Dependabot (#85).
+- Loads every sandbox through the paginated sandboxes API, and keeps long lists responsive with a sliding window (#84, #91).
+- Shows a loading state while sandboxes and route groups load, instead of "No Sandbox or RouteGroup selected", and a message if loading fails (#115).
+- No longer injects a content script into every page, and drops the unused `declarativeNetRequestFeedback` permission (#95).
+- Log out is now a real button (#94).
+- Dependency upgrades: React 19, Blueprint 6, TanStack Query 5 (replacing react-query 3), TypeScript 6, Jest 30, Biome 2, webpack-cli 7, css-loader 7, style-loader 4, ts-loader 9, react-icons 5, react-hotkeys-hook 5, and others (#96 to #114).
+- CI runs lint, typecheck, tests and a build on every PR; releases are built and attached by a tag-driven workflow; GitHub Actions are pinned to commit SHAs and kept current by Dependabot (#85, #94).
 
 ## 2.1.0 - 2025-11-11
 
