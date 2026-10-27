@@ -30,6 +30,7 @@ yarn build        # production build into dist/
 ## Pull requests
 
 - Branch from `main` and open the PR against `main`. CI runs lint, typecheck, tests and a production build on every PR.
+- Merging needs green CI and an approving review from a member of `@signadot/engineering` (see `.github/CODEOWNERS`). CI on PRs from forks runs once a maintainer approves it.
 - Keep PRs focused. A PR that changes behaviour should say how it was tested in Chrome.
 - Changes to `public/manifest.json` permissions need an explanation in the PR, since they affect what users are asked to grant.
 - Do not bump the version in a feature PR. Versions are bumped in a dedicated release PR (see below).
