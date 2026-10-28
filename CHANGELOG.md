@@ -2,6 +2,10 @@
 
 All notable changes to the Signadot browser extension. Versions match the `version` in `public/manifest.json` and the Chrome Web Store listing.
 
+## Unreleased
+
+- Applies routing header changes one at a time in the background worker, so a burst of changes while the popup loads no longer logs "Rule with id 1 does not have a unique ID".
+
 ## 2.2.0 - 2026-10-26
 
 - Loads every sandbox through the paginated sandboxes API, and keeps long lists responsive with a sliding window (#84, #91).

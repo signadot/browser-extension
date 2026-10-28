@@ -84,8 +84,19 @@ async function updateDynamicRules() {
   console.log("Dynamic rules updated successfully.");
 }
 
-chrome.runtime.onInstalled.addListener(updateDynamicRules);
-chrome.runtime.onStartup.addListener(updateDynamicRules);
+// The popup writes the headers several times while it loads, so storage changes arrive in bursts.
+// Run one update at a time: two concurrent updates read the same existing rules and both add
+// rule id 1, and the second fails with "Rule with id 1 does not have a unique ID".
+let pendingUpdate: Promise<void> = Promise.resolve();
+const scheduleUpdate = () => {
+  pendingUpdate = pendingUpdate
+    .then(updateDynamicRules)
+    .catch((error) => console.error("Error updating dynamic rules: ", error));
+  return pendingUpdate;
+};
+
+chrome.runtime.onInstalled.addListener(scheduleUpdate);
+chrome.runtime.onStartup.addListener(scheduleUpdate);
 chrome.storage.onChanged.addListener((changes, areaName) => {
   if (
     areaName === "local" &&
@@ -94,6 +105,6 @@ chrome.storage.onChanged.addListener((changes, areaName) => {
       changes[StorageBrowserKeys.enabled] ||
       changes[StorageBrowserKeys.traceparentHeader])
   ) {
-    updateDynamicRules();
+    scheduleUpdate();
   }
 });
